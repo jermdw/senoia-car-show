@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  collection, deleteDoc, doc, onSnapshot, query, setDoc, updateDoc, where, increment, writeBatch,
+  collection, deleteDoc, doc, onSnapshot, query, runTransaction, setDoc, updateDoc, where, increment,
 } from 'firebase/firestore'
 import {
   GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut,
@@ -31,7 +31,10 @@ function SignIn() {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
     } catch (e) {
-      setError(e.message)
+      // Dismissing the popup isn't an error worth showing
+      if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return
+      setError('Sign-in failed. Please try again.')
+      console.error('sign-in failed', e)
     }
   }
   return (
@@ -52,19 +55,27 @@ function Dashboard({ user }) {
   const [shifts, setShifts] = useState(null)
   const [signups, setSignups] = useState(null)
   const [denied, setDenied] = useState(false)
+  const [loadError, setLoadError] = useState(false)
   const [editing, setEditing] = useState(null) // shift object or 'new'
   const [openRoster, setOpenRoster] = useState(null) // shiftId
 
   useEffect(() => {
+    // Only permission-denied means "not an organizer" — anything else
+    // (offline, missing index, backend outage) is a load failure.
+    const onError = (err) => {
+      console.error('admin listener failed', err)
+      if (err.code === 'permission-denied') setDenied(true)
+      else setLoadError(true)
+    }
     const unsub1 = onSnapshot(
       query(collection(db, 'events', EVENT_ID, 'shifts')),
       (snap) => setShifts(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-      () => setDenied(true),
+      onError,
     )
     const unsub2 = onSnapshot(
       query(collection(db, 'signups'), where('eventId', '==', EVENT_ID), where('status', '==', 'active')),
       (snap) => setSignups(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-      () => setDenied(true),
+      onError,
     )
     return () => { unsub1(); unsub2() }
   }, [])
@@ -93,17 +104,34 @@ function Dashboard({ user }) {
     )
   }
 
+  if (loadError) {
+    return (
+      <Centered>
+        <p className="text-red-600 font-semibold" role="alert">
+          Couldn't load the dashboard. Check your connection and refresh.
+        </p>
+      </Centered>
+    )
+  }
+
   function exportCsv() {
     const rows = [['What', 'When', 'Credits', 'Volunteer First Name', 'Volunteer Last Name', 'Email', 'Phone']]
     for (const shift of sorted) {
       const roster = signupsByShift[shift.id] ?? []
-      for (let i = 0; i < shift.spotsTotal; i++) {
+      // A shift can hold more signups than spotsTotal if an admin shrank it —
+      // never drop volunteers from the export.
+      for (let i = 0; i < Math.max(shift.spotsTotal, roster.length); i++) {
         const v = roster[i]
         rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? ''])
       }
     }
     const csv = rows
-      .map((r) => r.map((c) => `"${String(c).replaceAll('"', '""')}"`).join(','))
+      .map((r) => r.map((c) => {
+        let s = String(c)
+        // Neutralize spreadsheet formula injection from volunteer-supplied text
+        if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`
+        return `"${s.replaceAll('"', '""')}"`
+      }).join(','))
       .join('\r\n')
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }))
     const a = document.createElement('a')
@@ -115,10 +143,19 @@ function Dashboard({ user }) {
 
   async function removeVolunteer(signup) {
     if (!confirm(`Remove ${signup.firstName} ${signup.lastName} from this shift?`)) return
-    const batch = writeBatch(db)
-    batch.update(doc(db, 'signups', signup.id), { status: 'cancelled' })
-    batch.update(doc(db, 'events', EVENT_ID, 'shifts', signup.shiftId), { spotsFilled: increment(-1) })
-    await batch.commit()
+    try {
+      // Transaction guards the counter: a double-click or a race with the
+      // volunteer's own cancel link must not decrement twice.
+      await runTransaction(db, async (t) => {
+        const snap = await t.get(doc(db, 'signups', signup.id))
+        if (!snap.exists() || snap.data().status !== 'active') return
+        t.update(snap.ref, { status: 'cancelled' })
+        t.update(doc(db, 'events', EVENT_ID, 'shifts', signup.shiftId), { spotsFilled: increment(-1) })
+      })
+    } catch (e) {
+      console.error('remove volunteer failed', e)
+      alert('Removing the volunteer failed. Check your connection and try again.')
+    }
   }
 
   async function deleteShift(shift) {
@@ -128,7 +165,12 @@ function Dashboard({ user }) {
       return
     }
     if (!confirm(`Delete shift "${shift.role} (${shift.time})"?`)) return
-    await deleteDoc(doc(db, 'events', EVENT_ID, 'shifts', shift.id))
+    try {
+      await deleteDoc(doc(db, 'events', EVENT_ID, 'shifts', shift.id))
+    } catch (e) {
+      console.error('delete shift failed', e)
+      alert('Deleting the shift failed. Check your connection and try again.')
+    }
   }
 
   const totalFilled = (signups ?? []).length
@@ -208,6 +250,7 @@ function Dashboard({ user }) {
       {editing && (
         <ShiftEditor
           shift={editing === 'new' ? null : editing}
+          activeCount={editing === 'new' ? 0 : (signupsByShift[editing.id]?.length ?? 0)}
           maxSortOrder={Math.max(0, ...(shifts ?? []).map((s) => s.sortOrder))}
           onClose={() => setEditing(null)}
         />
@@ -216,44 +259,60 @@ function Dashboard({ user }) {
   )
 }
 
-function ShiftEditor({ shift, maxSortOrder, onClose }) {
+function ShiftEditor({ shift, activeCount, maxSortOrder, onClose }) {
   const [form, setForm] = useState(
     shift ?? { role: '', time: '', day: '2026-09-26', spotsTotal: 2, category: '' },
   )
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const safeClose = () => { if (!saving) onClose() }
 
   async function save(e) {
     e.preventDefault()
+    const spotsTotal = Number(form.spotsTotal)
+    if (spotsTotal < activeCount) {
+      setError(`This shift already has ${activeCount} volunteers — spots can't be lower than that.`)
+      return
+    }
     setSaving(true)
+    setError(null)
     const data = {
       role: form.role.trim(),
       time: form.time.trim(),
       day: form.day,
       category: form.category?.trim() ?? '',
-      spotsTotal: Number(form.spotsTotal),
+      spotsTotal,
     }
-    if (shift) {
-      await updateDoc(doc(db, 'events', EVENT_ID, 'shifts', shift.id), data)
-    } else {
-      const id = crypto.randomUUID().slice(0, 8)
-      await setDoc(doc(db, 'events', EVENT_ID, 'shifts', id), {
-        ...data,
-        spotsFilled: 0,
-        sortOrder: maxSortOrder + 1,
-      })
+    try {
+      if (shift) {
+        await updateDoc(doc(db, 'events', EVENT_ID, 'shifts', shift.id), data)
+      } else {
+        const id = crypto.randomUUID().slice(0, 8)
+        await setDoc(doc(db, 'events', EVENT_ID, 'shifts', id), {
+          ...data,
+          spotsFilled: 0,
+          sortOrder: maxSortOrder + 1,
+        })
+      }
+      onClose()
+    } catch (err) {
+      console.error('save shift failed', err)
+      setError('Saving failed. Check your connection and try again.')
+    } finally {
+      setSaving(false)
     }
-    onClose()
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto" onClick={safeClose}>
       <form
         onSubmit={save}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-3"
+        className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-3 max-h-[90vh] overflow-y-auto my-auto"
       >
         <h2 className="text-lg font-bold text-slate-900">{shift ? 'Edit Shift' : 'New Shift'}</h2>
+        {error && <p className="text-red-600 text-sm" role="alert">{error}</p>}
         <label className="block">
           <span className="text-sm font-medium text-slate-700">Role</span>
           <input required value={form.role} onChange={set('role')}
@@ -281,7 +340,7 @@ function ShiftEditor({ shift, maxSortOrder, onClose }) {
           </label>
         </div>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose}
+          <button type="button" onClick={safeClose}
             className="flex-1 border border-slate-300 text-slate-700 font-semibold px-4 py-2 rounded-lg">
             Cancel
           </button>

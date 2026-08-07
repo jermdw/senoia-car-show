@@ -49,8 +49,12 @@ if (header[0] !== 'What' || header[1] !== 'When') {
 // Collapse duplicate rows (one row per slot) into shifts with spot counts.
 const shifts = new Map()
 let sortOrder = 0
-for (const [role, when] of rows) {
+for (const [i, [role, when]] of rows.entries()) {
   if (!role) continue
+  if (!when) {
+    console.error(`Row ${i + 2}: "${role}" has no When column`)
+    process.exit(1)
+  }
   const key = `${role}|${when}`
   if (!shifts.has(key)) {
     const dayToken = when.trim().split(/[\s-]+/)[0]
@@ -152,8 +156,13 @@ async function seedViaRest() {
     method: 'POST', headers, body: JSON.stringify({ writes }),
   })
   if (!res.ok) throw new Error(`batchWrite failed: ${res.status} ${await res.text()}`)
-  const statuses = (await res.json()).writeResults?.length ?? 0
-  console.log(`batchWrite applied ${statuses} writes (${existing.size} pre-existing shifts preserved)`)
+  // batchWrite is non-atomic: HTTP 200 can still carry per-write failures
+  const body = await res.json()
+  const failed = (body.status ?? []).filter((s) => s.code)
+  if (failed.length) {
+    throw new Error(`batchWrite had ${failed.length} failed writes: ${JSON.stringify(failed.slice(0, 3))}`)
+  }
+  console.log(`batchWrite applied ${body.writeResults?.length ?? 0} writes (${existing.size} pre-existing shifts preserved)`)
 }
 
 for (const s of shifts.values()) console.log(`  ${s.day}  ${s.role} (${s.spotsTotal})`)

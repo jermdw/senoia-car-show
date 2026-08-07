@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { db, functions, EVENT_ID } from '../firebase'
 
@@ -12,23 +12,41 @@ const DAY_LABELS = {
 
 export default function Volunteer() {
   const [shifts, setShifts] = useState(null)
+  const [event, setEvent] = useState(null)
+  const [loadError, setLoadError] = useState(false)
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
     const q = query(collection(db, 'events', EVENT_ID, 'shifts'))
-    return onSnapshot(q, (snap) => {
-      setShifts(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-    })
+    const unsub1 = onSnapshot(
+      q,
+      (snap) => setShifts(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+      (err) => {
+        console.error('shifts listener failed', err)
+        setLoadError(true)
+      },
+    )
+    const unsub2 = onSnapshot(
+      doc(db, 'events', EVENT_ID),
+      (snap) => setEvent(snap.data() ?? {}),
+      (err) => console.error('event listener failed', err),
+    )
+    return () => { unsub1(); unsub2() }
   }, [])
 
   const byDay = useMemo(() => {
     if (!shifts) return {}
     const groups = {}
-    for (const s of [...shifts].sort((a, b) => a.sortOrder - b.sortOrder)) {
+    const ordered = [...shifts].sort(
+      (a, b) => a.day.localeCompare(b.day) || a.sortOrder - b.sortOrder,
+    )
+    for (const s of ordered) {
       ;(groups[s.day] ||= []).push(s)
     }
     return groups
   }, [shifts])
+
+  const closed = event?.signupOpen === false
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -45,24 +63,36 @@ export default function Volunteer() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-8">
-        {!shifts && <p className="text-center text-slate-500 py-12">Loading shifts…</p>}
-        {shifts && shifts.length === 0 && (
+        {loadError ? (
+          <p className="text-center text-red-600 py-12" role="alert">
+            We couldn't load the shift list. Please refresh the page, or email{' '}
+            <a className="underline" href="mailto:carshow@enjoysenoia.com">carshow@enjoysenoia.com</a>.
+          </p>
+        ) : closed ? (
+          <p className="text-center text-slate-600 py-12">
+            Volunteer sign-ups are closed. Questions? Email{' '}
+            <a className="underline" href="mailto:carshow@enjoysenoia.com">carshow@enjoysenoia.com</a>.
+          </p>
+        ) : !shifts ? (
+          <p className="text-center text-slate-500 py-12">Loading shifts…</p>
+        ) : shifts.length === 0 ? (
           <p className="text-center text-slate-500 py-12">
             Sign-ups aren't open yet. Check back soon!
           </p>
+        ) : (
+          Object.entries(byDay).map(([day, dayShifts]) => (
+            <section key={day} className="mb-10">
+              <h2 className="text-xl font-bold text-slate-800 border-b-2 border-amber-400 pb-2 mb-4">
+                {DAY_LABELS[day] ?? day}
+              </h2>
+              <ul className="space-y-3">
+                {dayShifts.map((s) => (
+                  <ShiftRow key={s.id} shift={s} onSignUp={() => setSelected(s)} />
+                ))}
+              </ul>
+            </section>
+          ))
         )}
-        {Object.entries(byDay).map(([day, dayShifts]) => (
-          <section key={day} className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 border-b-2 border-amber-400 pb-2 mb-4">
-              {DAY_LABELS[day] ?? day}
-            </h2>
-            <ul className="space-y-3">
-              {dayShifts.map((s) => (
-                <ShiftRow key={s.id} shift={s} onSignUp={() => setSelected(s)} />
-              ))}
-            </ul>
-          </section>
-        ))}
       </main>
 
       {selected && (
@@ -108,6 +138,8 @@ function SignupModal({ shift, onClose }) {
   const [state, setState] = useState({ status: 'idle', error: null })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  // Closing mid-submit would hide the outcome of an in-flight signup
+  const safeClose = () => { if (state.status !== 'submitting') onClose() }
 
   async function submit(e) {
     e.preventDefault()
@@ -122,9 +154,9 @@ function SignupModal({ shift, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto" onClick={safeClose}>
       <div
-        className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
+        className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {state.status === 'done' ? (
@@ -175,7 +207,7 @@ function SignupModal({ shift, onClose }) {
               <p className="text-red-600 text-sm mb-3" role="alert">{state.error}</p>
             )}
             <div className="flex gap-3">
-              <button type="button" onClick={onClose}
+              <button type="button" onClick={safeClose}
                 className="flex-1 border border-slate-300 text-slate-700 font-semibold px-4 py-2 rounded-lg">
                 Cancel
               </button>

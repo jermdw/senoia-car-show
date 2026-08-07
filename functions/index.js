@@ -45,12 +45,16 @@ export const signUp = onCall(callOpts, async (req) => {
     throw new HttpsError('invalid-argument', 'Please provide a valid phone number.')
   }
 
+  const eventRef = db.doc(`events/${eventId}`)
   const shiftRef = db.doc(`events/${eventId}/shifts/${shiftId}`)
   const signupRef = db.collection('signups').doc()
   const cancelToken = randomBytes(24).toString('hex')
 
   const shift = await db.runTransaction(async (t) => {
-    const shiftSnap = await t.get(shiftRef)
+    const [eventSnap, shiftSnap] = await Promise.all([t.get(eventRef), t.get(shiftRef)])
+    if (eventSnap.exists && eventSnap.data().signupOpen === false) {
+      throw new HttpsError('failed-precondition', 'Volunteer sign-ups are closed.')
+    }
     if (!shiftSnap.exists) {
       throw new HttpsError('not-found', 'That shift no longer exists.')
     }
@@ -104,10 +108,14 @@ export const cancelSignup = onCall(callOpts, async (req) => {
     if (s.status !== 'active') {
       throw new HttpsError('failed-precondition', 'This signup was already cancelled.')
     }
+    // The shift may have been deleted by an admin; the cancellation must still
+    // succeed, so only decrement the counter when the shift still exists.
+    const shiftRef = db.doc(`events/${s.eventId}/shifts/${s.shiftId}`)
+    const shiftSnap = await t.get(shiftRef)
     t.update(signupRef, { status: 'cancelled', cancelledAt: FieldValue.serverTimestamp() })
-    t.update(db.doc(`events/${s.eventId}/shifts/${s.shiftId}`), {
-      spotsFilled: FieldValue.increment(-1),
-    })
+    if (shiftSnap.exists) {
+      t.update(shiftRef, { spotsFilled: FieldValue.increment(-1) })
+    }
     return s
   })
 
