@@ -1,0 +1,112 @@
+import { Link } from 'react-router-dom'
+import SiteHeader from '../components/SiteHeader.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
+
+const PRICING = [
+  { area: 'Main Street', advance: '$40', sameDay: '$50' },
+  { area: 'North Main Street', advance: '$30', sameDay: '$40' },
+  { area: 'General Parking', advance: '$20', sameDay: '$30' },
+]
+
+const DATES = [
+  ['May 1, 2026', 'Sponsor & vendor applications open'],
+  ['June 1, 2026 · 8:00 AM', 'Show car registration opens'],
+  ['August 1, 2026', 'Volunteer sign-ups open'],
+  ['September 26, 2026 · by 9:00 AM', 'All Main Street show vehicles parked'],
+  ['September 26, 2026 · 10 AM–4 PM', 'Show day!'],
+]
+
+export default function Show() {
+  return (
+    <div className="min-h-screen bg-cream flex flex-col">
+      <SiteHeader />
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-10 w-full">
+        <h1 className="font-display text-4xl uppercase tracking-wide text-ink mb-2">
+          Show <span className="text-gold">Info</span>
+        </h1>
+        <p className="font-script text-gold text-2xl mb-6">Saturday, September 26, 2026</p>
+
+        <p className="text-stone-700 mb-4 leading-relaxed">
+          The 21st Annual Senoia Car Show brings <strong>600+ collector and
+          classic vehicles</strong> to Historic Main Street in downtown Senoia,
+          with 8,000–10,000 spectators from across the Southeast. Enjoy classic
+          cars, live music, local shopping, food vendors, door prizes, and an
+          awards ceremony — plus Best in Show Car &amp; Truck, the valve cover
+          races, a car club corral, and the 50/50 raffle benefiting the I-58
+          Mission food bank.
+        </p>
+        <p className="text-stone-700 mb-8 leading-relaxed">
+          Public admission and spectator parking are <strong>free</strong>, with
+          shuttle service running throughout the day. Proceeds support the
+          Senoia Downtown Development Authority and downtown preservation.
+        </p>
+
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Key Dates
+        </h2>
+        <ul className="mb-8 space-y-2">
+          {DATES.map(([when, what]) => (
+            <li key={what} className="flex flex-wrap gap-x-3">
+              <span className="font-display text-gold-dark w-64 shrink-0">{when}</span>
+              <span className="text-stone-700">{what}</span>
+            </li>
+          ))}
+        </ul>
+
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Show Vehicle Display Pricing
+        </h2>
+        <p className="text-stone-600 text-sm mb-3">
+          Open to vehicles 25 years and older (model year 2001 or older).
+        </p>
+        <div className="overflow-x-auto mb-4">
+          <table className="w-full bg-white rounded-lg border border-stone-200 text-left">
+            <thead>
+              <tr className="font-display uppercase tracking-wide text-sm text-cream bg-ink">
+                <th className="px-4 py-3 rounded-tl-lg">Display Area</th>
+                <th className="px-4 py-3">Advance</th>
+                <th className="px-4 py-3 rounded-tr-lg">Same-Day</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PRICING.map((r) => (
+                <tr key={r.area} className="border-t border-stone-100">
+                  <td className="px-4 py-3 font-semibold text-ink">{r.area}</td>
+                  <td className="px-4 py-3 text-stone-700">{r.advance}</td>
+                  <td className="px-4 py-3 text-stone-700">{r.sameDay}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-stone-600 text-sm mb-8">
+          Registration opens June 1 at{' '}
+          <a className="underline" href="https://www.enjoysenoia.com/events/senoia-car-show-2" target="_blank" rel="noreferrer">
+            enjoysenoia.com
+          </a>.
+        </p>
+
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Parking &amp; Logistics
+        </h2>
+        <ul className="list-disc pl-5 text-stone-700 space-y-2 mb-8">
+          <li>All registered show vehicles displayed on Main Street must be parked by <strong>9:00 AM</strong>.</li>
+          <li>North Main Street show parking has been expanded this year.</li>
+          <li>The Maguires Lot returns to general parking (no longer reserved).</li>
+          <li>Free spectator parking with shuttles running all day.</li>
+        </ul>
+
+        <div className="bg-ink rounded-xl p-6 text-center">
+          <p className="font-script text-gold text-2xl mb-2">Want to help make it happen?</p>
+          <Link
+            to="/volunteer"
+            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
+          >
+            Volunteer Sign-Up
+          </Link>
+        </div>
+      </main>
+      <SiteFooter />
+    </div>
+  )
+}

@@ -6,6 +6,10 @@ import Landing from './pages/Landing.jsx'
 import Volunteer from './pages/Volunteer.jsx'
 import Cancel from './pages/Cancel.jsx'
 import Admin from './pages/Admin.jsx'
+import Show from './pages/Show.jsx'
+import Sponsors from './pages/Sponsors.jsx'
+import Vendors from './pages/Vendors.jsx'
+import Merch from './pages/Merch.jsx'
 
 class ErrorBoundary extends Component {
   state = { failed: false }
@@ -34,9 +38,14 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/show" element={<Show />} />
+          <Route path="/sponsors" element={<Sponsors />} />
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/merch" element={<Merch />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/cancel" element={<Cancel />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="*" element={<Landing />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>

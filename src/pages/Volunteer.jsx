@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { db, functions, EVENT_ID } from '../firebase'
-import logo from '../assets/logo-dark-bg.png'
+import SiteHeader from '../components/SiteHeader.jsx'
 
 const DAY_LABELS = {
   '2026-09-25': 'Friday, Sept 25 — Setup',
@@ -51,15 +50,8 @@ export default function Volunteer() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="bg-ink text-cream px-6 pt-4 pb-8 text-center relative">
-        <div className="flex justify-end">
-          <Link to="/admin" className="text-gold-pale/60 hover:text-gold-pale text-sm font-display tracking-wide uppercase">
-            Organizers
-          </Link>
-        </div>
-        <Link to="/" className="inline-block">
-          <img src={logo} alt="The Senoia Car Show" className="w-40 mx-auto mb-2" />
-        </Link>
+      <SiteHeader />
+      <header className="bg-ink text-cream px-6 pt-6 pb-8 text-center">
         <h1 className="text-3xl sm:text-4xl font-display font-semibold uppercase tracking-wide">
           Volunteer <span className="text-gold">Sign-Up</span>
         </h1>
