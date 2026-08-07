@@ -18,7 +18,7 @@ class ErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 text-center text-slate-700">
+      <div className="min-h-screen flex items-center justify-center p-6 text-center text-stone-700">
         <p>
           Something went wrong. Please refresh the page, or email{' '}
           <a className="underline" href="mailto:carshow@enjoysenoia.com">carshow@enjoysenoia.com</a>.

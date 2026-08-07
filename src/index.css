@@ -1,5 +1,16 @@
+@import "@fontsource/oswald/500.css";
+@import "@fontsource/oswald/600.css";
+@import "@fontsource/oswald/700.css";
+@import "@fontsource/yellowtail";
 @import "tailwindcss";
 
+/* Senoia Car Show brand — Pantone guide: black, PMS 1255 (gold), PMS 7402 (pale gold) */
 @theme {
-  --font-display: "Georgia", "Times New Roman", serif;
+  --color-cream: #f5eedb;
+  --color-gold: #ad841f;
+  --color-gold-dark: #8f6c17;
+  --color-gold-pale: #eedc9a;
+  --color-ink: #16130b;
+  --font-display: "Oswald", "Arial Narrow", sans-serif;
+  --font-script: "Yellowtail", cursive;
 }
