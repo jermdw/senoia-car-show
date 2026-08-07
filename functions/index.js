@@ -1,0 +1,153 @@
+import { onCall, HttpsError } from 'firebase-functions/v2/https'
+import { defineSecret } from 'firebase-functions/params'
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+import { randomBytes } from 'node:crypto'
+
+initializeApp()
+const db = getFirestore()
+
+const RESEND_API_KEY = defineSecret('RESEND_API_KEY')
+
+const SITE_URL = 'https://senoiacar.show'
+const FROM = 'Senoia Car Show <noreply@senoiacar.show>'
+const CONTACT = 'carshow@enjoysenoia.com'
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function requireString(data, field, maxLen) {
+  const v = data[field]
+  if (typeof v !== 'string' || !v.trim() || v.trim().length > maxLen) {
+    throw new HttpsError('invalid-argument', `Please provide a valid ${field}.`)
+  }
+  return v.trim()
+}
+
+export const signUp = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
+  const eventId = requireString(req.data, 'eventId', 20)
+  const shiftId = requireString(req.data, 'shiftId', 60)
+  const firstName = requireString(req.data, 'firstName', 80)
+  const lastName = requireString(req.data, 'lastName', 80)
+  const email = requireString(req.data, 'email', 200).toLowerCase()
+  const phone = requireString(req.data, 'phone', 40)
+
+  if (!EMAIL_RE.test(email)) {
+    throw new HttpsError('invalid-argument', 'Please provide a valid email address.')
+  }
+  if (phone.replace(/\D/g, '').length < 7) {
+    throw new HttpsError('invalid-argument', 'Please provide a valid phone number.')
+  }
+
+  const shiftRef = db.doc(`events/${eventId}/shifts/${shiftId}`)
+  const signupRef = db.collection('signups').doc()
+  const cancelToken = randomBytes(24).toString('hex')
+
+  const shift = await db.runTransaction(async (t) => {
+    const shiftSnap = await t.get(shiftRef)
+    if (!shiftSnap.exists) {
+      throw new HttpsError('not-found', 'That shift no longer exists.')
+    }
+    const s = shiftSnap.data()
+    if (s.spotsFilled >= s.spotsTotal) {
+      throw new HttpsError('failed-precondition', 'Sorry, that shift just filled up.')
+    }
+    const dup = await t.get(
+      db.collection('signups')
+        .where('shiftId', '==', shiftId)
+        .where('email', '==', email)
+        .where('status', '==', 'active')
+        .limit(1),
+    )
+    if (!dup.empty) {
+      throw new HttpsError('already-exists', "You're already signed up for this shift.")
+    }
+    t.create(signupRef, {
+      eventId, shiftId, firstName, lastName, email, phone,
+      cancelToken,
+      status: 'active',
+      createdAt: FieldValue.serverTimestamp(),
+    })
+    t.update(shiftRef, { spotsFilled: FieldValue.increment(1) })
+    return s
+  })
+
+  await sendEmail({
+    to: email,
+    subject: `You're signed up: ${shift.role} — Senoia Car Show`,
+    html: `
+      <p>Hi ${escapeHtml(firstName)},</p>
+      <p>Thanks for volunteering for the <strong>Senoia Car Show</strong>!</p>
+      <p><strong>${escapeHtml(shift.role)}</strong><br>${escapeHtml(shift.time)}</p>
+      <p>We'll contact you the week before the show with details about the
+      volunteer orientation meeting.</p>
+      <p>Need to cancel? <a href="${SITE_URL}/cancel?token=${cancelToken}">Click here to release your spot</a>.</p>
+      <p>Questions? Reply to this email or contact <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    `,
+  })
+
+  return { ok: true }
+})
+
+export const cancelSignup = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
+  const token = requireString(req.data, 'token', 100)
+
+  const snap = await db.collection('signups')
+    .where('cancelToken', '==', token)
+    .limit(1)
+    .get()
+  if (snap.empty) {
+    throw new HttpsError('not-found', 'This cancellation link is not valid.')
+  }
+  const signupRef = snap.docs[0].ref
+
+  const signup = await db.runTransaction(async (t) => {
+    const s = (await t.get(signupRef)).data()
+    if (s.status !== 'active') {
+      throw new HttpsError('failed-precondition', 'This signup was already cancelled.')
+    }
+    t.update(signupRef, { status: 'cancelled', cancelledAt: FieldValue.serverTimestamp() })
+    t.update(db.doc(`events/${s.eventId}/shifts/${s.shiftId}`), {
+      spotsFilled: FieldValue.increment(-1),
+    })
+    return s
+  })
+
+  const shiftSnap = await db.doc(`events/${signup.eventId}/shifts/${signup.shiftId}`).get()
+  const shift = shiftSnap.data()
+  await sendEmail({
+    to: signup.email,
+    subject: 'Your Senoia Car Show volunteer shift was cancelled',
+    html: `
+      <p>Hi ${escapeHtml(signup.firstName)},</p>
+      <p>Your signup for <strong>${escapeHtml(shift?.role ?? 'a volunteer shift')}</strong>
+      (${escapeHtml(shift?.time ?? '')}) has been cancelled and your spot released.</p>
+      <p>Changed your mind? <a href="${SITE_URL}/volunteer">Sign-ups are here</a>.</p>
+    `,
+  })
+
+  return { ok: true }
+})
+
+function escapeHtml(s) {
+  return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+}
+
+async function sendEmail({ to, subject, html }) {
+  const key = RESEND_API_KEY.value()
+  if (!key || key.startsWith('placeholder')) {
+    console.log(`[email skipped — no RESEND_API_KEY] to=${to} subject=${subject}`)
+    return
+  }
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+    })
+    if (!res.ok) {
+      console.error(`Resend error ${res.status}: ${await res.text()}`)
+    }
+  } catch (err) {
+    console.error('Email send failed', err)
+  }
+}
