@@ -3,18 +3,47 @@ import {
   collection, deleteDoc, doc, onSnapshot, query, runTransaction, setDoc, updateDoc, where, increment,
 } from 'firebase/firestore'
 import {
-  GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut,
+  GoogleAuthProvider, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail,
+  signInWithEmailLink, signInWithPopup, signOut,
 } from 'firebase/auth'
 import { db, auth, EVENT_ID } from '../firebase'
 import logoLight from '../assets/logo-light-bg.png'
 
+const EMAIL_LINK_KEY = 'scsEmailForSignIn'
+
 export default function Admin() {
   const [user, setUser] = useState(undefined)
+  const [linkError, setLinkError] = useState(null)
 
   useEffect(() => onAuthStateChanged(auth, setUser), [])
 
+  // Complete a magic-link sign-in when the user lands here from their email
+  useEffect(() => {
+    if (!isSignInWithEmailLink(auth, window.location.href)) return
+    // The email is stored before the link is sent; if the link is opened on a
+    // different device the browser has no record of it, so ask.
+    const email =
+      window.localStorage.getItem(EMAIL_LINK_KEY) ||
+      window.prompt('Confirm your email address to finish signing in:')
+    if (!email) return
+    signInWithEmailLink(auth, email.trim(), window.location.href)
+      .then(() => {
+        window.localStorage.removeItem(EMAIL_LINK_KEY)
+        window.history.replaceState(null, '', '/admin')
+      })
+      .catch((e) => {
+        console.error('email link sign-in failed', e)
+        setLinkError(
+          e.code === 'auth/invalid-action-code'
+            ? 'This sign-in link has expired or was already used. Request a new one below.'
+            : 'Signing in with that link failed. Request a new one below.',
+        )
+        window.history.replaceState(null, '', '/admin')
+      })
+  }, [])
+
   if (user === undefined) return <Centered>Loading…</Centered>
-  if (!user) return <SignIn />
+  if (!user) return <SignIn linkError={linkError} />
   return <Dashboard user={user} />
 }
 
@@ -26,9 +55,12 @@ function Centered({ children }) {
   )
 }
 
-function SignIn() {
-  const [error, setError] = useState(null)
-  async function go() {
+function SignIn({ linkError }) {
+  const [error, setError] = useState(linkError)
+  const [email, setEmail] = useState('')
+  const [linkState, setLinkState] = useState('idle') // idle | sending | sent
+
+  async function google() {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
     } catch (e) {
@@ -38,6 +70,26 @@ function SignIn() {
       console.error('sign-in failed', e)
     }
   }
+
+  async function sendLink(e) {
+    e.preventDefault()
+    setError(null)
+    setLinkState('sending')
+    try {
+      const addr = email.trim().toLowerCase()
+      await sendSignInLinkToEmail(auth, addr, {
+        url: `${window.location.origin}/admin`,
+        handleCodeInApp: true,
+      })
+      window.localStorage.setItem(EMAIL_LINK_KEY, addr)
+      setLinkState('sent')
+    } catch (err) {
+      console.error('send sign-in link failed', err)
+      setError('Sending the sign-in link failed. Check the email address and try again.')
+      setLinkState('idle')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-ink flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-8 max-w-sm w-full text-center">
@@ -46,10 +98,40 @@ function SignIn() {
           Organizer Dashboard
         </h1>
         <p className="text-stone-500 text-sm mb-6">Senoia Car Show 2026</p>
-        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
-        <button onClick={go} className="bg-ink text-white font-semibold px-6 py-3 rounded-lg w-full">
+        {error && <p className="text-red-600 text-sm mb-3" role="alert">{error}</p>}
+        <button onClick={google} className="bg-ink text-white font-semibold px-6 py-3 rounded-lg w-full">
           Sign in with Google
         </button>
+        <div className="flex items-center gap-3 my-5 text-stone-400 text-xs uppercase tracking-widest">
+          <span className="flex-1 border-t border-stone-200" />
+          or
+          <span className="flex-1 border-t border-stone-200" />
+        </div>
+        {linkState === 'sent' ? (
+          <p className="text-stone-600 text-sm">
+            Check your email — we sent a sign-in link to <strong>{email.trim()}</strong>.
+            Open it on this device to finish signing in.
+          </p>
+        ) : (
+          <form onSubmit={sendLink}>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-gold"
+            />
+            <button
+              type="submit"
+              disabled={linkState === 'sending'}
+              className="border border-ink text-ink font-semibold px-6 py-3 rounded-lg w-full disabled:opacity-60"
+            >
+              {linkState === 'sending' ? 'Sending…' : 'Email me a sign-in link'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   )
