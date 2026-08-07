@@ -23,7 +23,14 @@ function requireString(data, field, maxLen) {
   return v.trim()
 }
 
-export const signUp = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
+// App Check (reCAPTCHA Enterprise) blocks scripted abuse; the emulator has no
+// App Check backend, so enforcement is prod-only.
+const callOpts = {
+  secrets: [RESEND_API_KEY],
+  enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true',
+}
+
+export const signUp = onCall(callOpts, async (req) => {
   const eventId = requireString(req.data, 'eventId', 20)
   const shiftId = requireString(req.data, 'shiftId', 60)
   const firstName = requireString(req.data, 'firstName', 80)
@@ -51,16 +58,8 @@ export const signUp = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
     if (s.spotsFilled >= s.spotsTotal) {
       throw new HttpsError('failed-precondition', 'Sorry, that shift just filled up.')
     }
-    const dup = await t.get(
-      db.collection('signups')
-        .where('shiftId', '==', shiftId)
-        .where('email', '==', email)
-        .where('status', '==', 'active')
-        .limit(1),
-    )
-    if (!dup.empty) {
-      throw new HttpsError('already-exists', "You're already signed up for this shift.")
-    }
+    // Duplicate emails are allowed on purpose: households share addresses, and
+    // one person may take several slots of the same shift.
     t.create(signupRef, {
       eventId, shiftId, firstName, lastName, email, phone,
       cancelToken,
@@ -88,7 +87,7 @@ export const signUp = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
   return { ok: true }
 })
 
-export const cancelSignup = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
+export const cancelSignup = onCall(callOpts, async (req) => {
   const token = requireString(req.data, 'token', 100)
 
   const snap = await db.collection('signups')

@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getAuth, connectAuthEmulator, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check'
 
 const firebaseConfig = {
   projectId: 'senoiacar',
@@ -13,6 +14,15 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
+
+// App Check (invisible reCAPTCHA Enterprise) — prod only; the emulator suite
+// has no App Check backend and the functions skip enforcement there too.
+if (import.meta.env.PROD) {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider('6LdrNXktAAAAAHBauagqrx_dozbbZn5e_x3K-TwR'),
+    isTokenAutoRefreshEnabled: true,
+  })
+}
 export const db = getFirestore(app)
 export const functions = getFunctions(app)
 export const auth = getAuth(app)
