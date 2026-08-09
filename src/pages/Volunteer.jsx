@@ -75,8 +75,9 @@ export default function Volunteer() {
               </p>
               <p className="text-stone-600 text-sm mt-1">
                 Our way of saying thank you. Choose your size when you claim a
-                shift — sizes S–4XL — and we'll be in touch before the show
-                about collecting it.
+                shift (S–4XL), then pick your shirt up at one of the volunteer
+                training meetings the week before the show — dates to be
+                announced.
               </p>
             </div>
           </div>
@@ -189,7 +190,8 @@ function SignupModal({ shift, onClose }) {
               {shift.role} &middot; {shift.time}
             </p>
             <p className="text-stone-600 text-sm mb-1">
-              Free shirt reserved in size <strong>{form.shirtSize}</strong>.
+              Free shirt reserved in size <strong>{form.shirtSize}</strong> —
+              pick it up at a volunteer training meeting.
             </p>
             <p className="text-stone-500 text-sm mb-6">
               A confirmation email is on its way to {form.email}. It includes a
