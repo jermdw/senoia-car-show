@@ -8,10 +8,9 @@ import {
 } from 'firebase/auth'
 import { db, auth, EVENT_ID } from '../firebase'
 import logoLight from '../assets/logo-light-bg.webp'
+import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
-// Mirrors SHIRT_SIZES in functions/index.js and Volunteer.jsx
-const SHIRT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
 
 export default function Admin() {
   const [user, setUser] = useState(undefined)

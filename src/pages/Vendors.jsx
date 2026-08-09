@@ -15,8 +15,8 @@ export default function Vendors() {
             Vendor Registration Is Closed
           </p>
           <p className="text-gold-pale/90">
-            Our vendor lineup for the 2026 show is full. Thank you to everyone
-            who applied — we'll announce next year's application window here.
+            We're no longer accepting vendor applications for the 2026 show.
+            Thank you to everyone who applied!
           </p>
         </div>
 

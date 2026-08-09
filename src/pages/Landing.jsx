@@ -23,7 +23,7 @@ const SECTIONS = [
   {
     to: '/vendors',
     title: 'Vendors',
-    text: "Our 2026 vendor lineup is full. Here's what'll be on Main Street.",
+    text: 'Vendor applications are closed for 2026 — see what will be on Main Street.',
   },
   {
     to: '/merch',

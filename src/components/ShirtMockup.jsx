@@ -1,4 +1,6 @@
-import logo from '../assets/logo-hero.webp'
+// The header-sized logo: this renders around 100px wide, so the large hero
+// asset would be ~88KB of waste on the volunteer page.
+import logo from '../assets/logo-header.webp'
 
 // Representative mockup of the volunteer shirt, drawn rather than photographed
 // so it scales cleanly and stays in brand colors.
@@ -6,8 +8,8 @@ export default function ShirtMockup({ className = '' }) {
   return (
     <svg
       viewBox="0 0 400 430"
-      role="img"
-      aria-label="Mockup of the free volunteer shirt: the Senoia Car Show logo on the chest with VOLUNTEER printed underneath."
+      // Decorative: the adjacent heading and copy already describe the shirt.
+      aria-hidden="true"
       className={className}
     >
       <defs>

@@ -40,7 +40,9 @@ export const signUp = onCall(callOpts, async (req) => {
   const lastName = requireString(req.data, 'lastName', 80)
   const email = requireString(req.data, 'email', 200).toLowerCase()
   const phone = requireString(req.data, 'phone', 40)
-  const shirtSize = requireString(req.data, 'shirtSize', 4).toUpperCase()
+  // Not via requireString: a stale tab from before shirt sizes existed omits
+  // the field entirely, and "Please provide a valid shirtSize." is jargon.
+  const shirtSize = String(req.data.shirtSize ?? '').trim().toUpperCase()
 
   if (!EMAIL_RE.test(email)) {
     throw new HttpsError('invalid-argument', 'Please provide a valid email address.')
@@ -89,10 +91,9 @@ export const signUp = onCall(callOpts, async (req) => {
       <p>Thanks for volunteering for the <strong>Senoia Car Show</strong>!</p>
       <p><strong>${escapeHtml(shift.role)}</strong><br>${escapeHtml(shift.time)}</p>
       <p>Your free volunteer shirt is reserved in size
-      <strong>${escapeHtml(shirtSize)}</strong> — pick it up at the volunteer
-      tent on show day.</p>
+      <strong>${escapeHtml(shirtSize)}</strong>.</p>
       <p>We'll contact you the week before the show with details about the
-      volunteer orientation meeting.</p>
+      volunteer orientation meeting and how to collect your shirt.</p>
       <p>Need to cancel? <a href="${SITE_URL}/cancel?token=${cancelToken}">Click here to release your spot</a>.</p>
       <p>Questions? Reply to this email or contact <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
     `,

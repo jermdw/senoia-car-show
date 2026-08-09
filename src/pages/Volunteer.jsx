@@ -5,9 +5,7 @@ import { db, functions, EVENT_ID } from '../firebase'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
-
-// Must stay in sync with SHIRT_SIZES in functions/index.js, which validates it.
-const SHIRT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
+import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const DAY_LABELS = {
   '2026-09-25': 'Friday, Sept 25 — Setup',
@@ -77,8 +75,8 @@ export default function Volunteer() {
               </p>
               <p className="text-stone-600 text-sm mt-1">
                 Our way of saying thank you. Choose your size when you claim a
-                shift, then pick the shirt up at the volunteer tent on show day.
-                Sizes S–4XL.
+                shift — sizes S–4XL — and we'll be in touch before the show
+                about collecting it.
               </p>
             </div>
           </div>
@@ -191,8 +189,7 @@ function SignupModal({ shift, onClose }) {
               {shift.role} &middot; {shift.time}
             </p>
             <p className="text-stone-600 text-sm mb-1">
-              Shirt size <strong>{form.shirtSize}</strong> — pick it up at the
-              volunteer tent on show day.
+              Free shirt reserved in size <strong>{form.shirtSize}</strong>.
             </p>
             <p className="text-stone-500 text-sm mb-6">
               A confirmation email is on its way to {form.email}. It includes a
