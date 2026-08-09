@@ -1,5 +1,22 @@
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import bmwLogo from '../assets/sponsor-bmw-south-atlanta.png'
+
+const SPONSORS_2026 = [
+  {
+    tier: 'Title Sponsors',
+    names: ['BMW of South Atlanta', 'Carolina Handling', 'Landmark Dodge'],
+    logos: { 'BMW of South Atlanta': bmwLogo },
+  },
+  {
+    tier: 'Gold Sponsors',
+    names: ['Cycle Specialty', 'SAFEbuilt', 'Atlanta Auto Restoration', 'TDK Components USA', "Kelly's Automotive Repair"],
+  },
+  {
+    tier: 'Bronze Sponsors',
+    names: ['Clarissa Uhl – Realtor', "Crook's Tire & Auto"],
+  },
+]
 
 const TIERS = [
   {
@@ -72,6 +89,34 @@ export default function Sponsors() {
           </a>{' '}
           or call the Welcome Center at (770) 727-9173.
         </p>
+
+        <h2 className="font-display text-3xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mt-14 mb-2">
+          Our 2026 <span className="text-gold">Sponsors</span>
+        </h2>
+        <p className="font-script text-gold text-2xl mb-6">Thank you for supporting the show!</p>
+        {SPONSORS_2026.map(({ tier, names, logos }) => (
+          <section key={tier} className="mb-8">
+            <h3 className="font-display text-xl uppercase tracking-wide text-gold-dark mb-3">{tier}</h3>
+            <ul className={`grid gap-4 ${tier === 'Title Sponsors' ? 'sm:grid-cols-3' : 'sm:grid-cols-3 lg:grid-cols-4'}`}>
+              {names.map((name) => (
+                <li
+                  key={name}
+                  className={`bg-white rounded-xl border border-stone-200 flex items-center justify-center text-center px-4 ${
+                    tier === 'Title Sponsors' ? 'py-6 min-h-28' : 'py-4'
+                  }`}
+                >
+                  {logos?.[name] ? (
+                    <img src={logos[name]} alt={name} className="max-h-20 w-auto max-w-full" />
+                  ) : (
+                    <span className={`font-display text-ink ${tier === 'Title Sponsors' ? 'text-xl' : ''}`}>
+                      {name}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </main>
       <SiteFooter />
     </div>

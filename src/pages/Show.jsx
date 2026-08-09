@@ -96,6 +96,33 @@ export default function Show() {
           <li>Free spectator parking with shuttles running all day.</li>
         </ul>
 
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Event Flyer
+        </h2>
+        <div className="bg-white rounded-xl border border-stone-200 p-6 mb-8 sm:flex items-center gap-6">
+          <a href="/flyer-2026.pdf" target="_blank" rel="noreferrer" className="block shrink-0 w-40 mx-auto sm:mx-0 mb-4 sm:mb-0">
+            <img
+              src="/poster-2026.webp"
+              alt="2026 Senoia Car Show poster — click to open the printable flyer"
+              className="rounded shadow-md hover:shadow-lg transition-shadow"
+            />
+          </a>
+          <div className="text-center sm:text-left">
+            <p className="text-stone-700 mb-4">
+              Grab the printable 2026 flyer to share with your car club, shop,
+              or friends.
+            </p>
+            <a
+              href="/flyer-2026.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
+            >
+              Download Info Flyer (PDF)
+            </a>
+          </div>
+        </div>
+
         <div className="bg-ink rounded-xl p-6 text-center">
           <p className="font-script text-gold text-2xl mb-2">Want to help make it happen?</p>
           <Link

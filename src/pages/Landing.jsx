@@ -64,6 +64,16 @@ export default function Landing() {
           >
             Volunteer Sign-Up
           </Link>
+          <p className="mt-6">
+            <a
+              href="/flyer-2026.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="text-gold-pale/80 hover:text-gold-pale underline font-display uppercase tracking-wide text-sm"
+            >
+              Download the 2026 Info Flyer (PDF)
+            </a>
+          </p>
         </section>
 
         <section className="bg-cream py-12 px-4">
