@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   collection, deleteDoc, doc, onSnapshot, query, runTransaction, setDoc, updateDoc, where, increment,
 } from 'firebase/firestore'
@@ -7,30 +7,40 @@ import {
   signInWithEmailLink, signInWithPopup, signOut,
 } from 'firebase/auth'
 import { db, auth, EVENT_ID } from '../firebase'
-import logoLight from '../assets/logo-light-bg.png'
+import logoLight from '../assets/logo-light-bg.webp'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
 export default function Admin() {
   const [user, setUser] = useState(undefined)
   const [linkError, setLinkError] = useState(null)
+  // Set synchronously so the sign-in form never flashes while the link is
+  // being redeemed — the redemption round-trip outlives the auth state check.
+  const [completing, setCompleting] = useState(() =>
+    isSignInWithEmailLink(auth, window.location.href),
+  )
+  const redeeming = useRef(false)
 
   useEffect(() => onAuthStateChanged(auth, setUser), [])
 
   // Complete a magic-link sign-in when the user lands here from their email
   useEffect(() => {
-    if (!isSignInWithEmailLink(auth, window.location.href)) return
+    // The code is single-use, so it must not be redeemed twice (StrictMode
+    // double-invokes effects in development).
+    if (!completing || redeeming.current) return
+    redeeming.current = true
     // The email is stored before the link is sent; if the link is opened on a
     // different device the browser has no record of it, so ask.
     const email =
       window.localStorage.getItem(EMAIL_LINK_KEY) ||
       window.prompt('Confirm your email address to finish signing in:')
-    if (!email) return
+    if (!email) {
+      window.history.replaceState(null, '', '/admin')
+      setCompleting(false)
+      return
+    }
     signInWithEmailLink(auth, email.trim(), window.location.href)
-      .then(() => {
-        window.localStorage.removeItem(EMAIL_LINK_KEY)
-        window.history.replaceState(null, '', '/admin')
-      })
+      .then(() => window.localStorage.removeItem(EMAIL_LINK_KEY))
       .catch((e) => {
         console.error('email link sign-in failed', e)
         setLinkError(
@@ -38,12 +48,16 @@ export default function Admin() {
             ? 'This sign-in link has expired or was already used. Request a new one below.'
             : 'Signing in with that link failed. Request a new one below.',
         )
-        window.history.replaceState(null, '', '/admin')
       })
-  }, [])
+      .finally(() => {
+        window.history.replaceState(null, '', '/admin')
+        setCompleting(false)
+      })
+  }, [completing])
 
+  if (completing) return <Centered>Signing you in…</Centered>
   if (user === undefined) return <Centered>Loading…</Centered>
-  if (!user) return <SignIn linkError={linkError} />
+  if (!user) return <SignIn linkError={linkError} onClearLinkError={() => setLinkError(null)} />
   return <Dashboard user={user} />
 }
 
@@ -55,12 +69,20 @@ function Centered({ children }) {
   )
 }
 
-function SignIn({ linkError }) {
-  const [error, setError] = useState(linkError)
+function SignIn({ linkError, onClearLinkError }) {
+  const [error, setError] = useState(null)
   const [email, setEmail] = useState('')
   const [linkState, setLinkState] = useState('idle') // idle | sending | sent
 
+  // The expired-link notice belongs to the previous attempt; starting a new
+  // one must clear it, or a fresh link is reported as expired.
+  function resetErrors() {
+    setError(null)
+    onClearLinkError()
+  }
+
   async function google() {
+    resetErrors()
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
     } catch (e) {
@@ -73,15 +95,21 @@ function SignIn({ linkError }) {
 
   async function sendLink(e) {
     e.preventDefault()
-    setError(null)
+    resetErrors()
     setLinkState('sending')
+    const addr = email.trim().toLowerCase()
+    // Stored before sending: a storage failure here (private browsing) must
+    // not be reported as a send failure once the email is already out.
     try {
-      const addr = email.trim().toLowerCase()
+      window.localStorage.setItem(EMAIL_LINK_KEY, addr)
+    } catch (err) {
+      console.warn('could not remember email for sign-in link', err)
+    }
+    try {
       await sendSignInLinkToEmail(auth, addr, {
         url: `${window.location.origin}/admin`,
         handleCodeInApp: true,
       })
-      window.localStorage.setItem(EMAIL_LINK_KEY, addr)
       setLinkState('sent')
     } catch (err) {
       console.error('send sign-in link failed', err)
@@ -98,7 +126,9 @@ function SignIn({ linkError }) {
           Organizer Dashboard
         </h1>
         <p className="text-stone-500 text-sm mb-6">Senoia Car Show 2026</p>
-        {error && <p className="text-red-600 text-sm mb-3" role="alert">{error}</p>}
+        {(error ?? linkError) && (
+          <p className="text-red-600 text-sm mb-3" role="alert">{error ?? linkError}</p>
+        )}
         <button onClick={google} className="bg-ink text-white font-semibold px-6 py-3 rounded-lg w-full">
           Sign in with Google
         </button>

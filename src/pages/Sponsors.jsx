@@ -53,8 +53,9 @@ export default function Sponsors() {
         <p className="text-stone-700 mb-8 leading-relaxed max-w-2xl">
           Put your business in front of 8,000–10,000 visitors on Historic Main
           Street. Sponsorships support the Senoia Downtown Development Authority
-          and keep the show free for spectators. Applications open{' '}
-          <strong>May 1, 2026</strong> and require approval by the SDDA.
+          and keep the show free for spectators. Applications opened{' '}
+          <strong>May 1, 2026</strong> and require approval by the SDDA — email
+          us to check current availability.
         </p>
 
         <div className="grid gap-5 sm:grid-cols-2">

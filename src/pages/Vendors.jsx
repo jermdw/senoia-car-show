@@ -11,7 +11,7 @@ export default function Vendors() {
         </h1>
         <p className="text-stone-700 mb-8 leading-relaxed">
           Join us on Historic Main Street and serve a crowd of 8,000–10,000
-          car-show visitors. Vendor applications open <strong>May 1, 2026</strong>{' '}
+          car-show visitors. Vendor applications opened <strong>May 1, 2026</strong>{' '}
           and require approval from the Senoia Downtown Development Authority.
         </p>
 

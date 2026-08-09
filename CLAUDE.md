@@ -54,8 +54,10 @@ Use the theme tokens in `src/index.css` (`@theme`), not raw Tailwind palette col
 `cream` (page bg), `gold`/`gold-dark` (PMS 1255, buttons/accents), `gold-pale`
 (PMS 7402), `ink` (near-black surfaces). Neutrals are warm `stone-*`, never `slate`.
 Fonts: `font-display` (Oswald, condensed caps for headings/buttons) and
-`font-script` (Yellowtail, sparing accent lines). Logos live in `src/assets`
-(`logo-dark-bg.png` for ink surfaces, `logo-light-bg.png` for white/cream).
+`font-script` (Yellowtail, sparing accent lines). Logos live in `src/assets`,
+all WebP: `logo-header.webp` (small, for the `SiteHeader` bar), `logo-hero.webp`
+(large, Landing hero), `logo-light-bg.webp` (for white/cream, e.g. the admin
+sign-in card). Keep header art sized for its slot — it loads on every page.
 
 ## Gotchas
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
-import logo from '../assets/logo-dark-bg.png'
+import logo from '../assets/logo-hero.webp'
 
 const HIGHLIGHTS = [
   ['600+', 'Collector cars & trucks, 25 years and older'],
@@ -23,7 +23,7 @@ const SECTIONS = [
   {
     to: '/vendors',
     title: 'Vendors',
-    text: 'Food trucks and vendors — join us on Main Street. Applications open May 1.',
+    text: 'Food trucks and vendors — join us on Main Street this September.',
   },
   {
     to: '/merch',
@@ -44,23 +44,25 @@ export default function Landing() {
       <SiteHeader />
       <main className="flex-1">
         <section className="text-center px-6 pt-10 pb-14">
-          <img
-            src={logo}
-            alt="The Senoia Car Show — Main Street, Senoia, GA. Established 2005."
-            className="w-72 sm:w-96 max-w-full mx-auto mb-6 drop-shadow-[0_4px_24px_rgba(173,132,31,0.25)]"
-          />
-          <p className="font-script text-gold text-3xl sm:text-4xl mb-2">
-            Historic Downtown Senoia
-          </p>
-          <p className="font-display text-2xl sm:text-3xl uppercase tracking-wide text-cream mb-1">
-            Saturday, September 26, 2026 &middot; 10am&ndash;4pm
-          </p>
-          <p className="font-display text-lg uppercase tracking-widest text-gold-pale/80 mb-10">
+          <h1>
+            <img
+              src={logo}
+              alt="The Senoia Car Show — Main Street, Senoia, GA. Established 2005."
+              className="w-72 sm:w-96 max-w-full mx-auto mb-6 drop-shadow-[0_4px_24px_rgba(173,132,31,0.25)]"
+            />
+            <span className="block font-script text-gold text-3xl sm:text-4xl mb-2">
+              Historic Downtown Senoia
+            </span>
+            <span className="block font-display text-2xl sm:text-3xl uppercase tracking-wide text-cream">
+              Saturday, September 26, 2026 &middot; 10am&ndash;4pm
+            </span>
+          </h1>
+          <p className="font-display text-lg uppercase tracking-widest text-gold-pale/80 mt-1 mb-10">
             21st Annual &middot; Free Spectator Admission
           </p>
           <Link
             to="/volunteer"
-            className="bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
           >
             Volunteer Sign-Up
           </Link>
@@ -97,9 +99,9 @@ export default function Landing() {
                   s.featured ? 'bg-ink border-gold' : 'bg-white border-stone-200'
                 }`}
               >
-                <p className={`font-display text-xl uppercase tracking-wide mb-1 ${s.featured ? 'text-gold' : 'text-ink'}`}>
+                <h2 className={`font-display text-xl uppercase tracking-wide mb-1 ${s.featured ? 'text-gold' : 'text-ink'}`}>
                   {s.title} →
-                </p>
+                </h2>
                 <p className={`text-sm ${s.featured ? 'text-gold-pale/80' : 'text-stone-600'}`}>{s.text}</p>
               </Link>
             ))}
