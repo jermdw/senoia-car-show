@@ -15,6 +15,9 @@ const CONTACT = 'carshow@enjoysenoia.com'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Volunteers get a free show shirt; sizes must match what gets ordered.
+const SHIRT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
+
 function requireString(data, field, maxLen) {
   const v = data[field]
   if (typeof v !== 'string' || !v.trim() || v.trim().length > maxLen) {
@@ -37,12 +40,16 @@ export const signUp = onCall(callOpts, async (req) => {
   const lastName = requireString(req.data, 'lastName', 80)
   const email = requireString(req.data, 'email', 200).toLowerCase()
   const phone = requireString(req.data, 'phone', 40)
+  const shirtSize = requireString(req.data, 'shirtSize', 4).toUpperCase()
 
   if (!EMAIL_RE.test(email)) {
     throw new HttpsError('invalid-argument', 'Please provide a valid email address.')
   }
   if (phone.replace(/\D/g, '').length < 7) {
     throw new HttpsError('invalid-argument', 'Please provide a valid phone number.')
+  }
+  if (!SHIRT_SIZES.includes(shirtSize)) {
+    throw new HttpsError('invalid-argument', 'Please choose a shirt size.')
   }
 
   const eventRef = db.doc(`events/${eventId}`)
@@ -65,7 +72,7 @@ export const signUp = onCall(callOpts, async (req) => {
     // Duplicate emails are allowed on purpose: households share addresses, and
     // one person may take several slots of the same shift.
     t.create(signupRef, {
-      eventId, shiftId, firstName, lastName, email, phone,
+      eventId, shiftId, firstName, lastName, email, phone, shirtSize,
       cancelToken,
       status: 'active',
       createdAt: FieldValue.serverTimestamp(),
@@ -81,6 +88,9 @@ export const signUp = onCall(callOpts, async (req) => {
       <p>Hi ${escapeHtml(firstName)},</p>
       <p>Thanks for volunteering for the <strong>Senoia Car Show</strong>!</p>
       <p><strong>${escapeHtml(shift.role)}</strong><br>${escapeHtml(shift.time)}</p>
+      <p>Your free volunteer shirt is reserved in size
+      <strong>${escapeHtml(shirtSize)}</strong> — pick it up at the volunteer
+      tent on show day.</p>
       <p>We'll contact you the week before the show with details about the
       volunteer orientation meeting.</p>
       <p>Need to cancel? <a href="${SITE_URL}/cancel?token=${cancelToken}">Click here to release your spot</a>.</p>

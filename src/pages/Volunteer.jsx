@@ -4,6 +4,10 @@ import { httpsCallable } from 'firebase/functions'
 import { db, functions, EVENT_ID } from '../firebase'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import ShirtMockup from '../components/ShirtMockup.jsx'
+
+// Must stay in sync with SHIRT_SIZES in functions/index.js, which validates it.
+const SHIRT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
 
 const DAY_LABELS = {
   '2026-09-25': 'Friday, Sept 25 — Setup',
@@ -64,6 +68,21 @@ export default function Volunteer() {
       </header>
 
       <main className="flex-1 max-w-3xl mx-auto px-4 py-8 w-full">
+        {!loadError && !closed && (
+          <div className="bg-white rounded-xl border border-stone-200 p-5 mb-8 flex items-center gap-5">
+            <ShirtMockup className="w-24 sm:w-28 shrink-0" />
+            <div>
+              <p className="font-display text-xl uppercase tracking-wide text-ink">
+                Every volunteer gets a <span className="text-gold-dark">free shirt</span>
+              </p>
+              <p className="text-stone-600 text-sm mt-1">
+                Our way of saying thank you. Choose your size when you claim a
+                shift, then pick the shirt up at the volunteer tent on show day.
+                Sizes S–4XL.
+              </p>
+            </div>
+          </div>
+        )}
         {loadError ? (
           <p className="text-center text-red-600 py-12" role="alert">
             We couldn't load the shift list. Please refresh the page, or email{' '}
@@ -137,7 +156,9 @@ function ShiftRow({ shift, onSignUp }) {
 }
 
 function SignupModal({ shift, onClose }) {
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' })
+  const [form, setForm] = useState({
+    firstName: '', lastName: '', email: '', phone: '', shirtSize: '',
+  })
   const [state, setState] = useState({ status: 'idle', error: null })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -168,6 +189,10 @@ function SignupModal({ shift, onClose }) {
             <h2 className="text-xl font-bold text-ink mb-2">You're signed up!</h2>
             <p className="text-stone-600 mb-1">
               {shift.role} &middot; {shift.time}
+            </p>
+            <p className="text-stone-600 text-sm mb-1">
+              Shirt size <strong>{form.shirtSize}</strong> — pick it up at the
+              volunteer tent on show day.
             </p>
             <p className="text-stone-500 text-sm mb-6">
               A confirmation email is on its way to {form.email}. It includes a
@@ -201,10 +226,22 @@ function SignupModal({ shift, onClose }) {
               <input required type="email" value={form.email} onChange={set('email')} autoComplete="email"
                 className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" />
             </label>
-            <label className="block mb-5">
+            <label className="block mb-3">
               <span className="text-sm font-medium text-stone-700">Phone</span>
               <input required type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel"
                 className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" />
+            </label>
+            <label className="block mb-5">
+              <span className="text-sm font-medium text-stone-700">
+                Shirt size <span className="text-stone-500 font-normal">— your free volunteer shirt</span>
+              </span>
+              <select required value={form.shirtSize} onChange={set('shirtSize')}
+                className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
+                <option value="" disabled>Choose a size…</option>
+                {SHIRT_SIZES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </label>
             {state.error && (
               <p className="text-red-600 text-sm mb-3" role="alert">{state.error}</p>
