@@ -29,7 +29,7 @@ export default function SiteFooter() {
           </p>
         </div>
       </div>
-      <p className="text-center pb-6 text-gold-pale/40">
+      <p className="text-center pb-6 text-gold-pale/70">
         The Senoia Car Show · Est. 2005
       </p>
     </footer>

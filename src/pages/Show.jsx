@@ -80,7 +80,7 @@ export default function Show() {
           </table>
         </div>
         <p className="text-stone-600 text-sm mb-8">
-          Registration opens June 1 at{' '}
+          Registration opened June 1 at{' '}
           <a className="underline" href="https://www.enjoysenoia.com/events/senoia-car-show-2" target="_blank" rel="noreferrer">
             enjoysenoia.com
           </a>.

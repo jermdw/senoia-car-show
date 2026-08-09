@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../assets/logo-dark-bg.png'
+import logo from '../assets/logo-header.webp'
 
 const LINKS = [
   { to: '/show', label: 'Show Info' },
@@ -32,7 +32,7 @@ export default function SiteHeader() {
           ))}
           <Link
             to="/admin"
-            className="ml-3 text-gold-pale/50 hover:text-gold-pale text-xs font-display uppercase tracking-wide"
+            className="ml-3 text-gold-pale/70 hover:text-gold-pale text-xs font-display uppercase tracking-wide"
           >
             Organizers
           </Link>

@@ -3,6 +3,7 @@ import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { db, functions, EVENT_ID } from '../firebase'
 import SiteHeader from '../components/SiteHeader.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 const DAY_LABELS = {
   '2026-09-25': 'Friday, Sept 25 — Setup',
@@ -49,7 +50,7 @@ export default function Volunteer() {
   const closed = event?.signupOpen === false
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />
       <header className="bg-ink text-cream px-6 pt-6 pb-8 text-center">
         <h1 className="text-3xl sm:text-4xl font-display font-semibold uppercase tracking-wide">
@@ -62,7 +63,7 @@ export default function Volunteer() {
         </p>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-8 w-full">
         {loadError ? (
           <p className="text-center text-red-600 py-12" role="alert">
             We couldn't load the shift list. Please refresh the page, or email{' '}
@@ -94,6 +95,8 @@ export default function Volunteer() {
           ))
         )}
       </main>
+
+      <SiteFooter />
 
       {selected && (
         <SignupModal shift={selected} onClose={() => setSelected(null)} />

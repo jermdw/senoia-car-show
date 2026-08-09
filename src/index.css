@@ -15,7 +15,7 @@
   --font-script: "Yellowtail", cursive;
 }
 
-/* Every page ends in the ink footer, so overscroll (iOS rubber-banding)
+/* Public pages end in the ink footer, so overscroll (iOS rubber-banding)
    must reveal ink, not the browser's default white. */
 html {
   background-color: var(--color-ink);
