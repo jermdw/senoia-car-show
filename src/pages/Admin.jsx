@@ -35,6 +35,7 @@ export default function Admin() {
       window.localStorage.getItem(EMAIL_LINK_KEY) ||
       window.prompt('Confirm your email address to finish signing in:')
     if (!email) {
+      window.history.replaceState(null, '', '/admin')
       setCompleting(false)
       return
     }
@@ -56,7 +57,7 @@ export default function Admin() {
 
   if (completing) return <Centered>Signing you in…</Centered>
   if (user === undefined) return <Centered>Loading…</Centered>
-  if (!user) return <SignIn linkError={linkError} />
+  if (!user) return <SignIn linkError={linkError} onClearLinkError={() => setLinkError(null)} />
   return <Dashboard user={user} />
 }
 
@@ -68,12 +69,20 @@ function Centered({ children }) {
   )
 }
 
-function SignIn({ linkError }) {
+function SignIn({ linkError, onClearLinkError }) {
   const [error, setError] = useState(null)
   const [email, setEmail] = useState('')
   const [linkState, setLinkState] = useState('idle') // idle | sending | sent
 
+  // The expired-link notice belongs to the previous attempt; starting a new
+  // one must clear it, or a fresh link is reported as expired.
+  function resetErrors() {
+    setError(null)
+    onClearLinkError()
+  }
+
   async function google() {
+    resetErrors()
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
     } catch (e) {
@@ -86,7 +95,7 @@ function SignIn({ linkError }) {
 
   async function sendLink(e) {
     e.preventDefault()
-    setError(null)
+    resetErrors()
     setLinkState('sending')
     const addr = email.trim().toLowerCase()
     // Stored before sending: a storage failure here (private browsing) must
