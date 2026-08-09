@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth'
 import { db, auth, EVENT_ID } from '../firebase'
 import logoLight from '../assets/logo-light-bg.webp'
+import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
@@ -207,6 +208,18 @@ function Dashboard({ user }) {
     [shifts],
   )
 
+  // What organizers actually need to place the shirt order. A volunteer can
+  // hold several shifts, so this counts shirts (one per signup), not people.
+  const shirtCounts = useMemo(() => {
+    const counts = new Map(SHIRT_SIZES.map((s) => [s, 0]))
+    let unknown = 0
+    for (const v of signups ?? []) {
+      if (counts.has(v.shirtSize)) counts.set(v.shirtSize, counts.get(v.shirtSize) + 1)
+      else unknown++
+    }
+    return { counts, unknown }
+  }, [signups])
+
   if (denied) {
     return (
       <Centered>
@@ -231,14 +244,16 @@ function Dashboard({ user }) {
   }
 
   function exportCsv() {
-    const rows = [['What', 'When', 'Credits', 'Volunteer First Name', 'Volunteer Last Name', 'Email', 'Phone']]
+    // Shirt Size is appended so the leading columns still match the old
+    // volunteersignup.org export the organizers are used to.
+    const rows = [['What', 'When', 'Credits', 'Volunteer First Name', 'Volunteer Last Name', 'Email', 'Phone', 'Shirt Size']]
     for (const shift of sorted) {
       const roster = signupsByShift[shift.id] ?? []
       // A shift can hold more signups than spotsTotal if an admin shrank it —
       // never drop volunteers from the export.
       for (let i = 0; i < Math.max(shift.spotsTotal, roster.length); i++) {
         const v = roster[i]
-        rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? ''])
+        rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? '', v?.shirtSize ?? ''])
       }
     }
     const csv = rows
@@ -307,6 +322,22 @@ function Dashboard({ user }) {
       </header>
 
       <main className="max-w-4xl mx-auto p-4">
+        {signups && totalFilled > 0 && (
+          <div className="bg-white rounded-lg border border-stone-200 p-3 mb-4 flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-ink text-sm mr-1">Shirt order:</span>
+            {SHIRT_SIZES.map((size) => (
+              <span key={size} className="text-sm bg-stone-100 rounded px-2 py-1">
+                <span className="font-semibold text-ink">{size}</span>{' '}
+                <span className="text-stone-600">{shirtCounts.counts.get(size)}</span>
+              </span>
+            ))}
+            {shirtCounts.unknown > 0 && (
+              <span className="text-sm text-stone-500">
+                ({shirtCounts.unknown} signed up before sizes were collected)
+              </span>
+            )}
+          </div>
+        )}
         {!shifts || !signups ? (
           <p className="text-center text-stone-500 py-12">Loading…</p>
         ) : (
@@ -344,6 +375,15 @@ function Dashboard({ user }) {
                                 <td className="py-1 pr-3 font-medium text-stone-800">{v.firstName} {v.lastName}</td>
                                 <td className="py-1 pr-3 text-stone-500">{v.email}</td>
                                 <td className="py-1 pr-3 text-stone-500">{v.phone}</td>
+                                <td className="py-1 pr-3">
+                                  {v.shirtSize ? (
+                                    <span className="inline-block bg-gold-pale text-gold-dark font-semibold rounded px-2 py-0.5 text-xs">
+                                      {v.shirtSize}
+                                    </span>
+                                  ) : (
+                                    <span className="text-stone-300 text-xs">—</span>
+                                  )}
+                                </td>
                                 <td className="py-1 text-right">
                                   <button onClick={() => removeVolunteer(v)} className="text-red-500 underline">
                                     Remove

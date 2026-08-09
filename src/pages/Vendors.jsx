@@ -6,44 +6,38 @@ export default function Vendors() {
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />
       <main className="flex-1 max-w-3xl mx-auto px-4 py-10 w-full">
-        <h1 className="font-display text-4xl uppercase tracking-wide text-ink mb-2">
+        <h1 className="font-display text-4xl uppercase tracking-wide text-ink mb-4">
           Vendor <span className="text-gold">Info</span>
         </h1>
-        <p className="text-stone-700 mb-8 leading-relaxed">
-          Join us on Historic Main Street and serve a crowd of 8,000–10,000
-          car-show visitors. Vendor applications opened <strong>May 1, 2026</strong>{' '}
-          and require approval from the Senoia Downtown Development Authority.
-        </p>
 
-        <div className="bg-white rounded-xl border border-stone-200 p-6 mb-8">
-          <p className="font-display text-xl uppercase tracking-wide text-ink mb-2">
-            Food Vendors
+        <div className="bg-ink rounded-xl p-6 mb-8 text-center">
+          <p className="font-display text-2xl uppercase tracking-wide text-gold mb-2">
+            Vendor Registration Is Closed
           </p>
-          <p className="text-stone-700 mb-4">
-            Music, food &amp; beer trucks — including The Varsity! Food vendors
-            can apply directly using our online application.
+          <p className="text-gold-pale/90">
+            We're no longer accepting vendor applications for the 2026 show.
+            Thank you to everyone who applied!
           </p>
-          <a
-            href="https://forms.gle/RvrNwhmnMbeVQcwN6"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
-          >
-            Food Vendors: Apply Here
-          </a>
         </div>
+
+        <p className="text-stone-700 mb-6 leading-relaxed">
+          Come hungry: the show features music, food &amp; beer trucks —
+          including The Varsity — plus local shops and restaurants open all
+          along Historic Main Street.
+        </p>
 
         <div className="bg-white rounded-xl border border-stone-200 p-6">
           <p className="font-display text-xl uppercase tracking-wide text-ink mb-2">
-            All Other Vendors
+            Questions?
           </p>
           <p className="text-stone-700">
-            For craft, retail, and other vendor opportunities, contact the
+            For anything vendor-related, including next year's show, contact the
             organizers at{' '}
             <a className="underline font-semibold" href="mailto:carshow@enjoysenoia.com">
               carshow@enjoysenoia.com
             </a>{' '}
-            or (770) 727-9173.
+            or{' '}
+            <a className="underline font-semibold" href="tel:+17707279173">(770) 727-9173</a>.
           </p>
         </div>
       </main>

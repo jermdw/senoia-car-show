@@ -18,12 +18,12 @@ const SECTIONS = [
   {
     to: '/sponsors',
     title: 'Sponsors',
-    text: 'Four sponsorship tiers put your business in front of thousands of visitors.',
+    text: 'Meet our 2026 sponsors — and join them, spots are still available.',
   },
   {
     to: '/vendors',
     title: 'Vendors',
-    text: 'Food trucks and vendors — join us on Main Street this September.',
+    text: 'Vendor applications are closed for 2026 — see what will be on Main Street.',
   },
   {
     to: '/merch',
