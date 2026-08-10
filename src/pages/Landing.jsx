@@ -16,6 +16,11 @@ const SECTIONS = [
     text: 'Schedule, key dates, display pricing, and parking logistics for show day.',
   },
   {
+    to: '/map',
+    title: 'Show Day',
+    text: 'Find your way around the show, and what time everything happens.',
+  },
+  {
     to: '/sponsors',
     title: 'Sponsors',
     text: 'Meet our 2026 sponsors — and join them, spots are still available.',

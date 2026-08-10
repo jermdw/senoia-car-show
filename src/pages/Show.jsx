@@ -5,7 +5,7 @@ import SiteFooter from '../components/SiteFooter.jsx'
 const PRICING = [
   { area: 'Main Street', advance: '$40', sameDay: '$50' },
   { area: 'North Main Street', advance: '$30', sameDay: '$40' },
-  { area: 'General Parking', advance: '$20', sameDay: '$30' },
+  { area: 'General Parking', advance: '$25', sameDay: '$30' },
 ]
 
 const DATES = [
@@ -31,9 +31,8 @@ export default function Show() {
           classic vehicles</strong> to Historic Main Street in downtown Senoia,
           with 8,000–10,000 spectators from across the Southeast. Enjoy classic
           cars, live music, local shopping, food vendors, door prizes, and an
-          awards ceremony — plus Best in Show Car &amp; Truck, the valve cover
-          races, a car club corral, and the 50/50 raffle benefiting the I-58
-          Mission food bank.
+          awards ceremony — plus Best in Show Car &amp; Truck, a car club corral,
+          and the 50/50 raffle benefiting the I-58 Mission food bank.
         </p>
         <p className="text-stone-700 mb-8 leading-relaxed">
           Public admission and spectator parking are <strong>free</strong>, with
@@ -95,6 +94,14 @@ export default function Show() {
           <li>The Maguires Lot returns to general parking (no longer reserved).</li>
           <li>Free spectator parking with shuttles running all day.</li>
         </ul>
+        <p className="mb-8">
+          <Link
+            to="/map"
+            className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
+          >
+            See the show day guide →
+          </Link>
+        </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
           Event Flyer

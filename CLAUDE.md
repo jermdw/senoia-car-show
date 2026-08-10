@@ -22,10 +22,20 @@ Prod seed (idempotent, preserves `spotsFilled`):
 
 ## Architecture
 
-- **SPA**: React 19 + Vite + Tailwind v4, routes in `src/main.jsx`:
-  public info pages (`/`, `/show`, `/sponsors`, `/vendors`, `/merch`) use the shared
-  `SiteHeader`/`SiteFooter` components; `/volunteer` (shift board), `/cancel?token=`
-  (from confirmation emails), `/admin` (organizer dashboard).
+- **SPA**: React 19 + Vite + Tailwind v4, routes in `src/AppRoutes.jsx` (`src/main.jsx`
+  is just the error boundary + router): public info pages (`/`, `/show`, `/map`,
+  `/sponsors`, `/vendors`, `/merch`) use the shared `SiteHeader`/`SiteFooter`
+  components; `/volunteer` (shift board), `/cancel?token=` (from confirmation emails),
+  `/admin` (organizer dashboard).
+  The three Firebase-touching routes (`/volunteer`, `/cancel`, `/admin`) are behind
+  `React.lazy` so the Firebase SDK stays out of the chunk every spectator downloads —
+  **keep public pages free of any `src/firebase.js` import** or that split collapses.
+- **Show day guide** (`/map`): base map is a Mapbox Static Images export at a fixed
+  bounding box; `src/lib/venueGeo.js` converts lat/lon to a position on it exactly, so
+  pins are geocoded, never hand-placed. Content lives in `src/data/eventMap.js`, where
+  every entry carries a `confirmed` flag — unconfirmed entries are a working checklist
+  and are never rendered. Mapbox's terms require the `© Mapbox, © OpenStreetMap`
+  attribution the page displays.
 - **Cloud Functions v2** (`functions/index.js`): `signUp` and `cancelSignup` callables.
   All volunteer writes go through them (volunteers have no auth; the Admin SDK
   bypasses rules). Resend confirmation emails are best-effort by design — email

@@ -1,9 +1,19 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import logo from '../assets/logo-header.webp'
+import { warmRoute } from '../lib/routeLoaders.js'
+
+// Start fetching a lazily-loaded route's chunk as soon as intent is visible, so the
+// navigation itself feels instant. Pointer-down covers touch, where there is no hover.
+const prefetch = (to) => ({
+  onPointerEnter: () => warmRoute(to),
+  onPointerDown: () => warmRoute(to),
+  onFocus: () => warmRoute(to),
+})
 
 const LINKS = [
   { to: '/show', label: 'Show Info' },
+  { to: '/map', label: 'Show Day' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors' },
   { to: '/merch', label: 'Merch' },
@@ -26,12 +36,13 @@ export default function SiteHeader() {
         </Link>
         <nav className="hidden md:flex flex-1 justify-end items-center">
           {LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass}>
+            <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
               {l.label}
             </NavLink>
           ))}
           <Link
             to="/admin"
+            {...prefetch('/admin')}
             className="ml-3 text-gold-pale/70 hover:text-gold-pale text-xs font-display uppercase tracking-wide"
           >
             Organizers
@@ -49,12 +60,19 @@ export default function SiteHeader() {
       {open && (
         <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col">
           {LINKS.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass} onClick={() => setOpen(false)}>
+            <NavLink
+              key={l.to}
+              to={l.to}
+              className={linkClass}
+              onClick={() => setOpen(false)}
+              {...prefetch(l.to)}
+            >
               {l.label}
             </NavLink>
           ))}
           <Link
             to="/admin"
+            {...prefetch('/admin')}
             onClick={() => setOpen(false)}
             className="px-3 py-2 text-gold-pale/50 text-sm font-display uppercase tracking-wide"
           >
