@@ -4,6 +4,7 @@ import logo from '../assets/logo-dark-bg.png'
 
 const LINKS = [
   { to: '/show', label: 'Show Info' },
+  { to: '/map', label: 'Show Day' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors' },
   { to: '/merch', label: 'Merch' },
