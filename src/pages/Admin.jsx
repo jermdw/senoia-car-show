@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   collection, deleteDoc, doc, onSnapshot, query, runTransaction, setDoc, updateDoc, where, increment,
 } from 'firebase/firestore'
@@ -7,30 +7,41 @@ import {
   signInWithEmailLink, signInWithPopup, signOut,
 } from 'firebase/auth'
 import { db, auth, EVENT_ID } from '../firebase'
-import logoLight from '../assets/logo-light-bg.png'
+import logoLight from '../assets/logo-light-bg.webp'
+import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
 export default function Admin() {
   const [user, setUser] = useState(undefined)
   const [linkError, setLinkError] = useState(null)
+  // Set synchronously so the sign-in form never flashes while the link is
+  // being redeemed — the redemption round-trip outlives the auth state check.
+  const [completing, setCompleting] = useState(() =>
+    isSignInWithEmailLink(auth, window.location.href),
+  )
+  const redeeming = useRef(false)
 
   useEffect(() => onAuthStateChanged(auth, setUser), [])
 
   // Complete a magic-link sign-in when the user lands here from their email
   useEffect(() => {
-    if (!isSignInWithEmailLink(auth, window.location.href)) return
+    // The code is single-use, so it must not be redeemed twice (StrictMode
+    // double-invokes effects in development).
+    if (!completing || redeeming.current) return
+    redeeming.current = true
     // The email is stored before the link is sent; if the link is opened on a
     // different device the browser has no record of it, so ask.
     const email =
       window.localStorage.getItem(EMAIL_LINK_KEY) ||
       window.prompt('Confirm your email address to finish signing in:')
-    if (!email) return
+    if (!email) {
+      window.history.replaceState(null, '', '/admin')
+      setCompleting(false)
+      return
+    }
     signInWithEmailLink(auth, email.trim(), window.location.href)
-      .then(() => {
-        window.localStorage.removeItem(EMAIL_LINK_KEY)
-        window.history.replaceState(null, '', '/admin')
-      })
+      .then(() => window.localStorage.removeItem(EMAIL_LINK_KEY))
       .catch((e) => {
         console.error('email link sign-in failed', e)
         setLinkError(
@@ -38,12 +49,16 @@ export default function Admin() {
             ? 'This sign-in link has expired or was already used. Request a new one below.'
             : 'Signing in with that link failed. Request a new one below.',
         )
-        window.history.replaceState(null, '', '/admin')
       })
-  }, [])
+      .finally(() => {
+        window.history.replaceState(null, '', '/admin')
+        setCompleting(false)
+      })
+  }, [completing])
 
+  if (completing) return <Centered>Signing you in…</Centered>
   if (user === undefined) return <Centered>Loading…</Centered>
-  if (!user) return <SignIn linkError={linkError} />
+  if (!user) return <SignIn linkError={linkError} onClearLinkError={() => setLinkError(null)} />
   return <Dashboard user={user} />
 }
 
@@ -55,12 +70,20 @@ function Centered({ children }) {
   )
 }
 
-function SignIn({ linkError }) {
-  const [error, setError] = useState(linkError)
+function SignIn({ linkError, onClearLinkError }) {
+  const [error, setError] = useState(null)
   const [email, setEmail] = useState('')
   const [linkState, setLinkState] = useState('idle') // idle | sending | sent
 
+  // The expired-link notice belongs to the previous attempt; starting a new
+  // one must clear it, or a fresh link is reported as expired.
+  function resetErrors() {
+    setError(null)
+    onClearLinkError()
+  }
+
   async function google() {
+    resetErrors()
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
     } catch (e) {
@@ -73,15 +96,21 @@ function SignIn({ linkError }) {
 
   async function sendLink(e) {
     e.preventDefault()
-    setError(null)
+    resetErrors()
     setLinkState('sending')
+    const addr = email.trim().toLowerCase()
+    // Stored before sending: a storage failure here (private browsing) must
+    // not be reported as a send failure once the email is already out.
     try {
-      const addr = email.trim().toLowerCase()
+      window.localStorage.setItem(EMAIL_LINK_KEY, addr)
+    } catch (err) {
+      console.warn('could not remember email for sign-in link', err)
+    }
+    try {
       await sendSignInLinkToEmail(auth, addr, {
         url: `${window.location.origin}/admin`,
         handleCodeInApp: true,
       })
-      window.localStorage.setItem(EMAIL_LINK_KEY, addr)
       setLinkState('sent')
     } catch (err) {
       console.error('send sign-in link failed', err)
@@ -98,7 +127,9 @@ function SignIn({ linkError }) {
           Organizer Dashboard
         </h1>
         <p className="text-stone-500 text-sm mb-6">Senoia Car Show 2026</p>
-        {error && <p className="text-red-600 text-sm mb-3" role="alert">{error}</p>}
+        {(error ?? linkError) && (
+          <p className="text-red-600 text-sm mb-3" role="alert">{error ?? linkError}</p>
+        )}
         <button onClick={google} className="bg-ink text-white font-semibold px-6 py-3 rounded-lg w-full">
           Sign in with Google
         </button>
@@ -177,6 +208,18 @@ function Dashboard({ user }) {
     [shifts],
   )
 
+  // What organizers actually need to place the shirt order. A volunteer can
+  // hold several shifts, so this counts shirts (one per signup), not people.
+  const shirtCounts = useMemo(() => {
+    const counts = new Map(SHIRT_SIZES.map((s) => [s, 0]))
+    let unknown = 0
+    for (const v of signups ?? []) {
+      if (counts.has(v.shirtSize)) counts.set(v.shirtSize, counts.get(v.shirtSize) + 1)
+      else unknown++
+    }
+    return { counts, unknown }
+  }, [signups])
+
   if (denied) {
     return (
       <Centered>
@@ -201,14 +244,16 @@ function Dashboard({ user }) {
   }
 
   function exportCsv() {
-    const rows = [['What', 'When', 'Credits', 'Volunteer First Name', 'Volunteer Last Name', 'Email', 'Phone']]
+    // Shirt Size is appended so the leading columns still match the old
+    // volunteersignup.org export the organizers are used to.
+    const rows = [['What', 'When', 'Credits', 'Volunteer First Name', 'Volunteer Last Name', 'Email', 'Phone', 'Shirt Size']]
     for (const shift of sorted) {
       const roster = signupsByShift[shift.id] ?? []
       // A shift can hold more signups than spotsTotal if an admin shrank it —
       // never drop volunteers from the export.
       for (let i = 0; i < Math.max(shift.spotsTotal, roster.length); i++) {
         const v = roster[i]
-        rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? ''])
+        rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? '', v?.shirtSize ?? ''])
       }
     }
     const csv = rows
@@ -277,6 +322,22 @@ function Dashboard({ user }) {
       </header>
 
       <main className="max-w-4xl mx-auto p-4">
+        {signups && totalFilled > 0 && (
+          <div className="bg-white rounded-lg border border-stone-200 p-3 mb-4 flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-ink text-sm mr-1">Shirt order:</span>
+            {SHIRT_SIZES.map((size) => (
+              <span key={size} className="text-sm bg-stone-100 rounded px-2 py-1">
+                <span className="font-semibold text-ink">{size}</span>{' '}
+                <span className="text-stone-600">{shirtCounts.counts.get(size)}</span>
+              </span>
+            ))}
+            {shirtCounts.unknown > 0 && (
+              <span className="text-sm text-stone-500">
+                ({shirtCounts.unknown} signed up before sizes were collected)
+              </span>
+            )}
+          </div>
+        )}
         {!shifts || !signups ? (
           <p className="text-center text-stone-500 py-12">Loading…</p>
         ) : (
@@ -314,6 +375,15 @@ function Dashboard({ user }) {
                                 <td className="py-1 pr-3 font-medium text-stone-800">{v.firstName} {v.lastName}</td>
                                 <td className="py-1 pr-3 text-stone-500">{v.email}</td>
                                 <td className="py-1 pr-3 text-stone-500">{v.phone}</td>
+                                <td className="py-1 pr-3">
+                                  {v.shirtSize ? (
+                                    <span className="inline-block bg-gold-pale text-gold-dark font-semibold rounded px-2 py-0.5 text-xs">
+                                      {v.shirtSize}
+                                    </span>
+                                  ) : (
+                                    <span className="text-stone-300 text-xs">—</span>
+                                  )}
+                                </td>
                                 <td className="py-1 text-right">
                                   <button onClick={() => removeVolunteer(v)} className="text-red-500 underline">
                                     Remove

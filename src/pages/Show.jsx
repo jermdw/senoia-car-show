@@ -31,9 +31,8 @@ export default function Show() {
           classic vehicles</strong> to Historic Main Street in downtown Senoia,
           with 8,000–10,000 spectators from across the Southeast. Enjoy classic
           cars, live music, local shopping, food vendors, door prizes, and an
-          awards ceremony — plus Best in Show Car &amp; Truck, the valve cover
-          races, a car club corral, and the 50/50 raffle benefiting the I-58
-          Mission food bank.
+          awards ceremony — plus Best in Show Car &amp; Truck, a car club corral,
+          and the 50/50 raffle benefiting the I-58 Mission food bank.
         </p>
         <p className="text-stone-700 mb-8 leading-relaxed">
           Public admission and spectator parking are <strong>free</strong>, with
@@ -80,7 +79,7 @@ export default function Show() {
           </table>
         </div>
         <p className="text-stone-600 text-sm mb-8">
-          Registration opens June 1 at{' '}
+          Registration opened June 1 at{' '}
           <a className="underline" href="https://www.enjoysenoia.com/events/senoia-car-show-2" target="_blank" rel="noreferrer">
             enjoysenoia.com
           </a>.

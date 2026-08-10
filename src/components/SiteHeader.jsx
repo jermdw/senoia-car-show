@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../assets/logo-dark-bg.png'
+import logo from '../assets/logo-header.webp'
 import { warmRoute } from '../lib/routeLoaders.js'
 
 // Start fetching a lazily-loaded route's chunk as soon as intent is visible, so the
@@ -43,7 +43,7 @@ export default function SiteHeader() {
           <Link
             to="/admin"
             {...prefetch('/admin')}
-            className="ml-3 text-gold-pale/50 hover:text-gold-pale text-xs font-display uppercase tracking-wide"
+            className="ml-3 text-gold-pale/70 hover:text-gold-pale text-xs font-display uppercase tracking-wide"
           >
             Organizers
           </Link>

@@ -6,6 +6,7 @@ import EventMap from './pages/EventMap.jsx'
 import Sponsors from './pages/Sponsors.jsx'
 import Vendors from './pages/Vendors.jsx'
 import Merch from './pages/Merch.jsx'
+import NotFound from './pages/NotFound.jsx'
 import { ROUTE_LOADERS } from './lib/routeLoaders.js'
 
 // These three are the only routes that touch Firebase, and importing
@@ -30,7 +31,7 @@ export default function AppRoutes() {
         <Route path="/volunteer" element={<Volunteer />} />
         <Route path="/cancel" element={<Cancel />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="*" element={<Landing />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   )

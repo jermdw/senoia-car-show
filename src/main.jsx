@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import AppRoutes from './AppRoutes.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 
 class ErrorBoundary extends Component {
   state = { failed: false }
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
+        <ScrollToTop />
         <AppRoutes />
       </BrowserRouter>
     </ErrorBoundary>
