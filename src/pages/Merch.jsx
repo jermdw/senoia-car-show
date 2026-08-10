@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
-import carArt from '../assets/car-art.png'
+import annualMockup from '../assets/shirt-21st-mockup.webp'
 import a250Art from '../assets/shirt-a250-art.webp'
 import kidsArt from '../assets/shirt-kids-art.webp'
 
@@ -20,12 +20,12 @@ export default function Merch() {
 
         <div className="grid gap-6 md:grid-cols-3">
           <div className="bg-white rounded-xl border border-stone-200 p-6 text-center flex flex-col">
-            <ShirtMockup
-              className="w-48 mx-auto mb-4"
-              shirt="#6E92AC"
-              shade="#5D7F98"
-              art={carArt}
-              artBox={{ x: 112, y: 150, width: 176, height: 110 }}
+            <img
+              src={annualMockup}
+              alt="21st Annual show shirt, front and back, on a blue tee"
+              width="720"
+              height="383"
+              className="w-full max-w-xs mx-auto mb-4 mt-6"
             />
             <p className="font-display text-xl uppercase tracking-wide text-ink">
               21st Annual Show T-Shirt
