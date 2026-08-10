@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -24,18 +24,6 @@ export default function EventMap() {
     [pois],
   )
 
-  // Categories we know will exist but can't place yet. Naming them beats leaving a
-  // visitor to wonder whether the show simply has no restrooms. Disappears on its own
-  // as entries are confirmed.
-  const pending = useMemo(
-    () =>
-      CATEGORIES.filter(
-        (c) =>
-          !pois.some((p) => p.category === c.id) &&
-          POIS.some((p) => p.category === c.id),
-      ),
-    [pois],
-  )
 
   const [active, setActive] = useState(() => categories.map((c) => c.id))
 
@@ -60,11 +48,24 @@ export default function EventMap() {
     setSearchParams(next, { replace: true })
   }
 
-  // Arrow-key movement between tabs, per the ARIA tabs pattern.
+  // Arrow/Home/End movement between tabs, per the ARIA tabs pattern. Focus has to
+  // follow the selection: with roving tabindex the old tab drops to tabIndex=-1, so
+  // leaving focus on it breaks the pattern's invariant and announces nothing.
+  const tabRefs = useRef({})
   const onTabKey = (e) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End']
+    if (!keys.includes(e.key)) return
     e.preventDefault()
-    setView(view === 'locations' ? 'schedule' : 'locations')
+    const next =
+      e.key === 'Home'
+        ? 'locations'
+        : e.key === 'End'
+          ? 'schedule'
+          : view === 'locations'
+            ? 'schedule'
+            : 'locations'
+    setView(next)
+    tabRefs.current[next]?.focus()
   }
 
   // Resolved against ALL pois, not just published ones. A confirmed schedule entry can
@@ -110,7 +111,10 @@ export default function EventMap() {
         <MapCanvas
           pois={pois}
           categories={categories}
-          activeCategories={active}
+          // On the Schedule tab the filter chips are inside the hidden panel, so a
+          // filtered-down map would have no reachable control to restore it. Show
+          // everything there instead.
+          activeCategories={view === 'schedule' ? categories.map((c) => c.id) : active}
           selectedId={selectedId}
           onSelect={selectPoi}
         />
@@ -130,6 +134,7 @@ export default function EventMap() {
             return (
               <button
                 key={t.id}
+                ref={(el) => { tabRefs.current[t.id] = el }}
                 role="tab"
                 id={`tab-${t.id}`}
                 aria-selected={on}
@@ -153,6 +158,7 @@ export default function EventMap() {
           role="tabpanel"
           id="panel-locations"
           aria-labelledby="tab-locations"
+          tabIndex={0}
           className={view === 'locations' ? '' : 'hidden print:block'}
         >
         <div className="mb-6 print:hidden">
@@ -192,7 +198,7 @@ export default function EventMap() {
             type="button"
             onClick={() => setActive(categories.map((c) => c.id))}
             disabled={allOn}
-            className="mt-3 min-h-11 text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink disabled:no-underline disabled:text-stone-400 disabled:hover:text-stone-400"
+            className="mt-3 min-h-11 text-sm font-semibold text-ink underline underline-offset-2 hover:text-gold-dark disabled:no-underline disabled:text-stone-400 disabled:hover:text-stone-400"
           >
             Show everything
           </button>
@@ -212,28 +218,13 @@ export default function EventMap() {
           <PoiList categories={categories} pois={pois} idPrefix="poi-print" />
         </div>
 
-        {pending.length > 0 && (
-          <div className="mt-6 bg-white border border-stone-200 border-l-4 border-l-gold rounded-lg p-4">
-            <p className="font-display uppercase tracking-wide text-ink mb-1">
-              Still to come
-            </p>
-            <p className="text-stone-600 text-sm leading-relaxed">
-              {pending.map((c) => c.label.toLowerCase()).join(', ')} — locations
-              are added here as the organizers finalize the 2026 layout. Questions
-              in the meantime?{' '}
-              <a className="underline font-semibold" href="tel:+17707279173">
-                (770) 727-9173
-              </a>
-              .
-            </p>
-          </div>
-        )}
         </div>
 
         <div
           role="tabpanel"
           id="panel-schedule"
           aria-labelledby="tab-schedule"
+          tabIndex={0}
           className={view === 'schedule' ? '' : 'hidden print:block'}
         >
           <h2 className="hidden print:block font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4 mt-10">

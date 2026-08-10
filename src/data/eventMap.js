@@ -262,7 +262,10 @@ export const POIS = [
     confirmed: true,
   },
   {
-    // The 14th unit. Off the base map entirely — the Burn lot is remote parking.
+    // The 14th unit on the sheet, held back. It sits at the "Burn lot", which the 2026
+    // public parking plan does not list as a spectator lot — so the site never locates
+    // it, and publishing a restroom at a place we cannot direct anyone to is a dead end.
+    // Restore this if the Burn lot returns as public parking.
     id: 'restroom-burn-lot',
     category: 'restroom',
     name: 'Portable Restroom',
@@ -270,7 +273,7 @@ export const POIS = [
     blurb: null,
     lat: null,
     lon: null,
-    confirmed: true,
+    confirmed: false,
   },
   {
     // Pre-existing public restrooms marked on the DDA base map, next to City Hall.
@@ -406,7 +409,8 @@ export const POIS = [
     category: 'parking',
     name: 'Housing Authority Field',
     where: 'Off Bridge Street',
-    blurb: 'Free spectator parking, on a shuttle route.',
+    // Deliberately claims no shuttle: none of the three 2026 routes covers Bridge Street.
+    blurb: 'Free spectator parking, a short walk east of the show.',
     directions: 'Bridge Street, Senoia, GA 30276',
     lat: null,
     lon: null,
@@ -463,7 +467,9 @@ export const POIS = [
   // ---- Shuttles -------------------------------------------------------------
   // The playbook offered three conflicting configurations (3 routes/6 carts, 4 routes,
   // 3 groupings/10 carts). The 2026 public parking plan settles it at three routes,
-  // one per remote lot. Free golf-cart shuttles, 9:00am to 5:00pm.
+  // serving Seavy Street Park, Rockaway and Marimac. Free golf-cart shuttles, 9:00am to
+  // 5:00pm. Note the other remote lots are NOT on a named route, so their entries must
+  // not claim shuttle service.
   //
   // Deliberately unpinned. A route is a line between two places, not a point, so a
   // single pin would claim the shuttle sits there. Every town-end stop also shares an

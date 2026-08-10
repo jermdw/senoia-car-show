@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { flushSync } from 'react-dom'
 import Panzoom from '@panzoom/panzoom'
 import CategoryIcon from './CategoryIcon.jsx'
 import { toPercent, isWithinMap, ATTRIBUTION } from '../lib/venueGeo.js'
@@ -14,10 +15,10 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
   const pinRefs = useRef({})
   const [scale, setScale] = useState(1)
 
-  // Must gate on isWithinMap, not just on having coordinates: a POI outside the base
-  // map's extent (the remote lots — Tencate, Rockaway, Housing Authority) would other-
-  // wise render at e.g. left:188%, invisible behind overflow-hidden but still focusable
-  // and still counted in the "N of M pinned" caption.
+  // Gate on isWithinMap, not merely on having coordinates. Everything off-map today
+  // carries lat/lon null so this is currently defensive, but the moment anyone gives a
+  // remote lot real coordinates it would otherwise render at e.g. left:188% — invisible
+  // behind overflow-hidden, yet still focusable and still counted in the caption.
   const placed = pois
     .filter((p) => isWithinMap(p.lat, p.lon))
     .map((p) => ({ poi: p, pos: toPercent(p.lat, p.lon) }))
@@ -70,7 +71,10 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     // The container clips to its bounds, so printing while zoomed would crop the
     // handout to whatever the user was looking at — and silently drop pins that
     // the printed list still names. Reset to the full venue before the print runs.
-    const onBeforePrint = () => pz.reset({ animate: false })
+    // flushSync so the pins' counter-scale state is committed before the print
+    // snapshot: reset() writes the transform synchronously, but the setScale it
+    // triggers would otherwise be batched and the pins would print at a stale scale.
+    const onBeforePrint = () => flushSync(() => pz.reset({ animate: false }))
     window.addEventListener('beforeprint', onBeforePrint)
     return () => {
       parent.removeEventListener('wheel', onWheel)
@@ -193,7 +197,7 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
 
       <figcaption className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-stone-600">
         <span>
-          {placed.length} of {pois.length} locations pinned — the rest are listed below.
+          {placed.length} of {pois.length} locations pinned — the rest are listed under Find Your Way.
         </span>
         <span>{ATTRIBUTION}</span>
       </figcaption>

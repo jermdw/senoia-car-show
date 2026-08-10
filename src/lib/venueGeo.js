@@ -9,7 +9,7 @@
 //     "https://api.mapbox.com/styles/v1/$STYLE/static/[-84.5572,33.29855,-84.5512,33.30425]/1126x1280?access_token=$MB_TOKEN"
 //   cwebp -q 88 /tmp/base.png -o public/venue-base-2026-web.webp   # ~600 kB -> 40 kB
 //
-// The frame is cropped to the walkable venue (~558 x 759 m), not the wider area it
+// The frame is cropped to the walkable venue (~558 x 634 m), not the wider area it
 // started as. A wider frame squeezed 21 pins into the middle third of the image where
 // they overlapped into a blob on a phone; cropping spreads them across the full width.
 // Remote parking is outside this frame on purpose — it gets addresses and directions
@@ -22,7 +22,7 @@
 // that one layer leaves street names only, so everything named on the map is ours.
 // Classic (not Standard) because the Static Images API cannot render Standard styles.
 //
-// The @2x variant lives at design/venue-base-2026-print.png (2560x1838) — the source for
+// The @2x variant lives at design/venue-base-2026-print.png (2252x2560) — the source for
 // the printed "You Are Here" boards. It is deliberately OUTSIDE public/, because Vite copies
 // public/ wholesale into dist/ and it would otherwise ship ~900 kB on every deploy unused.
 // Mapbox's terms require text attribution wherever this image is shown, on screen
