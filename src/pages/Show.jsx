@@ -5,7 +5,7 @@ import SiteFooter from '../components/SiteFooter.jsx'
 const PRICING = [
   { area: 'Main Street', advance: '$40', sameDay: '$50' },
   { area: 'North Main Street', advance: '$30', sameDay: '$40' },
-  { area: 'General Parking', advance: '$20', sameDay: '$30' },
+  { area: 'General Parking', advance: '$25', sameDay: '$30' },
 ]
 
 const DATES = [
