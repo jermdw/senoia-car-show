@@ -26,6 +26,33 @@ export default function Vendors() {
           along Historic Main Street.
         </p>
 
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          2026 Food Vendors
+        </h2>
+        <ul className="mb-8 grid gap-2 sm:grid-cols-2">
+          {[
+            'The Varsity',
+            'Jalapeno Express',
+            'The Mad Greek',
+            'Little Miss Juicy',
+            "Aunt Zesty’s",
+          ].map((v) => (
+            <li
+              key={v}
+              className="bg-white rounded-lg border border-stone-200 px-4 py-3 font-display uppercase tracking-wide text-ink"
+            >
+              {v}
+            </li>
+          ))}
+        </ul>
+        <p className="text-stone-600 text-sm mb-8">
+          Find them in the food court on Travis Street west of Main — see the{' '}
+          <a className="underline font-semibold" href="/map?poi=food-court">
+            show day guide
+          </a>{' '}
+          for the map.
+        </p>
+
         <div className="bg-white rounded-xl border border-stone-200 p-6">
           <p className="font-display text-xl uppercase tracking-wide text-ink mb-2">
             Questions?

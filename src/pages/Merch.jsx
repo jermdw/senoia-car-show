@@ -36,6 +36,20 @@ export default function Merch() {
               Need 4XL? Email{' '}
               <a className="underline" href="mailto:welcome@enjoysenoia.com">welcome@enjoysenoia.com</a>
             </p>
+            {/* Online sales run through the legacy enjoysenoia.com store on
+                purpose — that's where the DDA's payment processing lives.
+                mt-auto keeps the button on the card's bottom edge however
+                tall its siblings grow. */}
+            <a
+              href="https://www.enjoysenoia.com/product/21st-annual-senoia-car-show-t-shirts"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block self-center mt-auto pt-4"
+            >
+              <span className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors">
+                Buy Online
+              </span>
+            </a>
           </div>
 
           <div className="bg-white rounded-xl border border-stone-200 p-6 text-center flex flex-col">

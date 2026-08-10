@@ -11,33 +11,36 @@ import kellysLogo from '../assets/sponsor-kellys-automotive.webp'
 import clarissaLogo from '../assets/sponsor-clarissa-uhl.webp'
 import crooksLogo from '../assets/sponsor-crooks-tire.webp'
 
+// `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
+// link on a page thanking a paying sponsor is worse than no link. TDK Components
+// USA has no standalone site, so it points at the TDK corporate site.
 const SPONSORS_2026 = [
   {
     tier: 'Title Sponsors',
     cell: 'h-32',
     sponsors: [
-      { name: 'BMW of South Atlanta', logo: bmwLogo, w: 400, h: 168 },
-      { name: 'Carolina Handling', logo: carolinaLogo, w: 400, h: 116 },
-      { name: 'Landmark Dodge Chrysler Jeep RAM', logo: landmarkLogo, w: 400, h: 191 },
+      { name: 'BMW of South Atlanta', logo: bmwLogo, w: 400, h: 168, url: 'https://www.bmwofsouthatlanta.com/' },
+      { name: 'Carolina Handling', logo: carolinaLogo, w: 400, h: 116, url: 'https://www.carolinahandling.com/' },
+      { name: 'Landmark Dodge Chrysler Jeep RAM', logo: landmarkLogo, w: 400, h: 191, url: 'https://landmarkdodge.com/' },
     ],
   },
   {
     tier: 'Gold Sponsors',
     cell: 'h-28',
     sponsors: [
-      { name: 'Cycle Specialty', logo: cycleLogo, w: 400, h: 204 },
-      { name: 'SAFEbuilt', logo: safebuiltLogo, w: 400, h: 104 },
-      { name: 'Atlanta Auto Restoration', logo: atlantaLogo, w: 400, h: 169 },
-      { name: 'TDK Components USA', logo: tdkLogo, w: 400, h: 63 },
-      { name: "Kelly's Automotive Repair", logo: kellysLogo, w: 400, h: 241 },
+      { name: 'Cycle Specialty', logo: cycleLogo, w: 400, h: 204, url: 'https://www.cyclespecialty.com/' },
+      { name: 'SAFEbuilt', logo: safebuiltLogo, w: 400, h: 104, url: 'https://safebuilt.com/' },
+      { name: 'Atlanta Auto Restoration', logo: atlantaLogo, w: 400, h: 169, url: 'https://atlautoresto.com/' },
+      { name: 'TDK Components USA', logo: tdkLogo, w: 400, h: 63, url: 'https://www.tdk.com/en/index.html' },
+      { name: "Kelly's Automotive Repair", logo: kellysLogo, w: 400, h: 241, url: 'https://kellysautorepairpeachtreecity.com/' },
     ],
   },
   {
     tier: 'Bronze Sponsors',
     cell: 'h-28',
     sponsors: [
-      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333 },
-      { name: "Crook's Tire & Auto", logo: crooksLogo, w: 400, h: 181 },
+      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333, url: 'https://clarissauhl.bhhsgeorgia.com/' },
+      { name: "Crook's Tire & Auto", logo: crooksLogo, w: 400, h: 181, url: 'https://www.crookstire.com/' },
     ],
   },
 ]
@@ -127,24 +130,34 @@ export default function Sponsors() {
           <section key={tier} className="mb-8">
             <h3 className="font-display text-xl uppercase tracking-wide text-gold-dark mb-3">{tier}</h3>
             <ul className={`grid gap-4 ${tier === 'Title Sponsors' ? 'sm:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
-              {sponsors.map(({ name, logo, w, h }) => (
+              {sponsors.map(({ name, logo, w, h, url }) => (
                 <li
                   key={name}
-                  className={`bg-white rounded-xl border border-stone-200 flex items-center justify-center p-4 ${cell}`}
+                  className={`bg-white rounded-xl border border-stone-200 hover:border-gold transition-colors ${cell}`}
                 >
-                  {/* Logos vary widely in aspect ratio; contain them in a
-                      fixed-height cell so the rows stay tidy. width/height
-                      carry the intrinsic ratio so the grid doesn't shift as
-                      they load. Deliberately not lazy: these are the whole
-                      point of the section and only ~140KB in total, and a
-                      lazy image that never intersects stays invisible. */}
-                  <img
-                    src={logo}
-                    alt={name}
-                    width={w}
-                    height={h}
-                    className="max-h-full max-w-full w-auto h-auto object-contain"
-                  />
+                  {/* The whole cell is the link, not just the logo pixels — a
+                      wordmark with whitespace around it is a frustrating target
+                      otherwise. The img alt is the link's accessible name. */}
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full h-full flex items-center justify-center p-4"
+                  >
+                    {/* Logos vary widely in aspect ratio; contain them in a
+                        fixed-height cell so the rows stay tidy. width/height
+                        carry the intrinsic ratio so the grid doesn't shift as
+                        they load. Deliberately not lazy: these are the whole
+                        point of the section and only ~140KB in total, and a
+                        lazy image that never intersects stays invisible. */}
+                    <img
+                      src={logo}
+                      alt={name}
+                      width={w}
+                      height={h}
+                      className="max-h-full max-w-full w-auto h-auto object-contain"
+                    />
+                  </a>
                 </li>
               ))}
             </ul>

@@ -27,7 +27,7 @@ export const CATEGORIES = [
   { id: 'gate', label: 'Entrances' },
   { id: 'awards', label: 'Stage & Awards' },
   { id: 'info', label: 'Info & Registration' },
-  { id: 'aid', label: 'First Aid & Water' },
+  { id: 'aid', label: 'First Aid' },
 ]
 
 export const POIS = [
@@ -147,14 +147,15 @@ export const POIS = [
     // the alley off Baggarly at Seavy, about 17 m from that intersection — near the
     // FedEx drop box at 48 Main, though not on top of it.
     //
-    // The two times are not a contradiction: the desk is open 8:00-11:00, but a car has
-    // to be checked in, parked and showing its ID card by 10:00 to be judged.
+    // The two times are not a contradiction: the desk is open 7:00-11:00 (moved up
+    // from 8:00 per organizer feedback, Aug 2026), but a car has to be checked in,
+    // parked and showing its ID card by 10:00 to be judged.
     id: 'registration',
     category: 'info',
     name: 'Show Car Registration',
     where: 'Alley off Baggarly Way at Seavy Street, near 48 Main',
     blurb:
-      'Every show car owner checks in here. Open 8:00am–11:00am, but you must be checked in by 10:00am to be eligible for awards.',
+      'Every show car owner checks in here. Open 7:00am–11:00am, but you must be checked in by 10:00am to be eligible for awards.',
     lat: 33.301382,
     lon: -84.554646,
     confirmed: true,
@@ -329,8 +330,10 @@ export const POIS = [
     confirmed: true,
   },
 
-  // ---- First aid, water, safety ----------------------------------------------
+  // ---- First aid & safety -----------------------------------------------------
   // Source: the organizers' hand-marked "WATER / SAFETY" site plan (Aug 2026).
+  // The water stations that sheet marked were cut by the organizers (Aug 2026
+  // feedback) — do not re-add them from the old site plan.
   {
     id: 'first-aid',
     category: 'aid',
@@ -339,26 +342,6 @@ export const POIS = [
     blurb: 'Staffed 10:00am to 4:00pm.',
     lat: 33.301681,
     lon: -84.554313,
-    confirmed: true,
-  },
-  {
-    id: 'water-north',
-    category: 'aid',
-    name: 'Water Station',
-    where: 'North end of Main Street, toward Johnson',
-    blurb: null,
-    lat: 33.302533,
-    lon: -84.554007,
-    confirmed: true,
-  },
-  {
-    id: 'water-central',
-    category: 'aid',
-    name: 'Water Station',
-    where: 'Main Street near Seavy Street',
-    blurb: null,
-    lat: 33.301205,
-    lon: -84.554136,
     confirmed: true,
   },
   {
@@ -524,10 +507,10 @@ export const SCHEDULE = [
     confirmed: true,
   },
   {
-    time: '08:00',
+    time: '07:00',
     label: 'Registration opens',
     poiId: 'registration',
-    detail: 'Closes at 11:00am.',
+    detail: 'Same-day registration is $25. Closes at 11:00am.',
     confirmed: true,
   },
   {
@@ -546,9 +529,9 @@ export const SCHEDULE = [
   },
   {
     time: '10:30',
-    label: 'Pedal car silent auction & door prizes begin',
+    label: 'Silent auction & door prizes begin',
     poiId: 'stage',
-    detail: null,
+    detail: 'Silent auction benefiting the I-58 Mission.',
     confirmed: true,
   },
   {
