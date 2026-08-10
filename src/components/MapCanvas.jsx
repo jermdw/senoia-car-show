@@ -99,7 +99,9 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     <figure className="mb-4">
       <div
         ref={containerRef}
-        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1280/919]"
+        // Must match the exported image's aspect exactly, or object-cover crops it and
+        // every pin drifts off its street. Keep in step with BBOX in venueGeo.js.
+        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1280/1123]"
       >
         <div ref={stageRef} className="relative w-full h-full origin-center">
           <img

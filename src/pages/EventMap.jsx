@@ -50,6 +50,23 @@ export default function EventMap() {
     setSearchParams(next, { replace: true })
   }
 
+  // Which tab is showing also lives in the URL, so signage can QR straight to the
+  // schedule (/map?view=schedule) the same way it can QR to a single pin.
+  const view = searchParams.get('view') === 'schedule' ? 'schedule' : 'locations'
+  const setView = (v) => {
+    const next = new URLSearchParams(searchParams)
+    if (v === 'schedule') next.set('view', v)
+    else next.delete('view')
+    setSearchParams(next, { replace: true })
+  }
+
+  // Arrow-key movement between tabs, per the ARIA tabs pattern.
+  const onTabKey = (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    e.preventDefault()
+    setView(view === 'locations' ? 'schedule' : 'locations')
+  }
+
   // Resolved against ALL pois, not just published ones. A confirmed schedule entry can
   // point at a location we haven't pinned down yet (registration is the live case): if we
   // looked only at published pois the link would silently vanish and the visitor would be
@@ -90,10 +107,6 @@ export default function EventMap() {
           happens. Spectator admission and parking are <strong>free</strong>.
         </p>
 
-        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
-          Find Your Way
-        </h2>
-
         <MapCanvas
           pois={pois}
           categories={categories}
@@ -102,6 +115,46 @@ export default function EventMap() {
           onSelect={selectPoi}
         />
 
+        {/* Two intents, one page: "where is it" and "when is it". The map stays above
+            both because schedule entries link to their pin. */}
+        <div
+          role="tablist"
+          aria-label="Show day guide"
+          className="flex border-b-2 border-gold mb-6 print:hidden"
+        >
+          {[
+            { id: 'locations', label: 'Find Your Way' },
+            { id: 'schedule', label: 'Schedule' },
+          ].map((t) => {
+            const on = view === t.id
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                id={`tab-${t.id}`}
+                aria-selected={on}
+                aria-controls={`panel-${t.id}`}
+                tabIndex={on ? 0 : -1}
+                onClick={() => setView(t.id)}
+                onKeyDown={onTabKey}
+                className={`min-h-11 px-5 font-display text-lg uppercase tracking-wide rounded-t-md transition-colors ${
+                  on
+                    ? 'bg-ink text-gold'
+                    : 'text-stone-600 hover:text-ink hover:bg-gold-pale/40'
+                }`}
+              >
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
+
+        <div
+          role="tabpanel"
+          id="panel-locations"
+          aria-labelledby="tab-locations"
+          className={view === 'locations' ? '' : 'hidden print:block'}
+        >
         <div className="mb-6 print:hidden">
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter locations by type">
             {categories.map((c) => {
@@ -166,11 +219,19 @@ export default function EventMap() {
             </p>
           </div>
         )}
+        </div>
 
-        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4 mt-10">
-          Show Day Schedule
-        </h2>
-        <ScheduleList schedule={scheduleWithPois} onSelectPoi={selectPoi} />
+        <div
+          role="tabpanel"
+          id="panel-schedule"
+          aria-labelledby="tab-schedule"
+          className={view === 'schedule' ? '' : 'hidden print:block'}
+        >
+          <h2 className="hidden print:block font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4 mt-10">
+            Show Day Schedule
+          </h2>
+          <ScheduleList schedule={scheduleWithPois} onSelectPoi={selectPoi} />
+        </div>
 
         <div className="bg-ink rounded-xl p-6 text-center mt-10 print:hidden">
           <p className="font-script text-gold text-2xl mb-2">
