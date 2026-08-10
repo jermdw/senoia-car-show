@@ -3,7 +3,7 @@ import Panzoom from '@panzoom/panzoom'
 import CategoryIcon from './CategoryIcon.jsx'
 import { toPercent, isWithinMap, ATTRIBUTION } from '../lib/venueGeo.js'
 
-const BASE_MAP = '/venue-base-2026-web.png'
+const BASE_MAP = '/venue-base-2026-web.webp'
 const MIN_SCALE = 1
 const MAX_SCALE = 6
 
