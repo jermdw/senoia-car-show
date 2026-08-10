@@ -6,14 +6,15 @@ import EventMap from './pages/EventMap.jsx'
 import Sponsors from './pages/Sponsors.jsx'
 import Vendors from './pages/Vendors.jsx'
 import Merch from './pages/Merch.jsx'
+import { ROUTE_LOADERS } from './lib/routeLoaders.js'
 
 // These three are the only routes that touch Firebase, and importing
 // `src/firebase.js` has side effects (initializeApp, App Check, emulator wiring).
 // Loading them lazily keeps the ~169 kB gzipped Firebase SDK out of the chunk every
 // spectator downloads on show day — none of the public pages above need it.
-const Volunteer = lazy(() => import('./pages/Volunteer.jsx'))
-const Cancel = lazy(() => import('./pages/Cancel.jsx'))
-const Admin = lazy(() => import('./pages/Admin.jsx'))
+const Volunteer = lazy(ROUTE_LOADERS['/volunteer'])
+const Cancel = lazy(ROUTE_LOADERS['/cancel'])
+const Admin = lazy(ROUTE_LOADERS['/admin'])
 
 export default function AppRoutes() {
   return (

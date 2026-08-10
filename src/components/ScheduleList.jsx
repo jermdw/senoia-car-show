@@ -1,8 +1,23 @@
+import { useEffect, useState } from 'react'
 import { currentEntryIndex, formatTime, isShowDay } from '../lib/showTime.js'
 
-export default function ScheduleList({ schedule, onSelectPoi, now = new Date() }) {
-  const live = isShowDay(now)
-  const activeIndex = live ? currentEntryIndex(schedule, now) : -1
+const TICK_MS = 30_000
+
+// `now` is for tests only. Left unset, the component keeps its own clock: a visitor who
+// opens the page at 10:55 and pockets the phone must still see the 3:00pm award ceremony
+// light up, and nothing else on this page re-renders on a timer.
+export default function ScheduleList({ schedule, onSelectPoi, now }) {
+  const [clock, setClock] = useState(() => now ?? new Date())
+
+  useEffect(() => {
+    if (now) return undefined
+    const id = setInterval(() => setClock(new Date()), TICK_MS)
+    return () => clearInterval(id)
+  }, [now])
+
+  const current = now ?? clock
+  const live = isShowDay(current)
+  const activeIndex = live ? currentEntryIndex(schedule, current) : -1
 
   return (
     <ol className="space-y-2">
@@ -15,7 +30,9 @@ export default function ScheduleList({ schedule, onSelectPoi, now = new Date() }
               isNow ? 'bg-gold-pale border-gold' : 'bg-white border-stone-200'
             }`}
           >
-            <p className="font-display text-gold-dark text-lg w-24 shrink-0">
+            <p className={`font-display text-lg w-24 shrink-0 ${
+              isNow ? 'text-ink' : 'text-gold-dark'
+            }`}>
               {formatTime(entry.time)}
             </p>
             <div className="min-w-0">
@@ -30,6 +47,11 @@ export default function ScheduleList({ schedule, onSelectPoi, now = new Date() }
               {entry.detail && (
                 <p className="text-stone-700 text-sm mt-1 leading-relaxed">
                   {entry.detail}
+                </p>
+              )}
+              {entry.locationPending && (
+                <p className="text-stone-600 text-sm mt-1 italic">
+                  Location to be announced.
                 </p>
               )}
               {entry.poi && (

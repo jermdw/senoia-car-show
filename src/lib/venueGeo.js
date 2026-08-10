@@ -27,7 +27,9 @@ const ySouth = mercY(BBOX.south)
 
 /** Position of a coordinate as percentages of the base image, or null if unplaced. */
 export function toPercent(lat, lon) {
-  if (typeof lat !== 'number' || typeof lon !== 'number') return null
+  // Number.isFinite, not typeof: NaN and Infinity are both typeof 'number' and would
+  // otherwise produce a truthy result with a NaN coordinate, rendering `top: NaN%`.
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
   return {
     x: ((lon - BBOX.west) / (BBOX.east - BBOX.west)) * 100,
     y: ((yNorth - mercY(lat)) / (yNorth - ySouth)) * 100,

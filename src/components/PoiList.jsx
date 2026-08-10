@@ -2,7 +2,9 @@ import CategoryIcon from './CategoryIcon.jsx'
 
 // The text alternative to the map (WCAG 1.1.1) — and on a phone, usually the
 // faster way to answer "where's the nearest restroom". Not a fallback view.
-export default function PoiList({ categories, pois, selectedId, onSelect }) {
+// `idPrefix` keeps the screen and print copies from emitting the same DOM ids —
+// both are in the DOM at once, only their `display` differs.
+export default function PoiList({ categories, pois, selectedId, onSelect, idPrefix = 'poi' }) {
   const groups = categories
     .map((c) => ({ category: c, items: pois.filter((p) => p.category === c.id) }))
     .filter((g) => g.items.length > 0)
@@ -18,9 +20,9 @@ export default function PoiList({ categories, pois, selectedId, onSelect }) {
   return (
     <div className="space-y-6">
       {groups.map(({ category, items }) => (
-        <section key={category.id} aria-labelledby={`poi-group-${category.id}`}>
+        <section key={category.id} aria-labelledby={`${idPrefix}-group-${category.id}`}>
           <h3
-            id={`poi-group-${category.id}`}
+            id={`${idPrefix}-group-${category.id}`}
             className="flex items-center gap-2 font-display uppercase tracking-wide text-ink mb-2"
           >
             <CategoryIcon category={category.id} className="w-5 h-5 text-gold-dark" />

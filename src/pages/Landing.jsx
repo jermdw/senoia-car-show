@@ -18,7 +18,7 @@ const SECTIONS = [
   {
     to: '/map',
     title: 'Show Day',
-    text: 'Parking, shuttles, food, and what time the awards happen.',
+    text: 'Find your way around the show, and what time everything happens.',
   },
   {
     to: '/sponsors',

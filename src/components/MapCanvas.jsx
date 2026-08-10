@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Panzoom from '@panzoom/panzoom'
 import CategoryIcon from './CategoryIcon.jsx'
-import { toPercent, ATTRIBUTION } from '../lib/venueGeo.js'
+import { toPercent, isWithinMap, ATTRIBUTION } from '../lib/venueGeo.js'
 
 const BASE_MAP = '/venue-base-2026-web.png'
 const MIN_SCALE = 1
@@ -14,9 +14,13 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
   const pinRefs = useRef({})
   const [scale, setScale] = useState(1)
 
+  // Must gate on isWithinMap, not just on having coordinates: a POI outside the base
+  // map's extent (the remote lots — Tencate, Rockaway, Housing Authority) would other-
+  // wise render at e.g. left:188%, invisible behind overflow-hidden but still focusable
+  // and still counted in the "N of M pinned" caption.
   const placed = pois
+    .filter((p) => isWithinMap(p.lat, p.lon))
     .map((p) => ({ poi: p, pos: toPercent(p.lat, p.lon) }))
-    .filter((p) => p.pos)
 
   useEffect(() => {
     const stage = stageRef.current
@@ -39,8 +43,14 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     const parent = stage.parentElement
     const onWheel = (e) => pz.zoomWithWheel(e)
     parent.addEventListener('wheel', onWheel)
+    // The container clips to its bounds, so printing while zoomed would crop the
+    // handout to whatever the user was looking at — and silently drop pins that
+    // the printed list still names. Reset to the full venue before the print runs.
+    const onBeforePrint = () => pz.reset({ animate: false })
+    window.addEventListener('beforeprint', onBeforePrint)
     return () => {
       parent.removeEventListener('wheel', onWheel)
+      window.removeEventListener('beforeprint', onBeforePrint)
       pz.destroy()
     }
   }, [])
@@ -54,11 +64,17 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     if (!pz || !pin || !container) return
     const c = container.getBoundingClientRect()
     const p = pin.getBoundingClientRect()
+    // A hidden (filtered-out) pin measures as all zeros, which would pan the map to
+    // a meaningless spot. Its ref is still live, so the null check above can't catch it.
+    if (!p.width || !p.height) return
     const dx = c.left + c.width / 2 - (p.left + p.width / 2)
-    const dy = c.top + c.height / 2 - p.bottom
+    const dy = c.top + c.height / 2 - (p.top + p.height / 2)
     const cur = pz.getPan()
     const s = pz.getScale()
-    pz.pan(cur.x + dx / s, cur.y + dy / s, { animate: true })
+    // Not animated on purpose: panzoom reports the settled pan immediately while the
+    // element is still easing, so measuring mid-animation and adding a delta to the
+    // already-final value overshoots when two selections land inside one transition.
+    pz.pan(cur.x + dx / s, cur.y + dy / s, { animate: false })
   }, [])
 
   useEffect(() => {
@@ -130,17 +146,17 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
           })}
         </div>
 
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
+        <div className="absolute top-2 right-2 flex flex-col gap-1 print:hidden">
           <button type="button" onClick={() => zoomBy(1.5)} aria-label="Zoom in"
-            className="w-11 h-11 rounded-md bg-ink/85 text-gold font-display text-xl leading-none shadow">+</button>
+            className="w-11 h-11 rounded-md bg-ink text-gold font-display text-xl leading-none shadow">+</button>
           <button type="button" onClick={() => zoomBy(1 / 1.5)} aria-label="Zoom out"
-            className="w-11 h-11 rounded-md bg-ink/85 text-gold font-display text-xl leading-none shadow">−</button>
+            className="w-11 h-11 rounded-md bg-ink text-gold font-display text-xl leading-none shadow">−</button>
           <button type="button" onClick={reset} aria-label="Reset map view"
-            className="w-11 h-11 rounded-md bg-ink/85 text-gold font-display text-[10px] uppercase tracking-wide shadow">Reset</button>
+            className="w-11 h-11 rounded-md bg-ink text-gold font-display text-[10px] uppercase tracking-wide shadow">Reset</button>
         </div>
       </div>
 
-      <figcaption className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-stone-500">
+      <figcaption className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-stone-600">
         <span>
           {placed.length} of {pois.length} locations pinned — the rest are listed below.
         </span>

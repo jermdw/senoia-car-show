@@ -50,13 +50,21 @@ export default function EventMap() {
     setSearchParams(next, { replace: true })
   }
 
+  // Resolved against ALL pois, not just published ones. A confirmed schedule entry can
+  // point at a location we haven't pinned down yet (registration is the live case): if we
+  // looked only at published pois the link would silently vanish and the visitor would be
+  // told an event happens with no hint that its location is still unknown.
   const scheduleWithPois = useMemo(
     () =>
-      schedule.map((entry) => ({
-        ...entry,
-        poi: entry.poiId ? pois.find((p) => p.id === entry.poiId) ?? null : null,
-      })),
-    [schedule, pois],
+      schedule.map((entry) => {
+        const poi = entry.poiId ? POIS.find((p) => p.id === entry.poiId) ?? null : null
+        return {
+          ...entry,
+          poi: poi?.confirmed ? poi : null,
+          locationPending: !!poi && !poi.confirmed,
+        }
+      }),
+    [schedule],
   )
 
   const visible = pois.filter((p) => active.includes(p.category))
@@ -78,9 +86,8 @@ export default function EventMap() {
           Saturday, September 26, 2026
         </p>
         <p className="text-stone-700 mb-8 leading-relaxed">
-          Where to find everything on show day — parking and shuttles, food, the
-          stage, and what time it all happens. Spectator admission and parking
-          are <strong>free</strong>.
+          Where to find your way around the show, and what time everything
+          happens. Spectator admission and parking are <strong>free</strong>.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
@@ -117,15 +124,16 @@ export default function EventMap() {
               )
             })}
           </div>
-          {!allOn && (
-            <button
-              type="button"
-              onClick={() => setActive(categories.map((c) => c.id))}
-              className="mt-3 min-h-11 text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
-            >
-              Show everything
-            </button>
-          )}
+          {/* Always rendered, disabled rather than removed: unmounting the control that
+              was just activated drops keyboard and screen-reader focus to <body>. */}
+          <button
+            type="button"
+            onClick={() => setActive(categories.map((c) => c.id))}
+            disabled={allOn}
+            className="mt-3 min-h-11 text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink disabled:no-underline disabled:text-stone-400 disabled:hover:text-stone-400"
+          >
+            Show everything
+          </button>
         </div>
 
         {/* The filtered view is for screen; print always gets the complete list,
@@ -139,7 +147,7 @@ export default function EventMap() {
           />
         </div>
         <div className="hidden print:block">
-          <PoiList categories={categories} pois={pois} />
+          <PoiList categories={categories} pois={pois} idPrefix="poi-print" />
         </div>
 
         {pending.length > 0 && (

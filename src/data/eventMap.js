@@ -200,7 +200,9 @@ export const POIS = [
     category: 'parking',
     name: 'Rockaway Grass Lots',
     where: 'North of downtown',
-    blurb: 'Free spectator parking, on shuttle Route 2.',
+    // Deliberately not "Route 2" — the route numbering is unconfirmed for 2026
+    // (see the shuttle entries below), so naming one here would contradict it.
+    blurb: 'Free spectator parking, on a shuttle route.',
     lat: null,
     lon: null,
     confirmed: true,
