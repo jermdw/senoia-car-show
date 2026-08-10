@@ -26,7 +26,7 @@ export const CATEGORIES = [
   { id: 'gate', label: 'Entrances' },
   { id: 'awards', label: 'Stage & Awards' },
   { id: 'info', label: 'Info & Registration' },
-  { id: 'aid', label: 'First Aid' },
+  { id: 'aid', label: 'First Aid & Water' },
 ]
 
 export const POIS = [
@@ -72,14 +72,20 @@ export const POIS = [
   // "Travis & Main") are the same junction — Gin joins Main from the west and
   // Travis from the east.
   {
+    // UNCONFIRMED — held back deliberately. The organizers say the north gate moves
+    // to "Baggarly and Main", but those two streets never meet: OpenStreetMap puts
+    // their closest approach 49 m apart, and Baggarly's only junction up here is with
+    // Johnson (33.302574, -84.554654). Main & Johnson below is the OLD position.
+    // Sending 600 show cars to the wrong corner is worse than showing no pin, so this
+    // stays unpublished until someone names the actual corner.
     id: 'gate-north',
     category: 'gate',
     name: 'North Gate — Show Cars',
     where: 'Main Street at Johnson Street',
     blurb: 'Show vehicle entry, 7:00am–11:00am. Paid credentials required.',
-    lat: 33.302533, // intersection: Main & Johnson
+    lat: 33.302533,
     lon: -84.554007,
-    confirmed: true,
+    confirmed: false,
   },
   {
     id: 'gate-south',
@@ -92,13 +98,25 @@ export const POIS = [
     confirmed: true,
   },
   {
-    id: 'gate-vendor',
+    // The playbook lumped sponsors and vendors together at Seavy/Pylant. The 2026
+    // entrance-gates plan splits them: sponsors in from the west, vendors from the east.
+    id: 'gate-sponsors',
     category: 'gate',
-    name: 'Sponsor & Vendor Gate',
+    name: 'Sponsor Gate — West',
     where: 'Seavy Street at Pylant Street',
-    blurb: 'Sponsor and vendor setup entry from 6:00am.',
+    blurb: 'Sponsor setup entry from 6:00am.',
     lat: 33.301342, // intersection: Seavy & Pylant
     lon: -84.556339,
+    confirmed: true,
+  },
+  {
+    id: 'gate-vendors',
+    category: 'gate',
+    name: 'Vendor Gate — East',
+    where: 'Seavy Street at Bridge Street',
+    blurb: 'Vendor setup entry from 6:00am.',
+    lat: 33.301065, // intersection: Seavy & Bridge
+    lon: -84.55191,
     confirmed: true,
   },
 
@@ -138,19 +156,133 @@ export const POIS = [
   },
 
   // ---- Restrooms ------------------------------------------------------------
-  // CRITICAL GAP. The playbook's only placement row is "set Portapotty / Lion's Den",
-  // and "Lion's Den" is defined nowhere. No counts. Supplier: Pollard, (770) 599-1800,
-  // contact Rebecca; the order task is assigned to Steph in August.
-  // One phone call resolves this — it is the highest-value data on the whole map.
+  // Source: the organizers' hand-marked "TOILETS / TRASH" site plan (Aug 2026).
+  // 14 porta-potties across 11 locations — the sheet's own margin tally is 14, which
+  // reconciles exactly with the P marks, so the set below is complete.
+  // Positions are read from that sheet's leader lines and geocoded to the nearest
+  // real intersection, so a pin can sit a few tens of metres from the actual unit —
+  // the `where` text is the precise guidance, not the pin.
   {
-    id: 'restroom-lions-den',
+    id: 'restroom-baggarly-johnson',
     category: 'restroom',
-    name: 'Portable Restrooms',
-    where: null,
+    name: 'Portable Restroom',
+    where: 'Baggarly Way at Johnson Street',
+    blurb: 'North end of the closed streets.',
+    lat: 33.302574,
+    lon: -84.554654,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-barnes',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Barnes Street, between Johnson and Seavy',
+    blurb: null,
+    lat: 33.301825,
+    lon: -84.553411,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-welcome-center',
+    category: 'restroom',
+    name: 'Portable Restrooms (2)',
+    where: 'Baggarly Way at Seavy Street, by the Welcome Center',
+    blurb: null,
+    lat: 33.30124,
+    lon: -84.554726,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-seavy-parking',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Parking lot off Seavy Street, east of Main',
+    blurb: null,
+    lat: 33.301162,
+    lon: -84.553472,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-bridge',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Bridge Street at Seavy Street',
+    blurb: null,
+    lat: 33.301065,
+    lon: -84.55191,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-maguires',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Maguires lot, off Travis Street',
+    blurb: null,
+    lat: 33.300077,
+    lon: -84.554879,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-gin-broad',
+    category: 'restroom',
+    name: 'Portable Restrooms (2)',
+    where: 'Gin Street at Broad Street',
+    blurb: null,
+    lat: 33.299568,
+    lon: -84.553749,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-travis-west',
+    category: 'restroom',
+    name: 'Portable Restrooms (2)',
+    where: 'West end of Travis Street, by Lower Creek Trail',
+    blurb: null,
+    lat: 33.300282,
+    lon: -84.555673,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-post-office',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'By the Post Office',
+    blurb: null,
+    lat: 33.299087,
+    lon: -84.554315,
+    confirmed: true,
+  },
+  {
+    id: 'restroom-travis-east',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Travis Street at Bridge Street',
+    blurb: null,
+    lat: 33.299575,
+    lon: -84.552095,
+    confirmed: true,
+  },
+  {
+    // The 14th unit. Off the base map entirely — the Burn lot is remote parking.
+    id: 'restroom-burn-lot',
+    category: 'restroom',
+    name: 'Portable Restroom',
+    where: 'Burn lot (remote parking)',
     blurb: null,
     lat: null,
     lon: null,
-    confirmed: false,
+    confirmed: true,
+  },
+  {
+    // Pre-existing public restrooms marked on the DDA base map, next to City Hall.
+    id: 'restroom-public-city-hall',
+    category: 'restroom',
+    name: 'Public Restrooms',
+    where: 'Main Street by City Hall',
+    blurb: 'Permanent public restrooms, open through the day.',
+    lat: 33.302111,
+    lon: -84.554309,
+    confirmed: true,
   },
 
   // ---- Food -----------------------------------------------------------------
@@ -168,17 +300,47 @@ export const POIS = [
     confirmed: false,
   },
 
-  // ---- First aid ------------------------------------------------------------
+  // ---- First aid, water, safety ----------------------------------------------
+  // Source: the organizers' hand-marked "WATER / SAFETY" site plan (Aug 2026).
   {
-    // Hours are documented (10:00am-4:00pm); location is stated nowhere.
     id: 'first-aid',
     category: 'aid',
     name: 'First Aid',
-    where: null,
+    where: 'Main Street, near the Senoia Welcome Center',
     blurb: 'Staffed 10:00am to 4:00pm.',
-    lat: null,
-    lon: null,
-    confirmed: false,
+    lat: 33.301681,
+    lon: -84.554313,
+    confirmed: true,
+  },
+  {
+    id: 'water-north',
+    category: 'aid',
+    name: 'Water Station',
+    where: 'North end of Main Street, toward Johnson',
+    blurb: null,
+    lat: 33.302533,
+    lon: -84.554007,
+    confirmed: true,
+  },
+  {
+    id: 'water-central',
+    category: 'aid',
+    name: 'Water Station',
+    where: 'Main Street near Seavy Street',
+    blurb: null,
+    lat: 33.301205,
+    lon: -84.554136,
+    confirmed: true,
+  },
+  {
+    id: 'police-tent',
+    category: 'aid',
+    name: 'Police Tent',
+    where: 'North end of Main Street',
+    blurb: 'Senoia Police on site through the show.',
+    lat: 33.302111,
+    lon: -84.554309,
+    confirmed: true,
   },
 
   // ---- Public parking -------------------------------------------------------
