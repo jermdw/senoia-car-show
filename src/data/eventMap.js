@@ -142,16 +142,22 @@ export const POIS = [
     confirmed: true,
   },
   {
-    // Playbook contradicts itself four times: Buggy Shop -> not Buggy Shop ->
-    // Welcome Center? -> DDA table by the gazebo. Still an open 2026 agenda item.
+    // Settled for 2026 after the playbook contradicted itself four times (Buggy Shop ->
+    // not Buggy Shop -> Welcome Center? -> DDA table by the gazebo). The tent sits in
+    // the alley off Baggarly at Seavy, about 17 m from that intersection — near the
+    // FedEx drop box at 48 Main, though not on top of it.
+    //
+    // The two times are not a contradiction: the desk is open 8:00-11:00, but a car has
+    // to be checked in, parked and showing its ID card by 10:00 to be judged.
     id: 'registration',
     category: 'info',
     name: 'Show Car Registration',
-    where: null,
-    blurb: 'All show car owners must check in by 10:00am.',
-    lat: null,
-    lon: null,
-    confirmed: false,
+    where: 'Alley off Baggarly Way at Seavy Street, near 48 Main',
+    blurb:
+      'Every show car owner checks in here. Open 8:00am–11:00am, but you must be checked in by 10:00am to be eligible for awards.',
+    lat: 33.301382,
+    lon: -84.554646,
+    confirmed: true,
   },
 
   // ---- Restrooms ------------------------------------------------------------
