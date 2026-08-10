@@ -137,9 +137,13 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
                   // Counter-scale so the pin stays a constant 44px touch target at any zoom.
                   transform: `translate(-50%, -50%) scale(${1 / scale})`,
                   zIndex: isSelected ? 20 : 10,
-                  backgroundColor: isSelected ? 'var(--color-gold)' : 'var(--color-ink)',
-                  borderColor: isSelected ? 'var(--color-ink)' : 'var(--color-gold)',
-                  color: isSelected ? 'var(--color-ink)' : 'var(--color-gold)',
+                  // Gold is reserved for the selected pin so it can never be mistaken
+                  // for a category. Category hues are defined in index.css.
+                  backgroundColor: isSelected
+                    ? 'var(--color-gold)'
+                    : `var(--color-cat-${poi.category}, var(--color-ink))`,
+                  borderColor: isSelected ? 'var(--color-ink)' : 'var(--color-cream)',
+                  color: isSelected ? 'var(--color-ink)' : 'var(--color-cream)',
                 }}
               >
                 <CategoryIcon category={poi.category} className="w-4 h-4 sm:w-5 sm:h-5" />

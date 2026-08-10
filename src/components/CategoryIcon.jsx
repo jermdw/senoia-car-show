@@ -57,7 +57,7 @@ const PATHS = {
   ),
 }
 
-export default function CategoryIcon({ category, className = 'w-5 h-5' }) {
+export default function CategoryIcon({ category, className = 'w-5 h-5', style }) {
   const path = PATHS[category]
   if (!path) return null
   return (
@@ -69,6 +69,7 @@ export default function CategoryIcon({ category, className = 'w-5 h-5' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      style={style}
       aria-hidden="true"
       focusable="false"
     >

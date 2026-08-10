@@ -160,15 +160,24 @@ export default function EventMap() {
             {categories.map((c) => {
               const on = active.includes(c.id)
               return (
+                // The chips double as the map's legend, so an active chip is filled
+                // with the same hue its pins use.
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => toggle(c.id)}
                   aria-pressed={on}
-                  className={`inline-flex items-center gap-2 min-h-11 px-4 rounded-full border font-display uppercase tracking-wide text-sm transition-colors ${
+                  style={
                     on
-                      ? 'bg-ink text-gold border-ink'
-                      : 'bg-white text-stone-600 border-stone-300 hover:border-gold'
+                      ? {
+                          backgroundColor: `var(--color-cat-${c.id})`,
+                          borderColor: `var(--color-cat-${c.id})`,
+                          color: 'var(--color-cream)',
+                        }
+                      : { color: `var(--color-cat-${c.id})` }
+                  }
+                  className={`inline-flex items-center gap-2 min-h-11 px-4 rounded-full border font-display uppercase tracking-wide text-sm transition-colors ${
+                    on ? '' : 'bg-white border-stone-300 hover:border-stone-500'
                   }`}
                 >
                   <CategoryIcon category={c.id} className="w-4 h-4" />

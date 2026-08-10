@@ -25,7 +25,11 @@ export default function PoiList({ categories, pois, selectedId, onSelect, idPref
             id={`${idPrefix}-group-${category.id}`}
             className="flex items-center gap-2 font-display uppercase tracking-wide text-ink mb-2"
           >
-            <CategoryIcon category={category.id} className="w-5 h-5 text-gold-dark" />
+            <CategoryIcon
+              category={category.id}
+              className="w-5 h-5"
+              style={{ color: `var(--color-cat-${category.id})` }}
+            />
             {category.label}
           </h3>
           <ul className="space-y-2">
