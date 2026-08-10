@@ -1,19 +1,34 @@
 // Converts real coordinates to a position on the base map image.
 //
-// `public/venue-base-2026-web.png` was generated from the Mapbox Static Images API
+// `public/venue-base-2026-web.webp` was generated from the Mapbox Static Images API
 // at exactly the bounding box below, so this transform is exact — not a calibration.
 // Regenerate the image and update BBOX together, and every pin moves correctly:
 //
-//   curl -g -o public/venue-base-2026-web.png \
-//     "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/[-84.5595,33.2985,-84.5495,33.3045]/1280x919?access_token=$MB_TOKEN"
+//   STYLE=jermdwsahs/cmsnd0mkk017601qo0nsz6fpp
+//   curl -g -o /tmp/base.png \
+//     "https://api.mapbox.com/styles/v1/$STYLE/static/[-84.5572,33.29855,-84.5512,33.30425]/1126x1280?access_token=$MB_TOKEN"
+//   cwebp -q 88 /tmp/base.png -o public/venue-base-2026-web.webp   # ~600 kB -> 40 kB
 //
-// The @2x variant lives at design/venue-base-2026-print.png (2560x1838) — the source for
+// The frame is cropped to the walkable venue (~558 x 634 m), not the wider area it
+// started as. A wider frame squeezed 21 pins into the middle third of the image where
+// they overlapped into a blob on a phone; cropping spreads them across the full width.
+// Remote parking is outside this frame on purpose — it gets addresses and directions
+// rather than pins, since zooming out far enough to include it shrinks the venue to
+// illegibility. Changing BBOX moves every pin automatically; nothing is hand-placed.
+//
+// The style is a classic Light with the `poi-label` layer deleted. Mapbox's stock
+// styles label every business and landmark — "Papp Clinic", "Peavy Gravesite" — which
+// competes with our own pins and puts arbitrary businesses on an event map. Dropping
+// that one layer leaves street names only, so everything named on the map is ours.
+// Classic (not Standard) because the Static Images API cannot render Standard styles.
+//
+// The @2x variant lives at design/venue-base-2026-print.png (2252x2560) — the source for
 // the printed "You Are Here" boards. It is deliberately OUTSIDE public/, because Vite copies
 // public/ wholesale into dist/ and it would otherwise ship ~900 kB on every deploy unused.
 // Mapbox's terms require text attribution wherever this image is shown, on screen
 // and in print: "© Mapbox, © OpenStreetMap".
 
-export const BBOX = { west: -84.5595, south: 33.2985, east: -84.5495, north: 33.3045 }
+export const BBOX = { west: -84.5572, south: 33.29855, east: -84.5512, north: 33.30425 }
 
 export const ATTRIBUTION = '© Mapbox, © OpenStreetMap'
 

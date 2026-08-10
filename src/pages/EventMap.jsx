@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -24,18 +24,6 @@ export default function EventMap() {
     [pois],
   )
 
-  // Categories we know will exist but can't place yet. Naming them beats leaving a
-  // visitor to wonder whether the show simply has no restrooms. Disappears on its own
-  // as entries are confirmed.
-  const pending = useMemo(
-    () =>
-      CATEGORIES.filter(
-        (c) =>
-          !pois.some((p) => p.category === c.id) &&
-          POIS.some((p) => p.category === c.id),
-      ),
-    [pois],
-  )
 
   const [active, setActive] = useState(() => categories.map((c) => c.id))
 
@@ -48,6 +36,36 @@ export default function EventMap() {
     if (id && id !== selectedId) next.set('poi', id)
     else next.delete('poi')
     setSearchParams(next, { replace: true })
+  }
+
+  // Which tab is showing also lives in the URL, so signage can QR straight to the
+  // schedule (/map?view=schedule) the same way it can QR to a single pin.
+  const view = searchParams.get('view') === 'schedule' ? 'schedule' : 'locations'
+  const setView = (v) => {
+    const next = new URLSearchParams(searchParams)
+    if (v === 'schedule') next.set('view', v)
+    else next.delete('view')
+    setSearchParams(next, { replace: true })
+  }
+
+  // Arrow/Home/End movement between tabs, per the ARIA tabs pattern. Focus has to
+  // follow the selection: with roving tabindex the old tab drops to tabIndex=-1, so
+  // leaving focus on it breaks the pattern's invariant and announces nothing.
+  const tabRefs = useRef({})
+  const onTabKey = (e) => {
+    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End']
+    if (!keys.includes(e.key)) return
+    e.preventDefault()
+    const next =
+      e.key === 'Home'
+        ? 'locations'
+        : e.key === 'End'
+          ? 'schedule'
+          : view === 'locations'
+            ? 'schedule'
+            : 'locations'
+    setView(next)
+    tabRefs.current[next]?.focus()
   }
 
   // Resolved against ALL pois, not just published ones. A confirmed schedule entry can
@@ -90,32 +108,82 @@ export default function EventMap() {
           happens. Spectator admission and parking are <strong>free</strong>.
         </p>
 
-        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
-          Find Your Way
-        </h2>
-
         <MapCanvas
           pois={pois}
           categories={categories}
-          activeCategories={active}
+          // On the Schedule tab the filter chips are inside the hidden panel, so a
+          // filtered-down map would have no reachable control to restore it. Show
+          // everything there instead.
+          activeCategories={view === 'schedule' ? categories.map((c) => c.id) : active}
           selectedId={selectedId}
           onSelect={selectPoi}
         />
 
+        {/* Two intents, one page: "where is it" and "when is it". The map stays above
+            both because schedule entries link to their pin. */}
+        <div
+          role="tablist"
+          aria-label="Show day guide"
+          className="flex border-b-2 border-gold mb-6 print:hidden"
+        >
+          {[
+            { id: 'locations', label: 'Find Your Way' },
+            { id: 'schedule', label: 'Schedule' },
+          ].map((t) => {
+            const on = view === t.id
+            return (
+              <button
+                key={t.id}
+                ref={(el) => { tabRefs.current[t.id] = el }}
+                role="tab"
+                id={`tab-${t.id}`}
+                aria-selected={on}
+                aria-controls={`panel-${t.id}`}
+                tabIndex={on ? 0 : -1}
+                onClick={() => setView(t.id)}
+                onKeyDown={onTabKey}
+                className={`min-h-11 px-5 font-display text-lg uppercase tracking-wide rounded-t-md transition-colors ${
+                  on
+                    ? 'bg-ink text-gold'
+                    : 'text-stone-600 hover:text-ink hover:bg-gold-pale/40'
+                }`}
+              >
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
+
+        <div
+          role="tabpanel"
+          id="panel-locations"
+          aria-labelledby="tab-locations"
+          tabIndex={0}
+          className={view === 'locations' ? '' : 'hidden print:block'}
+        >
         <div className="mb-6 print:hidden">
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter locations by type">
             {categories.map((c) => {
               const on = active.includes(c.id)
               return (
+                // The chips double as the map's legend, so an active chip is filled
+                // with the same hue its pins use.
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => toggle(c.id)}
                   aria-pressed={on}
-                  className={`inline-flex items-center gap-2 min-h-11 px-4 rounded-full border font-display uppercase tracking-wide text-sm transition-colors ${
+                  style={
                     on
-                      ? 'bg-ink text-gold border-ink'
-                      : 'bg-white text-stone-600 border-stone-300 hover:border-gold'
+                      ? {
+                          backgroundColor: `var(--color-cat-${c.id})`,
+                          borderColor: `var(--color-cat-${c.id})`,
+                          color: 'var(--color-cream)',
+                        }
+                      : { color: `var(--color-cat-${c.id})` }
+                  }
+                  className={`inline-flex items-center gap-2 min-h-11 px-4 rounded-full border font-display uppercase tracking-wide text-sm transition-colors ${
+                    on ? '' : 'bg-white border-stone-300 hover:border-stone-500'
                   }`}
                 >
                   <CategoryIcon category={c.id} className="w-4 h-4" />
@@ -130,7 +198,7 @@ export default function EventMap() {
             type="button"
             onClick={() => setActive(categories.map((c) => c.id))}
             disabled={allOn}
-            className="mt-3 min-h-11 text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink disabled:no-underline disabled:text-stone-400 disabled:hover:text-stone-400"
+            className="mt-3 min-h-11 text-sm font-semibold text-ink underline underline-offset-2 hover:text-gold-dark disabled:no-underline disabled:text-stone-400 disabled:hover:text-stone-400"
           >
             Show everything
           </button>
@@ -150,27 +218,20 @@ export default function EventMap() {
           <PoiList categories={categories} pois={pois} idPrefix="poi-print" />
         </div>
 
-        {pending.length > 0 && (
-          <div className="mt-6 bg-white border border-stone-200 border-l-4 border-l-gold rounded-lg p-4">
-            <p className="font-display uppercase tracking-wide text-ink mb-1">
-              Still to come
-            </p>
-            <p className="text-stone-600 text-sm leading-relaxed">
-              {pending.map((c) => c.label.toLowerCase()).join(', ')} — locations
-              are added here as the organizers finalize the 2026 layout. Questions
-              in the meantime?{' '}
-              <a className="underline font-semibold" href="tel:+17707279173">
-                (770) 727-9173
-              </a>
-              .
-            </p>
-          </div>
-        )}
+        </div>
 
-        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4 mt-10">
-          Show Day Schedule
-        </h2>
-        <ScheduleList schedule={scheduleWithPois} onSelectPoi={selectPoi} />
+        <div
+          role="tabpanel"
+          id="panel-schedule"
+          aria-labelledby="tab-schedule"
+          tabIndex={0}
+          className={view === 'schedule' ? '' : 'hidden print:block'}
+        >
+          <h2 className="hidden print:block font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4 mt-10">
+            Show Day Schedule
+          </h2>
+          <ScheduleList schedule={scheduleWithPois} onSelectPoi={selectPoi} />
+        </div>
 
         <div className="bg-ink rounded-xl p-6 text-center mt-10 print:hidden">
           <p className="font-script text-gold text-2xl mb-2">

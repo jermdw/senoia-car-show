@@ -15,6 +15,28 @@
   --font-script: "Yellowtail", cursive;
 }
 
+/* Show day map categories. Muted, deep, period-correct hues rather than a generic
+   bright palette — they sit next to the gold and ink without shouting. Every one
+   clears 4.5:1 against `cream`, the icon colour drawn on top: restroom 6.9,
+   food 5.0, parking 8.2, shuttle 6.0, gate 8.5, awards 6.7, info 10.4, aid 7.1.
+   None is close to `gold`, which is reserved for the selected pin, so "selected"
+   never reads as just another category. Colour sits on top of an already-distinct
+   icon shape per category, never instead of it — see CategoryIcon.
+
+   Deliberately NOT in @theme: these are read as `var(--color-cat-<id>)` built from
+   a category id at runtime, never as a utility class, and Tailwind v4 drops theme
+   variables no utility references — which silently left every pin ink-coloured. */
+:root {
+  --color-cat-restroom: #14595e;
+  --color-cat-food: #a84a1e;
+  --color-cat-parking: #1d4a63;
+  --color-cat-shuttle: #4a6127;
+  --color-cat-gate: #6a2f52;
+  --color-cat-awards: #6d4c12;
+  --color-cat-info: #3d3527;
+  --color-cat-aid: #93262c;
+}
+
 /* Public pages end in the ink footer, so overscroll (iOS rubber-banding)
    must reveal ink, not the browser's default white. */
 html {

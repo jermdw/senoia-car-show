@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { flushSync } from 'react-dom'
 import Panzoom from '@panzoom/panzoom'
 import CategoryIcon from './CategoryIcon.jsx'
 import { toPercent, isWithinMap, ATTRIBUTION } from '../lib/venueGeo.js'
 
-const BASE_MAP = '/venue-base-2026-web.png'
+const BASE_MAP = '/venue-base-2026-web.webp'
 const MIN_SCALE = 1
 const MAX_SCALE = 6
 
@@ -14,13 +15,37 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
   const pinRefs = useRef({})
   const [scale, setScale] = useState(1)
 
-  // Must gate on isWithinMap, not just on having coordinates: a POI outside the base
-  // map's extent (the remote lots — Tencate, Rockaway, Housing Authority) would other-
-  // wise render at e.g. left:188%, invisible behind overflow-hidden but still focusable
-  // and still counted in the "N of M pinned" caption.
+  // Gate on isWithinMap, not merely on having coordinates. Everything off-map today
+  // carries lat/lon null so this is currently defensive, but the moment anyone gives a
+  // remote lot real coordinates it would otherwise render at e.g. left:188% — invisible
+  // behind overflow-hidden, yet still focusable and still counted in the caption.
   const placed = pois
     .filter((p) => isWithinMap(p.lat, p.lon))
     .map((p) => ({ poi: p, pos: toPercent(p.lat, p.lon) }))
+
+  // Several things genuinely share a spot — first aid, food and the Welcome Center are
+  // all at 68 Main; the Post Office has both a restroom and accessible parking. Their
+  // coordinates are correct and stay untouched; instead the pins fan out around the
+  // shared point so each stays visible and tappable. Offsets are applied in screen
+  // pixels (see the transform below), so the cluster keeps its shape at any zoom.
+  const FAN_RADIUS_PX = 11
+  const groups = new Map()
+  placed.forEach((p) => {
+    const key = `${p.pos.x.toFixed(4)},${p.pos.y.toFixed(4)}`
+    const g = groups.get(key)
+    if (g) g.push(p)
+    else groups.set(key, [p])
+  })
+  groups.forEach((members) => {
+    if (members.length < 2) return
+    members.forEach((m, i) => {
+      const angle = (i / members.length) * 2 * Math.PI - Math.PI / 2
+      m.fan = {
+        dx: Math.cos(angle) * FAN_RADIUS_PX,
+        dy: Math.sin(angle) * FAN_RADIUS_PX,
+      }
+    })
+  })
 
   useEffect(() => {
     const stage = stageRef.current
@@ -46,7 +71,10 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     // The container clips to its bounds, so printing while zoomed would crop the
     // handout to whatever the user was looking at — and silently drop pins that
     // the printed list still names. Reset to the full venue before the print runs.
-    const onBeforePrint = () => pz.reset({ animate: false })
+    // flushSync so the pins' counter-scale state is committed before the print
+    // snapshot: reset() writes the transform synchronously, but the setScale it
+    // triggers would otherwise be batched and the pins would print at a stale scale.
+    const onBeforePrint = () => flushSync(() => pz.reset({ animate: false }))
     window.addEventListener('beforeprint', onBeforePrint)
     return () => {
       parent.removeEventListener('wheel', onWheel)
@@ -99,7 +127,9 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     <figure className="mb-4">
       <div
         ref={containerRef}
-        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1280/919]"
+        // Must match the exported image's aspect exactly, or object-cover crops it and
+        // every pin drifts off its street. Keep in step with BBOX in venueGeo.js.
+        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1126/1280]"
       >
         <div ref={stageRef} className="relative w-full h-full origin-center">
           <img
@@ -108,7 +138,7 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
             className="w-full h-full object-cover select-none pointer-events-none"
             draggable="false"
           />
-          {placed.map(({ poi, pos }) => {
+          {placed.map(({ poi, pos, fan }) => {
             const isSelected = poi.id === selectedId
             // Filtered-out pins are hidden on screen but always printed, so the
             // handout can never show fewer locations than the list beside it.
@@ -132,12 +162,21 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
                 style={{
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
-                  // Counter-scale so the pin stays a constant 44px touch target at any zoom.
-                  transform: `translate(-50%, -50%) scale(${1 / scale})`,
+                  // Counter-scale so the pin stays a constant 44px touch target at any
+                  // zoom. The fan offset is divided by scale because it lives in stage
+                  // coordinates, which the stage's own scale(s) then multiplies back up
+                  // — net effect is a constant offset in screen pixels.
+                  transform: `translate(-50%, -50%) translate(${(fan?.dx ?? 0) / scale}px, ${
+                    (fan?.dy ?? 0) / scale
+                  }px) scale(${1 / scale})`,
                   zIndex: isSelected ? 20 : 10,
-                  backgroundColor: isSelected ? 'var(--color-gold)' : 'var(--color-ink)',
-                  borderColor: isSelected ? 'var(--color-ink)' : 'var(--color-gold)',
-                  color: isSelected ? 'var(--color-ink)' : 'var(--color-gold)',
+                  // Gold is reserved for the selected pin so it can never be mistaken
+                  // for a category. Category hues are defined in index.css.
+                  backgroundColor: isSelected
+                    ? 'var(--color-gold)'
+                    : `var(--color-cat-${poi.category}, var(--color-ink))`,
+                  borderColor: isSelected ? 'var(--color-ink)' : 'var(--color-cream)',
+                  color: isSelected ? 'var(--color-ink)' : 'var(--color-cream)',
                 }}
               >
                 <CategoryIcon category={poi.category} className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -158,7 +197,7 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
 
       <figcaption className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-stone-600">
         <span>
-          {placed.length} of {pois.length} locations pinned — the rest are listed below.
+          {placed.length} of {pois.length} locations pinned — the rest are listed under Find Your Way.
         </span>
         <span>{ATTRIBUTION}</span>
       </figcaption>

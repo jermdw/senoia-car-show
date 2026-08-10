@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { currentEntryIndex, formatTime, isShowDay } from '../lib/showTime.js'
+import { isWithinMap } from '../lib/venueGeo.js'
 
 const TICK_MS = 30_000
 
@@ -54,17 +55,27 @@ export default function ScheduleList({ schedule, onSelectPoi, now }) {
                   Location to be announced.
                 </p>
               )}
-              {entry.poi && (
-                <button
-                  type="button"
-                  onClick={() => onSelectPoi?.(entry.poi.id)}
-                  className="mt-2 min-h-11 inline-flex items-center text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
-                >
-                  {entry.poi.where
-                    ? `${entry.poi.name} — ${entry.poi.where}`
-                    : entry.poi.name}
-                </button>
-              )}
+              {entry.poi &&
+                (isWithinMap(entry.poi.lat, entry.poi.lon) ? (
+                  <button
+                    type="button"
+                    onClick={() => onSelectPoi?.(entry.poi.id)}
+                    className="mt-2 min-h-11 inline-flex items-center text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
+                  >
+                    {entry.poi.where
+                      ? `${entry.poi.name} — ${entry.poi.where}`
+                      : entry.poi.name}
+                  </button>
+                ) : (
+                  // Plain text, not a button: this location has no pin to centre on,
+                  // so a control here would look actionable and do nothing. The stage
+                  // is the live case — it is described but not yet geocoded.
+                  <p className="mt-1 text-stone-700 text-sm">
+                    {entry.poi.where
+                      ? `${entry.poi.name} — ${entry.poi.where}`
+                      : entry.poi.name}
+                  </p>
+                ))}
             </div>
           </li>
         )
