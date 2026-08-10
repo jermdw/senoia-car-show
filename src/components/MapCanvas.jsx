@@ -22,6 +22,30 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
     .filter((p) => isWithinMap(p.lat, p.lon))
     .map((p) => ({ poi: p, pos: toPercent(p.lat, p.lon) }))
 
+  // Several things genuinely share a spot — first aid, food and the Welcome Center are
+  // all at 68 Main; the Post Office has both a restroom and accessible parking. Their
+  // coordinates are correct and stay untouched; instead the pins fan out around the
+  // shared point so each stays visible and tappable. Offsets are applied in screen
+  // pixels (see the transform below), so the cluster keeps its shape at any zoom.
+  const FAN_RADIUS_PX = 11
+  const groups = new Map()
+  placed.forEach((p) => {
+    const key = `${p.pos.x.toFixed(4)},${p.pos.y.toFixed(4)}`
+    const g = groups.get(key)
+    if (g) g.push(p)
+    else groups.set(key, [p])
+  })
+  groups.forEach((members) => {
+    if (members.length < 2) return
+    members.forEach((m, i) => {
+      const angle = (i / members.length) * 2 * Math.PI - Math.PI / 2
+      m.fan = {
+        dx: Math.cos(angle) * FAN_RADIUS_PX,
+        dy: Math.sin(angle) * FAN_RADIUS_PX,
+      }
+    })
+  })
+
   useEffect(() => {
     const stage = stageRef.current
     if (!stage) return
@@ -101,7 +125,7 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
         ref={containerRef}
         // Must match the exported image's aspect exactly, or object-cover crops it and
         // every pin drifts off its street. Keep in step with BBOX in venueGeo.js.
-        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1280/1123]"
+        className="relative overflow-hidden rounded-xl border border-stone-200 bg-white aspect-[1126/1280]"
       >
         <div ref={stageRef} className="relative w-full h-full origin-center">
           <img
@@ -110,7 +134,7 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
             className="w-full h-full object-cover select-none pointer-events-none"
             draggable="false"
           />
-          {placed.map(({ poi, pos }) => {
+          {placed.map(({ poi, pos, fan }) => {
             const isSelected = poi.id === selectedId
             // Filtered-out pins are hidden on screen but always printed, so the
             // handout can never show fewer locations than the list beside it.
@@ -134,8 +158,13 @@ export default function MapCanvas({ pois, categories, activeCategories, selected
                 style={{
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
-                  // Counter-scale so the pin stays a constant 44px touch target at any zoom.
-                  transform: `translate(-50%, -50%) scale(${1 / scale})`,
+                  // Counter-scale so the pin stays a constant 44px touch target at any
+                  // zoom. The fan offset is divided by scale because it lives in stage
+                  // coordinates, which the stage's own scale(s) then multiplies back up
+                  // — net effect is a constant offset in screen pixels.
+                  transform: `translate(-50%, -50%) translate(${(fan?.dx ?? 0) / scale}px, ${
+                    (fan?.dy ?? 0) / scale
+                  }px) scale(${1 / scale})`,
                   zIndex: isSelected ? 20 : 10,
                   // Gold is reserved for the selected pin so it can never be mistaken
                   // for a category. Category hues are defined in index.css.

@@ -13,10 +13,11 @@
 // Coordinates marked "OSM" came from OpenStreetMap; "intersection" ones were computed
 // from where the two named streets actually meet. Null means not yet located.
 //
-// Note: the remote parking lots (Tencate, Rockaway, Housing Authority) sit OUTSIDE the
-// base map's extent. They are deliberately left unplaced — pinning them would require
-// zooming the map out so far the three-block venue becomes unreadable. They need either
-// a second wider arrival map or plain driving directions.
+// Remote parking sits OUTSIDE the base map's extent and is deliberately left unpinned —
+// including it would mean zooming out until the walkable venue is unreadable. Those
+// entries carry `directions` instead, which the list turns into a driving-directions
+// link. Shuttle routes are unpinned for a different reason: a route is a line between
+// two places, so a single pin would misrepresent it.
 
 export const CATEGORIES = [
   { id: 'restroom', label: 'Restrooms' },
@@ -72,20 +73,18 @@ export const POIS = [
   // "Travis & Main") are the same junction — Gin joins Main from the west and
   // Travis from the east.
   {
-    // UNCONFIRMED — held back deliberately. The organizers say the north gate moves
-    // to "Baggarly and Main", but those two streets never meet: OpenStreetMap puts
-    // their closest approach 49 m apart, and Baggarly's only junction up here is with
-    // Johnson (33.302574, -84.554654). Main & Johnson below is the OLD position.
-    // Sending 600 show cars to the wrong corner is worse than showing no pin, so this
-    // stays unpublished until someone names the actual corner.
+    // Resolved: Baggarly Way has been extended north to meet Main, which is why the
+    // two never intersected in OpenStreetMap. The organizers' coordinate lands within
+    // a metre of the existing OSM node at the north end of Main (33.30386, -84.553948),
+    // about 145 m north of the old Main & Johnson position.
     id: 'gate-north',
     category: 'gate',
     name: 'North Gate — Show Cars',
-    where: 'Main Street at Johnson Street',
+    where: 'Main Street at Baggarly Way, by Middle Street',
     blurb: 'Show vehicle entry, 7:00am–11:00am. Paid credentials required.',
-    lat: 33.302533,
-    lon: -84.554007,
-    confirmed: false,
+    lat: 33.303857,
+    lon: -84.553939,
+    confirmed: true,
   },
   {
     id: 'gate-south',
@@ -286,18 +285,39 @@ export const POIS = [
   },
 
   // ---- Food -----------------------------------------------------------------
+  // The playbook offered three candidate streets (Baggarly, Barnes, Travis). The 2026
+  // food vendor plan settles it: the main row F1-F11 lines Travis Street west of Main,
+  // with a few stalls out on Main near Broad and by the Welcome Center.
   {
-    // Three candidate streets in the playbook: Baggarly (equipment table),
-    // Barnes (2024), Travis (2025 feedback: "Travis St worked great for Food").
     id: 'food-court',
     category: 'food',
     name: 'Food Court',
-    where: null,
+    where: 'Travis Street, west of Main',
     blurb:
-      'Food and drink vendors including The Varsity, with tables and seating.',
-    lat: null,
-    lon: null,
-    confirmed: false,
+      'The main run of food and drink vendors, including The Varsity, with tables and seating.',
+    lat: 33.30018,
+    lon: -84.555276,
+    confirmed: true,
+  },
+  {
+    id: 'food-main-broad',
+    category: 'food',
+    name: 'Food Vendors',
+    where: 'Main Street near Broad Street',
+    blurb: null,
+    lat: 33.299966,
+    lon: -84.554216,
+    confirmed: true,
+  },
+  {
+    id: 'food-welcome-center',
+    category: 'food',
+    name: 'Food Vendors',
+    where: 'Main Street by the Welcome Center',
+    blurb: null,
+    lat: 33.301681,
+    lon: -84.554313,
+    confirmed: true,
   },
 
   // ---- First aid, water, safety ----------------------------------------------
@@ -344,15 +364,28 @@ export const POIS = [
   },
 
   // ---- Public parking -------------------------------------------------------
-  // Spectator parking is free. The 2026 agenda lists "hous auth, Lowe, Olivier
-  // pasture, Tencate", which drops Seavy St Park / Merrimack / the Burn lot from
-  // the older list — so the older lots are unconfirmed until organizers re-confirm.
+  // Spectator parking is free. The remote lots sit outside the base map's frame, so
+  // instead of a pin they carry `directions` — a Google Maps query. That matches how
+  // they are actually used: you want driving directions before you arrive and the
+  // pinned map once you are on foot.
   {
-    id: 'parking-housing-authority',
+    id: 'parking-seavy-park',
     category: 'parking',
-    name: 'Housing Authority Field',
-    where: 'Off Bridge Street',
-    blurb: 'Free spectator parking, on a shuttle route.',
+    name: 'Seavy Street Park',
+    where: 'East of downtown, on Seavy Street',
+    blurb: 'Free spectator parking. Shuttle 1 runs from here into the show.',
+    directions: 'Seavy Street Park, Senoia, GA 30276',
+    lat: null,
+    lon: null,
+    confirmed: true,
+  },
+  {
+    id: 'parking-marimac',
+    category: 'parking',
+    name: 'Marimac Lakes & Public Library',
+    where: 'West of downtown, off Pylant Street',
+    blurb: 'Free spectator parking. Shuttle 3 runs from here into the show.',
+    directions: 'Senoia Public Library, Senoia, GA 30276',
     lat: null,
     lon: null,
     confirmed: true,
@@ -361,10 +394,20 @@ export const POIS = [
     id: 'parking-rockaway',
     category: 'parking',
     name: 'Rockaway Grass Lots',
-    where: 'North of downtown',
-    // Deliberately not "Route 2" — the route numbering is unconfirmed for 2026
-    // (see the shuttle entries below), so naming one here would contradict it.
+    where: 'North of downtown, off Main Street',
+    blurb: 'Free spectator parking. Shuttle 2 runs from here into the show.',
+    directions: 'Rockaway Road, Senoia, GA 30276',
+    lat: null,
+    lon: null,
+    confirmed: true,
+  },
+  {
+    id: 'parking-housing-authority',
+    category: 'parking',
+    name: 'Housing Authority Field',
+    where: 'Off Bridge Street',
     blurb: 'Free spectator parking, on a shuttle route.',
+    directions: 'Bridge Street, Senoia, GA 30276',
     lat: null,
     lon: null,
     confirmed: true,
@@ -376,11 +419,17 @@ export const POIS = [
     where: 'Andrews Parkway, just before Highway 74',
     blurb:
       'Free spectator parking, and the drop-off point for car haulers and trailers.',
+    directions: 'Andrews Parkway, Senoia, GA 30276',
     lat: null,
     lon: null,
     confirmed: true,
   },
   {
+    // UNCONFIRMED. The playbook says "Baptist Church"; the 2026 accessible-parking
+    // sheet circles a block west of Baggarly north of Seavy; and the only Baptist
+    // church OSM knows is well outside the show footprint. Three sources, no
+    // agreement — and a wrong pin here strands someone with limited mobility, so it
+    // stays unpublished. The confirmed south lot at the Post Office still shows.
     id: 'parking-handicap-baptist',
     category: 'parking',
     name: 'Accessible Parking — North',
@@ -388,7 +437,7 @@ export const POIS = [
     blurb: 'Marked accessible spaces at the north end of the show.',
     lat: null,
     lon: null,
-    confirmed: true,
+    confirmed: false,
   },
   {
     id: 'parking-handicap-post-office',
@@ -410,60 +459,45 @@ export const POIS = [
     lon: null,
     confirmed: true,
   },
-  {
-    id: 'parking-seavy-park',
-    category: 'parking',
-    name: 'Seavy Street Park',
-    where: 'Seavy Street',
-    blurb: 'Free spectator parking, on shuttle Route 1.',
-    lat: null,
-    lon: null,
-    confirmed: false,
-  },
-  {
-    id: 'parking-marimac',
-    category: 'parking',
-    name: 'Marimac (Library)',
-    where: 'West of downtown',
-    blurb: 'Free spectator parking, on shuttle Route 3.',
-    lat: null,
-    lon: null,
-    confirmed: false,
-  },
 
   // ---- Shuttles -------------------------------------------------------------
-  // Golf cart shuttles run 9:00am-5:00pm. The playbook gives three different route
-  // configurations (3 routes/6 carts, 4 routes, 3 groupings/10 carts); the named
-  // stop pairs below are the best-documented version but need 2026 confirmation.
+  // The playbook offered three conflicting configurations (3 routes/6 carts, 4 routes,
+  // 3 groupings/10 carts). The 2026 public parking plan settles it at three routes,
+  // one per remote lot. Free golf-cart shuttles, 9:00am to 5:00pm.
+  //
+  // Deliberately unpinned. A route is a line between two places, not a point, so a
+  // single pin would claim the shuttle sits there. Every town-end stop also shares an
+  // exact coordinate with a restroom or the north gate, which hid those pins entirely.
+  // The endpoints are in `where`, and each remote lot names the shuttle that serves it.
   {
     id: 'shuttle-1',
     category: 'shuttle',
-    name: 'Shuttle Route 1',
-    where: 'Seavy Street Park ↔ Seavy & Barnes',
-    blurb: 'Running 9:00am to 5:00pm.',
+    name: 'Shuttle 1 — East',
+    where: 'Seavy Street Park into the show, along Seavy Street',
+    blurb: 'Running 9:00am to 5:00pm. Catch it back at Seavy & Bridge.',
     lat: null,
     lon: null,
-    confirmed: false,
+    confirmed: true,
   },
   {
     id: 'shuttle-2',
     category: 'shuttle',
-    name: 'Shuttle Route 2',
-    where: 'Rockaway ↔ Main & Johnson',
-    blurb: 'Running 9:00am to 5:00pm.',
+    name: 'Shuttle 2 — North',
+    where: 'Rockaway lots into the show, down Main Street',
+    blurb: 'Running 9:00am to 5:00pm. Catch it back at the north end of Main.',
     lat: null,
     lon: null,
-    confirmed: false,
+    confirmed: true,
   },
   {
     id: 'shuttle-3',
     category: 'shuttle',
-    name: 'Shuttle Route 3',
-    where: 'Marimac ↔ Pylant & Travis',
-    blurb: 'Running 9:00am to 5:00pm.',
+    name: 'Shuttle 3 — West',
+    where: 'Marimac Lakes and the library into the show, via Travis Street',
+    blurb: 'Running 9:00am to 5:00pm. Catch it back at the west end of Travis.',
     lat: null,
     lon: null,
-    confirmed: false,
+    confirmed: true,
   },
 ]
 
