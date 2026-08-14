@@ -32,7 +32,8 @@ export default function Show() {
           with 8,000–10,000 spectators from across the Southeast. Enjoy classic
           cars, live music, local shopping, food vendors, door prizes, and an
           awards ceremony — plus Best in Show Car &amp; Truck, a car club corral,
-          and the 50/50 raffle benefiting the I-58 Mission food bank.
+          a poker run, and the 50/50 raffle benefiting the I-58 Mission food
+          bank.
         </p>
         <p className="text-stone-700 mb-8 leading-relaxed">
           Public admission and spectator parking are <strong>free</strong>, with
@@ -101,6 +102,15 @@ export default function Show() {
           >
             See the show day guide →
           </Link>
+        </p>
+
+        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Poker Run
+        </h2>
+        <p className="text-stone-700 mb-8 leading-relaxed">
+          A poker run is coming to the 2026 show — route, times, and entry
+          details coming soon. Check back here or watch the event flyer for
+          updates.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">

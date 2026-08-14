@@ -110,6 +110,12 @@ export default function Sponsors() {
           ))}
         </div>
 
+        <p className="mt-5 bg-gold-pale/40 border border-gold rounded-xl p-4 text-sm text-ink">
+          <strong>Please note:</strong> All sponsorships received after{' '}
+          <strong>August 17</strong> will not receive an appreciation plaque
+          due to order lead times.
+        </p>
+
         <div className="mt-8 bg-ink rounded-xl p-6 text-center">
           <p className="font-script text-gold text-2xl mb-1">Still accepting sponsors!</p>
           <p className="text-gold-pale/90">

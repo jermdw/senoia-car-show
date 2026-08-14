@@ -60,8 +60,8 @@ export default function Volunteer() {
         </h1>
         <p className="text-gold-pale/80 mt-3 max-w-xl mx-auto">
           Pick a shift below — no account needed. You'll get a confirmation
-          email, and we'll contact you the week before the show about the
-          volunteer orientation meeting.
+          email. Volunteer training meetings are Sept 22 &amp; 24 at 7:00 PM
+          at the SAHS Museum.
         </p>
       </header>
 
@@ -76,8 +76,9 @@ export default function Volunteer() {
               <p className="text-stone-600 text-sm mt-1">
                 Our way of saying thank you. Choose your size when you claim a
                 shift (S–4XL), then pick your shirt up at one of the volunteer
-                training meetings the week before the show — dates to be
-                announced.
+                training meetings: <strong className="text-ink">Tuesday,
+                Sept 22 or Thursday, Sept 24 · 7:00 PM at the SAHS
+                Museum</strong>.
               </p>
             </div>
           </div>
@@ -191,7 +192,8 @@ function SignupModal({ shift, onClose }) {
             </p>
             <p className="text-stone-600 text-sm mb-1">
               Free shirt reserved in size <strong>{form.shirtSize}</strong> —
-              pick it up at a volunteer training meeting.
+              pick it up at a volunteer training meeting (Sept 22 or 24,
+              7:00 PM, SAHS Museum).
             </p>
             <p className="text-stone-500 text-sm mb-6">
               A confirmation email is on its way to {form.email}. It includes a
@@ -241,6 +243,10 @@ function SignupModal({ shift, onClose }) {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
+              <span className="block text-stone-500 text-xs mt-1">
+                Pick up at a volunteer training meeting — Sept 22 or 24,
+                7:00 PM, SAHS Museum.
+              </span>
             </label>
             {state.error && (
               <p className="text-red-600 text-sm mb-3" role="alert">{state.error}</p>
