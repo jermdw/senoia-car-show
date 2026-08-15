@@ -121,15 +121,21 @@ export default function Show() {
           Cruisin’ for History Poker Run: cruise five local landmarks at your own
           pace, photograph your ride at each, then turn in your photos at
           Marimac Lakes between 6:00 and 7:00 PM to draw a poker hand. Best hand
-          wins $200 cash. Any make, model, or year is welcome, and proceeds
-          benefit the Senoia Area Historical Society.
+          wins $200 cash. Any make, model, or year is welcome; tickets are $25
+          per entry, and proceeds benefit the Senoia Area Historical Society.
         </p>
-        <p className="mb-8">
+        <p className="mb-8 flex flex-wrap gap-x-6 gap-y-2">
           <Link
             to="/poker-run"
             className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
           >
             Route, stops &amp; details →
+          </Link>
+          <Link
+            to="/poker-run#tickets"
+            className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
+          >
+            Buy tickets →
           </Link>
         </p>
 

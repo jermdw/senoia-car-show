@@ -24,7 +24,7 @@ const SECTIONS = [
   {
     to: '/poker-run',
     title: 'Poker Run',
-    text: 'Friday, Sept 25: cruise five landmarks, draw a hand, best hand wins $200. Any vehicle welcome.',
+    text: 'Friday, Sept 25: cruise five landmarks, draw a hand, best hand wins $200. Any vehicle, $25 per entry — tickets on sale now.',
   },
   {
     to: '/sponsors',
