@@ -120,7 +120,7 @@ export default function Sponsors() {
 
         <p className="mt-5 bg-gold-pale/40 border border-gold rounded-xl p-4 text-sm text-ink">
           <strong>Please note:</strong> All sponsorships received after{' '}
-          <strong>August 17</strong> will not receive an appreciation plaque
+          <strong>August 17, 2026</strong> will not receive an appreciation plaque
           due to order lead times.
         </p>
 
