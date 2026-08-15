@@ -29,12 +29,13 @@ const FINISH = {
 
 const mapsSearch = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
 
-// One tap opens the whole loop, stops in order, in the Google Maps app.
+// One tap opens the whole loop in the Google Maps app: the five stops in order,
+// ending at the turn-in (the one place with a deadline) rather than at stop 5.
 const ROUTE_URL =
   'https://www.google.com/maps/dir/?api=1' +
   `&origin=${encodeURIComponent(STOPS[0].address)}` +
-  `&destination=${encodeURIComponent(STOPS[STOPS.length - 1].address)}` +
-  `&waypoints=${encodeURIComponent(STOPS.slice(1, -1).map((s) => s.address).join('|'))}` +
+  `&destination=${encodeURIComponent(FINISH.address)}` +
+  `&waypoints=${encodeURIComponent(STOPS.slice(1).map((s) => s.address).join('|'))}` +
   '&travelmode=driving'
 
 const STEPS = [
@@ -46,7 +47,7 @@ const STEPS = [
 
 const FACTS = [
   ['Any vehicle', 'Car, truck, or motorcycle — no age restriction, unlike the show'],
-  ['Own pace', 'No start or finish time; visit the stops in any order'],
+  ['Own pace', 'No set start time; visit the stops in any order'],
   ['$200', 'Cash prize for the best poker hand'],
   ['6–7 PM', 'Photo turn-in at Marimac Lakes; winner announced at 7:00'],
 ]
@@ -125,7 +126,8 @@ export default function PokerRun() {
           Five stops, roughly a 33-mile loop — about 50 minutes of driving
           without the photo breaks. The order below is the suggested route; you’re
           free to run it however you like. Tap any address to open it in your
-          maps app.
+          maps app, or open the whole loop — stops 1–5, then the finish line —
+          in one go.
         </p>
         <a
           href={ROUTE_URL}

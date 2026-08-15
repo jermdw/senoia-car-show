@@ -251,22 +251,25 @@ function SignupModal({ shift, onClose }) {
               <input required type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel"
                 className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" />
             </label>
-            <label className="block mb-5">
+            <label className="block">
               <span className="text-sm font-medium text-stone-700">
                 Shirt size <span className="text-stone-500 font-normal">— your free volunteer shirt</span>
               </span>
               <select required value={form.shirtSize} onChange={set('shirtSize')}
+                aria-describedby="shirt-pickup-hint"
                 className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold">
                 <option value="" disabled>Choose a size…</option>
                 {SHIRT_SIZES.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              <span className="block text-stone-500 text-xs mt-1">
-                Pick up at a volunteer training meeting — Sept 22 or 24,
-                7:00 PM, SAHS Museum.
-              </span>
             </label>
+            {/* Outside the label on purpose: inside it, this text would be read
+                as part of the select's accessible name on every focus/change. */}
+            <p id="shirt-pickup-hint" className="text-stone-500 text-xs mt-1 mb-5">
+              Pick up at a volunteer training meeting — Sept 22 or 24,
+              7:00 PM, SAHS Museum.
+            </p>
             {state.error && (
               <p className="text-red-600 text-sm mb-3" role="alert">{state.error}</p>
             )}

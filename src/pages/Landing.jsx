@@ -116,7 +116,11 @@ export default function Landing() {
                 key={s.to}
                 to={s.to}
                 className={`rounded-xl border p-6 transition-shadow hover:shadow-md ${
-                  s.featured ? 'bg-ink border-gold' : 'bg-white border-stone-200'
+                  s.featured
+                    ? // Seven cards leave one orphan; the featured CTA takes the whole
+                      // last row as a banner rather than sitting alone at a third width.
+                      'bg-ink border-gold sm:col-span-2 lg:col-span-3 text-center'
+                    : 'bg-white border-stone-200'
                 }`}
               >
                 <h2 className={`font-display text-xl uppercase tracking-wide mb-1 ${s.featured ? 'text-gold' : 'text-ink'}`}>

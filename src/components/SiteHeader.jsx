@@ -24,8 +24,11 @@ const LINKS = [
 export default function SiteHeader() {
   const [open, setOpen] = useState(false)
 
+  // Seven links + "Organizers" only just fit the md band (768–~830px, iPad
+  // portrait) — tighter padding there and no wrapping, or two-word labels
+  // break onto a second line and the sticky bar grows.
   const linkClass = ({ isActive }) =>
-    `font-display uppercase tracking-wide px-3 py-2 transition-colors ${
+    `font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
       isActive ? 'text-gold' : 'text-cream hover:text-gold-pale'
     }`
 
