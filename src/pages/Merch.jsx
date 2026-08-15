@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 import annualMockup from '../assets/shirt-21st-mockup.webp'
 import a250Art from '../assets/shirt-a250-art.webp'
 import kidsArt from '../assets/shirt-kids-art.webp'
@@ -10,6 +11,13 @@ import kidsArt from '../assets/shirt-kids-art.webp'
 const SQUARE_ART = { x: 116, y: 112, width: 168, height: 172 }
 
 export default function Merch() {
+  usePageMeta({
+    title: '2026 Show T-Shirts & Merch | Senoia Car Show',
+    description:
+      'The 21st Annual Senoia Car Show t-shirt and more, available at the merchandise tent on show day. Proceeds support downtown Senoia preservation.',
+    path: '/merch',
+  })
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />

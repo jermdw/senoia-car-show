@@ -27,6 +27,13 @@ export default function SiteFooter() {
             support downtown preservation. Please visit our local shops and
             restaurants!
           </p>
+          <p className="mt-2">
+            Also from the DDA:{' '}
+            <a className="underline hover:text-gold-pale" href="https://senoiaporchfest.org">
+              Senoia PorchFest
+            </a>{' '}
+            · Sun, Sept 6
+          </p>
         </div>
       </div>
       <p className="text-center pb-6 text-gold-pale/70">

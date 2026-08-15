@@ -2,8 +2,15 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { httpsCallable } from 'firebase/functions'
 import { functions } from '../firebase'
+import usePageMeta from '../lib/usePageMeta.js'
 
 export default function Cancel() {
+  usePageMeta({
+    title: 'Cancel a Volunteer Shift | Senoia Car Show',
+    description: 'Cancel a Senoia Car Show volunteer shift using the link from your confirmation email.',
+    noindex: true,
+  })
+
   const [params] = useSearchParams()
   const token = params.get('token')
   const [state, setState] = useState({ status: 'idle', error: null })

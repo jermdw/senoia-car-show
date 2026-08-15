@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 
 const PRICING = [
   { area: 'Main Street', advance: '$40', sameDay: '$50' },
@@ -17,6 +18,13 @@ const DATES = [
 ]
 
 export default function Show() {
+  usePageMeta({
+    title: 'Show Info — Key Dates, Pricing & Parking | Senoia Car Show',
+    description:
+      'Everything about the 21st Annual Senoia Car Show, Sept 26, 2026: key dates, show vehicle display pricing (25 years and older), free spectator parking with shuttles, awards, and door prizes.',
+    path: '/show',
+  })
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />

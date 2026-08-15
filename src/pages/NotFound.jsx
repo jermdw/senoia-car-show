@@ -1,8 +1,17 @@
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 
 export default function NotFound() {
+  // The SPA rewrite answers every path with HTTP 200, so unknown URLs would
+  // otherwise be indexable copies of this page — noindex marks them soft-404s.
+  usePageMeta({
+    title: 'Page Not Found | Senoia Car Show',
+    description: 'That page doesn’t exist. Head back to the Senoia Car Show home page.',
+    noindex: true,
+  })
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />
