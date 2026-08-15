@@ -13,6 +13,7 @@ const DATES = [
   ['May 1, 2026', 'Sponsor & vendor applications open'],
   ['June 1, 2026 · 8:00 AM', 'Show car registration opens'],
   ['August 1, 2026', 'Volunteer sign-ups open'],
+  ['September 25, 2026 · afternoon', 'Cruisin’ for History Poker Run (photo turn-in 6–7 PM)'],
   ['September 26, 2026 · by 9:00 AM', 'All Main Street show vehicles parked'],
   ['September 26, 2026 · 10 AM–4 PM', 'Show day!'],
 ]
@@ -115,10 +116,21 @@ export default function Show() {
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
           Poker Run
         </h2>
-        <p className="text-stone-700 mb-8 leading-relaxed">
-          A poker run is coming to the 2026 show — route, times, and entry
-          details coming soon. Check back here or watch the event flyer for
-          updates.
+        <p className="text-stone-700 mb-4 leading-relaxed">
+          Kick off the weekend on <strong>Friday, September 25</strong> with the
+          Cruisin’ for History Poker Run: cruise five local landmarks at your own
+          pace, photograph your ride at each, then turn in your photos at
+          Marimac Lakes between 6:00 and 7:00 PM to draw a poker hand. Best hand
+          wins $200 cash. Any make, model, or year is welcome, and proceeds
+          benefit the Senoia Area Historical Society.
+        </p>
+        <p className="mb-8">
+          <Link
+            to="/poker-run"
+            className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
+          >
+            Route, stops &amp; details →
+          </Link>
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">

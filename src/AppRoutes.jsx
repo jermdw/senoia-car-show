@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing.jsx'
 import Show from './pages/Show.jsx'
+import PokerRun from './pages/PokerRun.jsx'
 import EventMap from './pages/EventMap.jsx'
 import Sponsors from './pages/Sponsors.jsx'
 import Vendors from './pages/Vendors.jsx'
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/show" element={<Show />} />
+        <Route path="/poker-run" element={<PokerRun />} />
         <Route path="/map" element={<EventMap />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/vendors" element={<Vendors />} />

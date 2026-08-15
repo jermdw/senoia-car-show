@@ -14,6 +14,7 @@ const prefetch = (to) => ({
 const LINKS = [
   { to: '/show', label: 'Show Info' },
   { to: '/map', label: 'Show Day' },
+  { to: '/poker-run', label: 'Poker Run' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors' },
   { to: '/merch', label: 'Merch' },

@@ -22,6 +22,11 @@ const SECTIONS = [
     text: 'Find your way around the show, and what time everything happens.',
   },
   {
+    to: '/poker-run',
+    title: 'Poker Run',
+    text: 'Friday, Sept 25: cruise five landmarks, draw a hand, best hand wins $200. Any vehicle welcome.',
+  },
+  {
     to: '/sponsors',
     title: 'Sponsors',
     text: 'Meet our 2026 sponsors — and join them, spots are still available.',
