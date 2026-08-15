@@ -17,6 +17,11 @@ npx firebase-tools deploy --only hosting --project senoiacar             # site 
 npx firebase-tools deploy --only functions,hosting --project senoiacar   # after functions changes
 ```
 
+Merging to `main` auto-deploys via `.github/workflows/deploy.yml` (hosting every
+push; functions too when `functions/**` changed, or via "Run workflow" with the
+box ticked). Keyless auth (Workload Identity Federation) — one-time GCP setup is
+`scripts/setup-ci-deploy.sh`. The manual commands above remain the fallback.
+
 Prod seed (idempotent, preserves `spotsFilled`):
 `GCLOUD_ACCESS_TOKEN=$(gcloud auth print-access-token) node scripts/seed-shifts.mjs <csv> --prod`
 

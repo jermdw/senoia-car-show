@@ -1,0 +1,95 @@
+# Deploys senoiacar.show from `main`.
+#
+# Every push to main: lint, build, deploy Hosting. Functions are deployed too
+# when the push touched functions/ (or when run by hand with the box ticked) —
+# a functions deploy is slow and rebinds secrets, so it isn't done for a copy
+# change.
+#
+# Auth is keyless: GitHub's OIDC token is exchanged for the github-deploy
+# service account via Workload Identity Federation, so no service-account key
+# lives in this (public) repo's secrets. One-time GCP setup:
+# scripts/setup-ci-deploy.sh.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      functions:
+        description: 'Also deploy Cloud Functions'
+        type: boolean
+        default: false
+
+# Never let two deploys interleave; queue the later one instead of cancelling
+# a release mid-flight.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  FIREBASE_PROJECT: senoiacar
+  # Pinned to the major used locally; bump deliberately, not on every run.
+  FIREBASE_TOOLS: firebase-tools@15
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # HEAD^ is needed to see what the push changed.
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
+
+      - name: Decide whether functions changed
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            want="${{ inputs.functions }}"
+          elif git diff --quiet HEAD^ HEAD -- functions firebase.json; then
+            want=false
+          else
+            want=true
+          fi
+          echo "functions=$want" >> "$GITHUB_OUTPUT"
+          echo "Deploy functions: $want"
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      # firebase-tools loads functions/index.js locally to discover the
+      # callables, so its dependencies must be installed on the runner.
+      - name: Install functions dependencies
+        if: steps.scope.outputs.functions == 'true'
+        run: npm ci --prefix functions
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/679851800295/locations/global/workloadIdentityPools/github/providers/github
+          service_account: github-deploy@senoiacar.iam.gserviceaccount.com
+
+      - name: Deploy
+        run: |
+          only=hosting
+          if [ "${{ steps.scope.outputs.functions }}" = "true" ]; then only=functions,hosting; fi
+          # No --force: if a function disappears from source, the deploy stops
+          # rather than silently deleting it in prod — that wants a human.
+          npx --yes "$FIREBASE_TOOLS" deploy --only "$only" --project "$FIREBASE_PROJECT" --non-interactive
+
+      - name: Smoke-check the live site
+        run: |
+          curl -fsS -o /dev/null https://senoiacar.show/
+          curl -fsS https://senoiacar.show/robots.txt | grep -q '^Sitemap:'
