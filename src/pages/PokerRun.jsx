@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -38,6 +39,47 @@ const ROUTE_URL =
   `&waypoints=${encodeURIComponent(STOPS.slice(1).map((s) => s.address).join('|'))}` +
   '&travelmode=driving'
 
+// Ticket sales are the Historical Society's (Stripe checkout on their site);
+// we embed their widget rather than re-implementing purchase here.
+const TICKETS_ORIGIN = 'https://senoiahistory.com'
+const TICKETS_URL = `${TICKETS_ORIGIN}/embed/tickets/cruisin-for-history-poker-run-2026`
+const TICKETS_INITIAL_HEIGHT = 340
+
+/**
+ * The SAHS ticket widget in an iframe that grows to fit its content. When
+ * framed, the widget posts `{type:'sahs:embed-height', height}` to its parent
+ * from a ResizeObserver on its body; we accept that only from the SAHS origin
+ * AND from this iframe's own window (stricter than SAHS's reference snippet,
+ * which checked origin alone), and clamp so a bad value can't blow the layout.
+ */
+function TicketEmbed() {
+  const frameRef = useRef(null)
+  const [height, setHeight] = useState(TICKETS_INITIAL_HEIGHT)
+
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.origin !== TICKETS_ORIGIN) return
+      if (e.source !== frameRef.current?.contentWindow) return
+      if (e.data?.type !== 'sahs:embed-height') return
+      const h = Number(e.data.height)
+      if (Number.isFinite(h) && h >= 200 && h <= 4000) setHeight(Math.ceil(h))
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
+
+  return (
+    <iframe
+      ref={frameRef}
+      src={TICKETS_URL}
+      title="Buy Poker Run tickets"
+      loading="lazy"
+      className="block w-full max-w-[720px] mx-auto border-0"
+      style={{ height }}
+    />
+  )
+}
+
 const STEPS = [
   ['Cruise the stops', 'Drive to all five landmarks below, in any order, at your own pace. There’s no official start time — go whenever suits you on Friday afternoon.'],
   ['Snap a photo', 'Take a picture of your vehicle at each stop. A selfie with the car counts! Tell any onlookers to come see the show on Saturday.'],
@@ -56,7 +98,7 @@ export default function PokerRun() {
   usePageMeta({
     title: 'Cruisin’ for History Poker Run — Fri, Sept 25, 2026 | Senoia Car Show',
     description:
-      'Kick off car show weekend with the Cruisin’ for History Poker Run, Friday, September 25, 2026: drive to five local landmarks, photograph your car at each, and turn in your photos at Marimac Lakes 6–7 PM for a poker hand. Best hand wins $200. Any vehicle welcome; benefits the Senoia Area Historical Society.',
+      'Kick off car show weekend with the Cruisin’ for History Poker Run, Friday, September 25, 2026: drive to five local landmarks, photograph your car at each, and turn in your photos at Marimac Lakes 6–7 PM for a poker hand. Best hand wins $200. $25 per entry, any vehicle welcome; benefits the Senoia Area Historical Society.',
     path: '/poker-run',
   })
 
@@ -183,26 +225,29 @@ export default function PokerRun() {
           </p>
         </div>
 
-        <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
-          Entry
+        <h2 id="tickets" className="scroll-mt-24 font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
+          Tickets
         </h2>
-        <div className="bg-white rounded-xl border border-stone-200 p-6 mb-10">
-          <p className="font-display text-xl uppercase tracking-wide text-ink mb-2">
-            Entry details coming soon
-          </p>
-          <p className="text-stone-700">
-            Ticket pricing and how to register will be posted here and on the{' '}
-            <a
-              className="underline font-semibold"
-              href="https://senoiahistory.com/news"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Senoia Area Historical Society
-            </a>{' '}
-            site. All proceeds benefit the Historical Society.
-          </p>
+        <p className="text-stone-700 mb-4 leading-relaxed">
+          Tickets are <strong>$25 per entry</strong>. Buy below — checkout opens in
+          a new tab, secured by Stripe, and all proceeds benefit the Senoia Area
+          Historical Society.
+        </p>
+        <div className="bg-white rounded-xl border border-stone-200 p-2 sm:p-4 mb-3">
+          <TicketEmbed />
         </div>
+        <p className="text-stone-600 text-sm mb-10">
+          Trouble with the form?{' '}
+          <a
+            className="underline font-semibold"
+            href={TICKETS_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open the ticket page directly
+          </a>
+          .
+        </p>
 
         <div className="bg-cream border-2 border-gold rounded-xl p-6 text-center">
           <p className="font-script text-gold text-2xl mb-2">Then come see the show</p>
