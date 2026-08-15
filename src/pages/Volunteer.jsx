@@ -5,6 +5,7 @@ import { db, functions, EVENT_ID } from '../firebase'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const DAY_LABELS = {
@@ -14,6 +15,13 @@ const DAY_LABELS = {
 }
 
 export default function Volunteer() {
+  usePageMeta({
+    title: 'Volunteer at the 2026 Senoia Car Show',
+    description:
+      'The show runs on volunteers — browse open shifts for setup, show day, and cleanup (September 25–27, 2026) and sign up in seconds. No account needed.',
+    path: '/volunteer',
+  })
+
   const [shifts, setShifts] = useState(null)
   const [event, setEvent] = useState(null)
   const [loadError, setLoadError] = useState(false)

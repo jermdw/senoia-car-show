@@ -9,10 +9,17 @@ import {
 import { db, auth, EVENT_ID } from '../firebase'
 import logoLight from '../assets/logo-light-bg.webp'
 import { SHIRT_SIZES } from '../shirtSizes.js'
+import usePageMeta from '../lib/usePageMeta.js'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
 export default function Admin() {
+  usePageMeta({
+    title: 'Organizer Dashboard | Senoia Car Show',
+    description: 'Organizer dashboard for Senoia Car Show volunteer sign-ups.',
+    noindex: true,
+  })
+
   const [user, setUser] = useState(undefined)
   const [linkError, setLinkError] = useState(null)
   // Set synchronously so the sign-in form never flashes while the link is

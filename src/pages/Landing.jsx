@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 import logo from '../assets/logo-hero.webp'
 
 const HIGHLIGHTS = [
@@ -44,6 +45,13 @@ const SECTIONS = [
 ]
 
 export default function Landing() {
+  usePageMeta({
+    title: 'Senoia Car Show — Sept 26, 2026 · Historic Downtown Senoia, GA',
+    description:
+      'The 21st Annual Senoia Car Show: 600+ collector and classic vehicles on Historic Main Street in Senoia, Georgia. Saturday, September 26, 2026, 10am–4pm. Free spectator admission.',
+    path: '/',
+  })
+
   return (
     <div className="min-h-screen bg-ink flex flex-col">
       <SiteHeader />
@@ -53,7 +61,9 @@ export default function Landing() {
             <img
               src={logo}
               alt="The Senoia Car Show — Main Street, Senoia, GA. Established 2005."
-              className="w-72 sm:w-96 max-w-full mx-auto mb-6 drop-shadow-[0_4px_24px_rgba(173,132,31,0.25)]"
+              width="800"
+              height="820"
+              className="w-72 sm:w-96 max-w-full h-auto mx-auto mb-6 drop-shadow-[0_4px_24px_rgba(173,132,31,0.25)]"
             />
             <span className="block font-script text-gold text-3xl sm:text-4xl mb-2">
               Historic Downtown Senoia

@@ -83,5 +83,13 @@ sign-in card). Keep header art sized for its slot — it loads on every page.
 - Page content is deliberately hardcoded in components (no CMS). Event facts
   (pricing, dates, sponsor tiers/names) come from the organizers or the legacy
   enjoysenoia.com page — never invent or extrapolate them.
+- **SEO plumbing**: `public/robots.txt` + `public/sitemap.xml` must list any new
+  public route (the SPA rewrite otherwise answers everything, even robots.txt,
+  with the app shell). `index.html` carries the Event JSON-LD and social-card
+  meta — update dates/status and `share-card-2026.png` each year. Per-route
+  titles/canonicals come from `src/lib/usePageMeta.js`; every new page should
+  call it (`noindex: true` for anything private). senoiacar.show is the
+  canonical host — the `.web.app`/`.firebaseapp.com` mirrors must never be
+  linked or promoted.
 - GitHub secret-scanning flags the Firebase web API key in `src/firebase.js`;
   it is a public client identifier, not a secret (alert #1 resolved as such).

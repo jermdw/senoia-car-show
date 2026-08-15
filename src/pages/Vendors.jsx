@@ -1,7 +1,15 @@
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 
 export default function Vendors() {
+  usePageMeta({
+    title: 'Vendors & Food Trucks | Senoia Car Show',
+    description:
+      'Food and beer trucks — including The Varsity — plus local shops and restaurants along Historic Main Street at the 2026 Senoia Car Show. Vendor registration for 2026 is closed.',
+    path: '/vendors',
+  })
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />

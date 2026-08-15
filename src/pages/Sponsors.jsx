@@ -1,5 +1,6 @@
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 import bmwLogo from '../assets/sponsor-bmw-south-atlanta.webp'
 import carolinaLogo from '../assets/sponsor-carolina-handling.webp'
 import landmarkLogo from '../assets/sponsor-landmark-dodge.webp'
@@ -70,6 +71,13 @@ const TIERS = [
 ]
 
 export default function Sponsors() {
+  usePageMeta({
+    title: '2026 Sponsors | Senoia Car Show',
+    description:
+      'Meet the sponsors of the 21st Annual Senoia Car Show — and join them: sponsorship spots for the 2026 show are still available.',
+    path: '/sponsors',
+  })
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />

@@ -6,6 +6,7 @@ import CategoryIcon from '../components/CategoryIcon.jsx'
 import MapCanvas from '../components/MapCanvas.jsx'
 import PoiList from '../components/PoiList.jsx'
 import ScheduleList from '../components/ScheduleList.jsx'
+import usePageMeta from '../lib/usePageMeta.js'
 import {
   CATEGORIES,
   POIS,
@@ -14,6 +15,13 @@ import {
 } from '../data/eventMap.js'
 
 export default function EventMap() {
+  usePageMeta({
+    title: 'Show Day Map — Parking, Shuttles & Schedule | Senoia Car Show',
+    description:
+      'The interactive show-day guide for the 2026 Senoia Car Show: parking and shuttles, food, restrooms, first aid, and what time everything happens on Historic Main Street.',
+    path: '/map',
+  })
+
   const pois = useMemo(publishedPois, [])
   const schedule = useMemo(publishedSchedule, [])
 

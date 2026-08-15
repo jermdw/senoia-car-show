@@ -14,9 +14,62 @@
       property="og:description"
       content="600+ collector cars & trucks, live music, food, and family fun on Historic Main Street in Senoia, GA. Free spectator admission."
     />
-    <meta property="og:image" content="https://senoiacar.show/poster-2026.webp" />
+    <meta property="og:image" content="https://senoiacar.show/share-card-2026.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Senoia Car Show — Saturday, September 26, 2026, Historic Main Street, Senoia, GA" />
     <meta property="og:url" content="https://senoiacar.show/" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Senoia Car Show" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://senoiacar.show/share-card-2026.png" />
+    <!-- senoiacar.show is the one canonical host: the Firebase default domains
+         (senoiacar.web.app / .firebaseapp.com) serve identical copies, and
+         this tag keeps them out of the index. -->
+    <link rel="canonical" href="https://senoiacar.show/" />
+    <!-- Event rich-result data. Facts mirror the organizer-provided content in
+         src/ — update dates (and eventStatus if weather forces it) each year. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "The 21st Annual Senoia Car Show",
+        "startDate": "2026-09-26T10:00:00-04:00",
+        "endDate": "2026-09-26T16:00:00-04:00",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+          "@type": "Place",
+          "name": "Historic Main Street",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Senoia",
+            "addressRegion": "GA",
+            "postalCode": "30276",
+            "addressCountry": "US"
+          }
+        },
+        "image": [
+          "https://senoiacar.show/share-card-2026.png",
+          "https://senoiacar.show/poster-2026.webp"
+        ],
+        "description": "600+ collector and classic vehicles on Historic Main Street in downtown Senoia, Georgia, with live music, food trucks, door prizes, and an awards ceremony. Free spectator admission and parking, with shuttles all day.",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://senoiacar.show/"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Senoia Downtown Development Authority",
+          "url": "https://www.enjoysenoia.com/"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
