@@ -90,10 +90,14 @@ async function seedViaAdminSdk() {
   initializeApp({ projectId: 'senoiacar' })
   const db = getFirestore()
   const batch = db.batch()
-  batch.set(db.doc(`events/${EVENT_ID}`), {
+  const eventRef = db.doc(`events/${EVENT_ID}`)
+  const eventExists = (await eventRef.get()).exists
+  // signupOpen is the organizers' close switch — set it only when the event
+  // doc is first created, so a re-seed never silently reopens closed sign-ups.
+  batch.set(eventRef, {
     name: '21st Annual Senoia Car Show',
     date: '2026-09-26',
-    signupOpen: true,
+    ...(eventExists ? {} : { signupOpen: true }),
   }, { merge: true })
   for (const s of shifts.values()) {
     const { id, ...data } = s
@@ -118,24 +122,42 @@ async function seedViaRest() {
   const name = (path) => `${dbPath}/documents/${path}`
   const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
 
-  const listRes = await fetch(`${docs}/events/${EVENT_ID}/shifts?pageSize=300&mask.fieldPaths=day`, { headers })
-  if (!listRes.ok) throw new Error(`list failed: ${listRes.status} ${await listRes.text()}`)
-  const existing = new Set(
-    ((await listRes.json()).documents ?? []).map((d) => d.name.split('/').pop()),
-  )
+  // Page through the full shift list: any existing shift missed here would be
+  // treated as new and get its live spotsFilled clobbered to 0.
+  const existing = new Set()
+  let pageToken
+  do {
+    const params = new URLSearchParams({ pageSize: '300', 'mask.fieldPaths': 'day' })
+    if (pageToken) params.set('pageToken', pageToken)
+    const listRes = await fetch(`${docs}/events/${EVENT_ID}/shifts?${params}`, { headers })
+    if (!listRes.ok) throw new Error(`list failed: ${listRes.status} ${await listRes.text()}`)
+    const page = await listRes.json()
+    for (const d of page.documents ?? []) existing.add(d.name.split('/').pop())
+    pageToken = page.nextPageToken
+  } while (pageToken)
+
+  // signupOpen is the organizers' close switch — write it only when the event
+  // doc doesn't exist yet, so a re-seed never silently reopens closed sign-ups.
+  const eventRes = await fetch(`${docs}/events/${EVENT_ID}?mask.fieldPaths=name`, { headers })
+  if (!eventRes.ok && eventRes.status !== 404) {
+    throw new Error(`event fetch failed: ${eventRes.status} ${await eventRes.text()}`)
+  }
+  const eventExists = eventRes.ok
 
   const str = (v) => ({ stringValue: v })
   const int = (v) => ({ integerValue: String(v) })
+  const eventFields = {
+    name: str('21st Annual Senoia Car Show'),
+    date: str('2026-09-26'),
+  }
+  const eventFieldPaths = ['name', 'date']
+  if (!eventExists) {
+    eventFields.signupOpen = { booleanValue: true }
+    eventFieldPaths.push('signupOpen')
+  }
   const writes = [{
-    update: {
-      name: name(`events/${EVENT_ID}`),
-      fields: {
-        name: str('21st Annual Senoia Car Show'),
-        date: str('2026-09-26'),
-        signupOpen: { booleanValue: true },
-      },
-    },
-    updateMask: { fieldPaths: ['name', 'date', 'signupOpen'] },
+    update: { name: name(`events/${EVENT_ID}`), fields: eventFields },
+    updateMask: { fieldPaths: eventFieldPaths },
   }]
   for (const s of shifts.values()) {
     const fields = {

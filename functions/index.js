@@ -19,12 +19,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const SHIRT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
 
 function requireString(data, field, maxLen) {
-  const v = data[field]
+  const v = data?.[field]
   if (typeof v !== 'string' || !v.trim() || v.trim().length > maxLen) {
     throw new HttpsError('invalid-argument', `Please provide a valid ${field}.`)
   }
   return v.trim()
 }
+
+// Doc IDs are interpolated into Firestore paths — a `/` would change the path
+// shape (and `.`/`..` are reserved), surfacing as an opaque `internal` error.
+const DOC_ID_RE = /^[\w-]+$/
 
 // App Check (reCAPTCHA Enterprise) blocks scripted abuse; the emulator has no
 // App Check backend, so enforcement is prod-only.
@@ -52,6 +56,9 @@ export const signUp = onCall(callOpts, async (req) => {
   }
   if (!SHIRT_SIZES.includes(shirtSize)) {
     throw new HttpsError('invalid-argument', 'Please choose a shirt size.')
+  }
+  if (!DOC_ID_RE.test(eventId) || !DOC_ID_RE.test(shiftId)) {
+    throw new HttpsError('invalid-argument', 'That shift no longer exists.')
   }
 
   const eventRef = db.doc(`events/${eventId}`)
@@ -125,7 +132,10 @@ export const cancelSignup = onCall(callOpts, async (req) => {
     const shiftSnap = await t.get(shiftRef)
     t.update(signupRef, { status: 'cancelled', cancelledAt: FieldValue.serverTimestamp() })
     if (shiftSnap.exists) {
-      t.update(shiftRef, { spotsFilled: FieldValue.increment(-1) })
+      // Floored, not a blind decrement: if the shift was ever deleted and
+      // re-seeded (fresh spotsFilled: 0) while this signup stayed active, a
+      // negative count would advertise more open spots than spotsTotal.
+      t.update(shiftRef, { spotsFilled: Math.max(0, (shiftSnap.data().spotsFilled ?? 0) - 1) })
     }
     return s
   })

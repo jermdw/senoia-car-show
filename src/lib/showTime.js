@@ -11,21 +11,35 @@ export function formatTime(hhmm) {
   return `${hour}:${String(m).padStart(2, '0')}${suffix}`
 }
 
+// The event runs on US Eastern time; a remote visitor's clock must be read in
+// the event's timezone or the highlight drifts by their UTC offset.
+const EVENT_TZ = 'America/New_York'
+
+function eventLocalParts(now) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: EVENT_TZ,
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', hourCycle: 'h23',
+  }).formatToParts(now)
+  const num = (type) => Number(parts.find((p) => p.type === type).value)
+  return {
+    year: num('year'),
+    month: num('month') - 1, // align with SHOW_DATE's 0-indexed month
+    day: num('day'),
+    hhmm: `${String(num('hour')).padStart(2, '0')}:${String(num('minute')).padStart(2, '0')}`,
+  }
+}
+
 // Highlighting "happening now" on a random day in July would be nonsense.
 export function isShowDay(now = new Date()) {
-  return (
-    now.getFullYear() === SHOW_DATE.year &&
-    now.getMonth() === SHOW_DATE.month &&
-    now.getDate() === SHOW_DATE.day
-  )
+  const p = eventLocalParts(now)
+  return p.year === SHOW_DATE.year && p.month === SHOW_DATE.month && p.day === SHOW_DATE.day
 }
 
 // Index of the most recent entry at or before `now`, or -1 before the first.
 // Assumes `schedule` is sorted ascending by `time`.
 export function currentEntryIndex(schedule, now = new Date()) {
-  const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(
-    now.getMinutes(),
-  ).padStart(2, '0')}`
+  const { hhmm } = eventLocalParts(now)
   let index = -1
   schedule.forEach((entry, i) => {
     if (entry.time <= hhmm) index = i
