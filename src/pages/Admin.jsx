@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  collection, deleteDoc, doc, onSnapshot, query, runTransaction, setDoc, updateDoc, where, increment,
+  collection, deleteDoc, doc, getDocs, onSnapshot, query, runTransaction, setDoc, updateDoc, where,
 } from 'firebase/firestore'
 import {
   GoogleAuthProvider, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail,
@@ -263,6 +263,15 @@ function Dashboard({ user }) {
         rows.push([shift.role, shift.time, '', v?.firstName ?? '', v?.lastName ?? '', v?.email ?? '', v?.phone ?? '', v?.shirtSize ?? ''])
       }
     }
+    // An active signup whose shift was deleted is still a real volunteer (and
+    // still owes a shirt) — export it under a placeholder rather than let the
+    // printed roster disagree with the on-screen totals.
+    const knownShiftIds = new Set(sorted.map((s) => s.id))
+    for (const v of signups ?? []) {
+      if (!knownShiftIds.has(v.shiftId)) {
+        rows.push(['(deleted shift)', '', '', v.firstName, v.lastName, v.email, v.phone, v.shirtSize ?? ''])
+      }
+    }
     const csv = rows
       .map((r) => r.map((c) => {
         let s = String(c)
@@ -285,10 +294,19 @@ function Dashboard({ user }) {
       // Transaction guards the counter: a double-click or a race with the
       // volunteer's own cancel link must not decrement twice.
       await runTransaction(db, async (t) => {
-        const snap = await t.get(doc(db, 'signups', signup.id))
+        const shiftRef = doc(db, 'events', EVENT_ID, 'shifts', signup.shiftId)
+        const [snap, shiftSnap] = await Promise.all([
+          t.get(doc(db, 'signups', signup.id)),
+          t.get(shiftRef),
+        ])
         if (!snap.exists() || snap.data().status !== 'active') return
         t.update(snap.ref, { status: 'cancelled' })
-        t.update(doc(db, 'events', EVENT_ID, 'shifts', signup.shiftId), { spotsFilled: increment(-1) })
+        // The shift may have been deleted out from under this signup — the
+        // removal must still succeed, and the counter must never go below
+        // zero (mirrors cancelSignup in functions/index.js).
+        if (shiftSnap.exists()) {
+          t.update(shiftRef, { spotsFilled: Math.max(0, (shiftSnap.data().spotsFilled ?? 0) - 1) })
+        }
       })
     } catch (e) {
       console.error('remove volunteer failed', e)
@@ -304,6 +322,18 @@ function Dashboard({ user }) {
     }
     if (!confirm(`Delete shift "${shift.role} (${shift.time})"?`)) return
     try {
+      // Re-check against the server right before deleting: the local snapshot
+      // can be stale, and a volunteer may have signed up while the confirm
+      // dialog was open. An orphaned active signup corrupts the totals.
+      const fresh = await getDocs(query(
+        collection(db, 'signups'),
+        where('shiftId', '==', shift.id),
+        where('status', '==', 'active'),
+      ))
+      if (!fresh.empty) {
+        alert('This shift has active signups. Remove the volunteers first.')
+        return
+      }
       await deleteDoc(doc(db, 'events', EVENT_ID, 'shifts', shift.id))
     } catch (e) {
       console.error('delete shift failed', e)
@@ -431,6 +461,14 @@ function ShiftEditor({ shift, activeCount, maxSortOrder, onClose }) {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const safeClose = () => { if (!saving) onClose() }
 
+  // Escape closes the dialog; no dep array so the handler always sees the
+  // current `saving` guard.
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') safeClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
   async function save(e) {
     e.preventDefault()
     const spotsTotal = Number(form.spotsTotal)
@@ -472,13 +510,16 @@ function ShiftEditor({ shift, activeCount, maxSortOrder, onClose }) {
       <form
         onSubmit={save}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={shift ? 'Edit shift' : 'New shift'}
         className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-3 max-h-[90vh] overflow-y-auto my-auto"
       >
         <h2 className="text-lg font-bold text-ink">{shift ? 'Edit Shift' : 'New Shift'}</h2>
         {error && <p className="text-red-600 text-sm" role="alert">{error}</p>}
         <label className="block">
           <span className="text-sm font-medium text-stone-700">Role</span>
-          <input required value={form.role} onChange={set('role')}
+          <input required autoFocus value={form.role} onChange={set('role')}
             className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2" />
         </label>
         <label className="block">

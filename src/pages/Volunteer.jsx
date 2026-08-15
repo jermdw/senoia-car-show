@@ -172,6 +172,14 @@ function SignupModal({ shift, onClose }) {
   // Closing mid-submit would hide the outcome of an in-flight signup
   const safeClose = () => { if (state.status !== 'submitting') onClose() }
 
+  // Escape closes the dialog; no dep array so the handler always sees the
+  // current submit-state guard.
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') safeClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
   async function submit(e) {
     e.preventDefault()
     setState({ status: 'submitting', error: null })
@@ -187,6 +195,9 @@ function SignupModal({ shift, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto" onClick={safeClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Sign up: ${shift.role}`}
         className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto my-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -219,7 +230,7 @@ function SignupModal({ shift, onClose }) {
             <div className="grid grid-cols-2 gap-3 mb-3">
               <label className="block col-span-1">
                 <span className="text-sm font-medium text-stone-700">First name</span>
-                <input required value={form.firstName} onChange={set('firstName')} autoComplete="given-name"
+                <input required autoFocus value={form.firstName} onChange={set('firstName')} autoComplete="given-name"
                   className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" />
               </label>
               <label className="block col-span-1">

@@ -34,6 +34,9 @@ export default function usePageMeta({ title, description, path, noindex = false 
     if (noindex) {
       upsertMeta('name', 'robots', 'noindex')
       canonical?.remove()
+      // og:url would otherwise keep pointing at whatever indexable page was
+      // shown before this one; a noindex page has no canonical URL to claim.
+      document.head.querySelector('meta[property="og:url"]')?.remove()
     } else {
       document.head.querySelector('meta[name="robots"]')?.remove()
       if (!canonical) {
