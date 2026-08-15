@@ -33,6 +33,22 @@ if ! gcloud iam service-accounts describe "$SA" --project "$PROJECT" >/dev/null 
     --display-name "GitHub Actions deploy ($REPO)"
 fi
 
+# IAM is eventually consistent: a policy binding issued right after the account
+# is created fails with "Service account ... does not exist" for a few seconds.
+# Retry the binding rather than racing it.
+bind_project_role() {
+  local role=$1 attempt
+  for attempt in 1 2 3 4 5 6; do
+    if gcloud projects add-iam-policy-binding "$PROJECT" \
+         --member "serviceAccount:$SA" --role "$role" --condition=None --quiet >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 5
+  done
+  echo "!! could not bind $role after $attempt attempts" >&2
+  return 1
+}
+
 echo "== Roles"
 for role in \
   roles/firebasehosting.admin \
@@ -44,8 +60,7 @@ for role in \
   roles/artifactregistry.reader \
   roles/run.viewer
 do
-  gcloud projects add-iam-policy-binding "$PROJECT" \
-    --member "serviceAccount:$SA" --role "$role" --condition=None --quiet >/dev/null
+  bind_project_role "$role"
   echo "   $role"
 done
 
