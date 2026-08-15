@@ -61,8 +61,9 @@ function TicketEmbed() {
       if (e.origin !== TICKETS_ORIGIN) return
       if (e.source !== frameRef.current?.contentWindow) return
       if (e.data?.type !== 'sahs:embed-height') return
+      // Floor is low on purpose: a "sold out" notice is legitimately short.
       const h = Number(e.data.height)
-      if (Number.isFinite(h) && h >= 200 && h <= 4000) setHeight(Math.ceil(h))
+      if (Number.isFinite(h) && h >= 40 && h <= 4000) setHeight(Math.ceil(h))
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
@@ -229,9 +230,8 @@ export default function PokerRun() {
           Tickets
         </h2>
         <p className="text-stone-700 mb-4 leading-relaxed">
-          Tickets are <strong>$25 per entry</strong>. Buy below — checkout opens in
-          a new tab, secured by Stripe, and all proceeds benefit the Senoia Area
-          Historical Society.
+          Tickets are <strong>$25 per entry</strong> — buy below. All proceeds
+          benefit the Senoia Area Historical Society.
         </p>
         <div className="bg-white rounded-xl border border-stone-200 p-2 sm:p-4 mb-3">
           <TicketEmbed />
@@ -245,6 +245,15 @@ export default function PokerRun() {
             rel="noreferrer"
           >
             Open the ticket page directly
+          </a>{' '}
+          or visit{' '}
+          <a
+            className="underline font-semibold"
+            href="https://senoiahistory.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            senoiahistory.com
           </a>
           .
         </p>

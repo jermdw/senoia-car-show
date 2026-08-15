@@ -33,7 +33,7 @@
     <!-- Event rich-result data. Facts mirror the organizer-provided content in
          src/ — update dates (and eventStatus if weather forces it) each year. -->
     <script type="application/ld+json">
-      {
+      [{
         "@context": "https://schema.org",
         "@type": "Event",
         "name": "The 21st Annual Senoia Car Show",
@@ -70,7 +70,43 @@
           "name": "Senoia Downtown Development Authority",
           "url": "https://www.enjoysenoia.com/"
         }
-      }
+      }, {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "Cruisin' for History Poker Run",
+        "url": "https://senoiacar.show/poker-run",
+        "startDate": "2026-09-25",
+        "endDate": "2026-09-25",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+          "@type": "Place",
+          "name": "Stone Lodge at Marimac Lakes",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "148 Pylant St",
+            "addressLocality": "Senoia",
+            "addressRegion": "GA",
+            "postalCode": "30276",
+            "addressCountry": "US"
+          }
+        },
+        "image": ["https://senoiacar.show/share-card-2026.png"],
+        "description": "The Friday-before-the-show poker run: drive to five local landmarks, photograph your vehicle at each, then turn in your photos at the Stone Lodge at Marimac Lakes 6–7 PM for a poker hand. Best hand wins $200. Any make, model, or year; benefits the Senoia Area Historical Society.",
+        "isAccessibleForFree": false,
+        "offers": {
+          "@type": "Offer",
+          "price": "25",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://senoiacar.show/poker-run#tickets"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Senoia Area Historical Society",
+          "url": "https://senoiahistory.com/"
+        }
+      }]
     </script>
   </head>
   <body>
