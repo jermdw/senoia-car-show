@@ -99,8 +99,8 @@ export const signUp = onCall(callOpts, async (req) => {
       <p><strong>${escapeHtml(shift.role)}</strong><br>${escapeHtml(shift.time)}</p>
       <p>Your free volunteer shirt is reserved in size
       <strong>${escapeHtml(shirtSize)}</strong>.</p>
-      <p>Pick it up at one of the volunteer training meetings the week before
-      the show — we'll email you the dates once they're set.</p>
+      <p>Pick it up at a volunteer training meeting — Tuesday, Sept 22 or
+      Thursday, Sept 24 at 7:00 PM, at the SAHS Museum.</p>
       <p>Need to cancel? <a href="${SITE_URL}/cancel?token=${cancelToken}">Click here to release your spot</a>.</p>
       <p>Questions? Reply to this email or contact <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
     `,
