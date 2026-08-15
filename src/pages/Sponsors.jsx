@@ -11,10 +11,13 @@ import tdkLogo from '../assets/sponsor-tdk-components.webp'
 import kellysLogo from '../assets/sponsor-kellys-automotive.webp'
 import clarissaLogo from '../assets/sponsor-clarissa-uhl.webp'
 import crooksLogo from '../assets/sponsor-crooks-tire.webp'
+import wolterLogo from '../assets/sponsor-wolter.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
-// USA has no standalone site, so it points at the TDK corporate site.
+// USA has no standalone site, so it points at the TDK corporate site. Wolter is
+// the Wisconsin-based material handling company; its Atlanta/Buford branches
+// serve Coweta County, and the corporate site is where its Atlanta pages live.
 const SPONSORS_2026 = [
   {
     tier: 'Title Sponsors',
@@ -23,6 +26,7 @@ const SPONSORS_2026 = [
       { name: 'BMW of South Atlanta', logo: bmwLogo, w: 400, h: 168, url: 'https://www.bmwofsouthatlanta.com/' },
       { name: 'Carolina Handling', logo: carolinaLogo, w: 400, h: 116, url: 'https://www.carolinahandling.com/' },
       { name: 'Landmark Dodge Chrysler Jeep RAM', logo: landmarkLogo, w: 400, h: 191, url: 'https://landmarkdodge.com/' },
+      { name: 'Wolter, Inc.', logo: wolterLogo, w: 400, h: 77, url: 'https://www.wolterinc.com/' },
     ],
   },
   {
@@ -143,7 +147,9 @@ export default function Sponsors() {
         {SPONSORS_2026.map(({ tier, cell, sponsors }) => (
           <section key={tier} className="mb-8">
             <h3 className="font-display text-xl uppercase tracking-wide text-gold-dark mb-3">{tier}</h3>
-            <ul className={`grid gap-4 ${tier === 'Title Sponsors' ? 'sm:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
+            {/* Four title sponsors: two-up keeps every row full and every logo
+                large; three-up would orphan one on its own row. */}
+            <ul className={`grid gap-4 ${tier === 'Title Sponsors' ? 'sm:grid-cols-2' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
               {sponsors.map(({ name, logo, w, h, url }) => (
                 <li
                   key={name}
