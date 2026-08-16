@@ -25,3 +25,6 @@ dist-ssr
 
 # Firebase deploy cache
 .firebase/
+
+# Agents
+.claude/*
