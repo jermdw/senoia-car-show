@@ -80,6 +80,10 @@ jobs:
         with:
           workload_identity_provider: projects/679851800295/locations/global/workloadIdentityPools/github/providers/github
           service_account: github-deploy@senoiacar.iam.gserviceaccount.com
+          # Minting a token here makes the WIF exchange fail loudly in this
+          # step (with GCP's error) instead of as a vague "have you run
+          # firebase login?" further down.
+          token_format: access_token
 
       - name: Deploy
         run: |
@@ -87,7 +91,7 @@ jobs:
           if [ "${{ steps.scope.outputs.functions }}" = "true" ]; then only=functions,hosting; fi
           # No --force: if a function disappears from source, the deploy stops
           # rather than silently deleting it in prod — that wants a human.
-          npx --yes "$FIREBASE_TOOLS" deploy --only "$only" --project "$FIREBASE_PROJECT" --non-interactive
+          npx --yes "$FIREBASE_TOOLS" deploy --only "$only" --project "$FIREBASE_PROJECT" --non-interactive --debug
 
       - name: Smoke-check the live site
         run: |
