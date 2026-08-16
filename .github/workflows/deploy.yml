@@ -91,7 +91,7 @@ jobs:
           if [ "${{ steps.scope.outputs.functions }}" = "true" ]; then only=functions,hosting; fi
           # No --force: if a function disappears from source, the deploy stops
           # rather than silently deleting it in prod — that wants a human.
-          npx --yes "$FIREBASE_TOOLS" deploy --only "$only" --project "$FIREBASE_PROJECT" --non-interactive --debug
+          npx --yes "$FIREBASE_TOOLS" deploy --only "$only" --project "$FIREBASE_PROJECT" --non-interactive
 
       - name: Smoke-check the live site
         run: |
