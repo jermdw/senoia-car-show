@@ -3,7 +3,6 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import Countdown from '../components/Countdown.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { REGISTRATION_URL, REGISTRATION_FROM } from '../data/registration.js'
 import logo from '../assets/logo-hero.webp'
 
 const HIGHLIGHTS = [
@@ -87,31 +86,27 @@ export default function Landing() {
             <Countdown />
           </div>
 
-          {/* Two CTAs, deliberately unequal: registering a car costs money and has a
-              deadline, so it leads; volunteering is the standing ask beside it. */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
-            >
-              Register Your Vehicle
-            </a>
-            <Link
-              to="/volunteer"
-              className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-[0.875rem] rounded-md transition-colors"
-            >
-              Volunteer Sign-Up
-            </Link>
-          </div>
+          <Link
+            to="/volunteer"
+            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+          >
+            Volunteer Sign-Up
+          </Link>
+          {/* A countdown next to a sign-up button reads like a ticket sale, so the
+              free-to-watch line sits directly under it rather than further down
+              the page. There is deliberately no "register" button: there is no
+              confirmed online checkout to send owners to, and a dead-end CTA next
+              to a countdown is worse than none. */}
           <p className="mt-5 max-w-xl mx-auto text-cream/75 leading-relaxed">
             <strong className="text-gold-pale font-semibold">
               Coming to look? It&rsquo;s free.
             </strong>{' '}
-            No ticket, no registration, and parking and shuttles are free too.
-            Registration is only for owners putting a vehicle on display
-            (25 years and older, from {REGISTRATION_FROM} in advance).
+            No ticket, no registration &mdash; spectator admission, parking and
+            shuttles all cost nothing. Showing a car?{' '}
+            <Link to="/show" className="underline underline-offset-2 hover:text-gold-pale">
+              Registration
+            </Link>{' '}
+            is for display vehicles only, 25 years and older.
           </p>
           <p className="mt-6">
             <a
