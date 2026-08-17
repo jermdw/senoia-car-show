@@ -18,6 +18,17 @@ service cloud.firestore {
         allow read: if true;
         allow write: if isAdmin();
       }
+
+      // Show-day award winners. Organizers stage the judges' results here
+      // before the 3:00pm ceremony, so a staged row must not leak early:
+      // the public may only read rows already announced from the stage.
+      // A query without `where('announced', '==', true)` is rejected for
+      // everyone but an organizer — that filter is what makes the read
+      // provably safe, so the public board must always include it.
+      match /awards/{awardId} {
+        allow read: if isAdmin() || resource.data.announced == true;
+        allow write: if isAdmin();
+      }
     }
 
     // Volunteer PII — never publicly readable. Volunteers write via Cloud

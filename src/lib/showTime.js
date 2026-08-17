@@ -36,6 +36,12 @@ export function isShowDay(now = new Date()) {
   return p.year === SHOW_DATE.year && p.month === SHOW_DATE.month && p.day === SHOW_DATE.day
 }
 
+// True once the event-local clock has reached `hhmm`, and only on show day —
+// "announcing now" on the awards board in March would be nonsense.
+export function hasPassedOnShowDay(hhmm, now = new Date()) {
+  return isShowDay(now) && eventLocalParts(now).hhmm >= hhmm
+}
+
 // Index of the most recent entry at or before `now`, or -1 before the first.
 // Assumes `schedule` is sorted ascending by `time`.
 export function currentEntryIndex(schedule, now = new Date()) {

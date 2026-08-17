@@ -30,24 +30,33 @@ Prod seed (idempotent, preserves `spotsFilled`):
 - **SPA**: React 19 + Vite + Tailwind v4, routes in `src/AppRoutes.jsx` (`src/main.jsx`
   is just the error boundary + router): public info pages (`/`, `/show`, `/map`,
   `/sponsors`, `/vendors`, `/merch`) use the shared `SiteHeader`/`SiteFooter`
-  components; `/volunteer` (shift board), `/cancel?token=` (from confirmation emails),
-  `/admin` (organizer dashboard).
-  The three Firebase-touching routes (`/volunteer`, `/cancel`, `/admin`) are behind
-  `React.lazy` so the Firebase SDK stays out of the chunk every spectator downloads —
-  **keep public pages free of any `src/firebase.js` import** or that split collapses.
+  components; `/awards` (live award board), `/volunteer` (shift board),
+  `/cancel?token=` (from confirmation emails), `/admin` (organizer dashboard).
+  The four Firebase-touching routes (`/awards`, `/volunteer`, `/cancel`, `/admin`) are
+  behind `React.lazy` so the Firebase SDK stays out of the chunk every spectator
+  downloads — **keep public pages free of any `src/firebase.js` import** (including
+  indirectly, via a component such as `AwardsAdmin`) or that split collapses.
+  Eight nav links no longer fit iPad portrait, so the full header bar starts at `lg`.
 - **Show day guide** (`/map`): base map is a Mapbox Static Images export at a fixed
   bounding box; `src/lib/venueGeo.js` converts lat/lon to a position on it exactly, so
   pins are geocoded, never hand-placed. Content lives in `src/data/eventMap.js`, where
   every entry carries a `confirmed` flag — unconfirmed entries are a working checklist
   and are never rendered. Mapbox's terms require the `© Mapbox, © OpenStreetMap`
   attribution the page displays.
+- **Award board** (`/awards`): the show-day results page, fed live from Firestore.
+  Organizers type winners on the Awards tab of `/admin` (`src/components/AwardsAdmin.jsx`);
+  rows are **staged** (`announced: false`) until published, so the judges' sheet can be
+  entered before the 3:00pm ceremony without leaking. Shared sort/search live in
+  `src/lib/awards.js` so both sides order the list identically.
 - **Cloud Functions v2** (`functions/index.js`): `signUp` and `cancelSignup` callables.
   All volunteer writes go through them (volunteers have no auth; the Admin SDK
   bypasses rules). Resend confirmation emails are best-effort by design — email
   failure must never fail a signup.
 - **Firestore**: `events/2026` (`signupOpen: false` closes sign-ups),
   `events/2026/shifts/{id}` (`role, time, day, category, spotsTotal, spotsFilled,
-  sortOrder`), `signups/{autoId}` (volunteer PII + `status` + `cancelToken`),
+  sortOrder`), `events/2026/awards/{id}` (`tier, title, carNumber, vehicle, owner,
+  awardClass, photoUrl, announced, sortOrder`),
+  `signups/{autoId}` (volunteer PII + `status` + `cancelToken`),
   `admins/{email}` (organizer allowlist; doc ID = lowercase email; data-only, no
   deploy needed to change).
 
@@ -58,7 +67,12 @@ Prod seed (idempotent, preserves `spotsFilled`):
   with a bare update/batch — a double-click or race corrupts the count.
 - Volunteer PII (`signups`) is never publicly readable; only allowlisted admins
   (verified email matching an `admins/{email}` doc) read it. Public reads are
-  limited to shift docs (counts, no PII).
+  limited to shift docs (counts, no PII) and **announced** award docs.
+- The public board's award query must keep its `where('announced', '==', true)`
+  filter: that constraint is what makes the read pass the rules, so dropping it
+  breaks the page rather than silently exposing staged winners. Award owner names
+  are published, so they carry the announcer's form (first name, last initial) —
+  the admin form says so; don't widen that field to full contact details.
 - Duplicate signup emails are **allowed by design** (households share addresses).
 - Admin sign-in: Google popup or email magic link. Both rely on
   `email_verified` in rules.

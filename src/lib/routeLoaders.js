@@ -1,4 +1,4 @@
-// Dynamic imports for the three Firebase-backed routes, kept in their own module so
+// Dynamic imports for the four Firebase-backed routes, kept in their own module so
 // both AppRoutes (to build the lazy components) and SiteHeader (to warm them early)
 // reference the same import specifier — Vite dedupes them into one chunk.
 //
@@ -8,6 +8,7 @@
 // the ~169 kB Firebase chunk lands. Warming on hover/focus/touch hides that latency
 // without costing spectators who never open those routes anything.
 export const ROUTE_LOADERS = {
+  '/awards': () => import('../pages/Awards.jsx'),
   '/volunteer': () => import('../pages/Volunteer.jsx'),
   '/cancel': () => import('../pages/Cancel.jsx'),
   '/admin': () => import('../pages/Admin.jsx'),
