@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { REGISTRATION_URL } from '../data/registration.js'
 
 const PRICING = [
   { area: 'Main Street', advance: '$40', sameDay: '$50' },
@@ -88,11 +89,19 @@ export default function Show() {
             </tbody>
           </table>
         </div>
-        <p className="text-stone-600 text-sm mb-8">
-          Registration opened June 1 at{' '}
-          <a className="underline" href="https://www.enjoysenoia.com/events/senoia-car-show-2" target="_blank" rel="noreferrer">
-            enjoysenoia.com
-          </a>.
+        <p className="text-stone-600 text-sm mb-4">
+          Registration opened June 1 and is for show vehicles only — spectator
+          admission and parking are always free.
+        </p>
+        <p className="mb-8">
+          <a
+            href={REGISTRATION_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
+          >
+            Register Your Vehicle
+          </a>
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">

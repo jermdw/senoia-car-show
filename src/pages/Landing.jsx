@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import Countdown from '../components/Countdown.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { REGISTRATION_URL, REGISTRATION_FROM } from '../data/registration.js'
 import logo from '../assets/logo-hero.webp'
 
 const HIGHLIGHTS = [
@@ -77,15 +79,40 @@ export default function Landing() {
               Saturday, September 26, 2026 &middot; 10am&ndash;4pm
             </span>
           </h1>
-          <p className="font-display text-lg uppercase tracking-widest text-gold-pale/80 mt-1 mb-10">
+          <p className="font-display text-lg uppercase tracking-widest text-gold-pale/80 mt-1 mb-8">
             21st Annual &middot; Free Spectator Admission
           </p>
-          <Link
-            to="/volunteer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
-          >
-            Volunteer Sign-Up
-          </Link>
+
+          <div className="mb-10">
+            <Countdown />
+          </div>
+
+          {/* Two CTAs, deliberately unequal: registering a car costs money and has a
+              deadline, so it leads; volunteering is the standing ask beside it. */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+            <a
+              href={REGISTRATION_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+            >
+              Register Your Vehicle
+            </a>
+            <Link
+              to="/volunteer"
+              className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-[0.875rem] rounded-md transition-colors"
+            >
+              Volunteer Sign-Up
+            </Link>
+          </div>
+          <p className="mt-5 max-w-xl mx-auto text-cream/75 leading-relaxed">
+            <strong className="text-gold-pale font-semibold">
+              Coming to look? It&rsquo;s free.
+            </strong>{' '}
+            No ticket, no registration, and parking and shuttles are free too.
+            Registration is only for owners putting a vehicle on display
+            (25 years and older, from {REGISTRATION_FROM} in advance).
+          </p>
           <p className="mt-6">
             <a
               href="/flyer-2026.pdf"
