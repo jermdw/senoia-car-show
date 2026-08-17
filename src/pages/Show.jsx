@@ -89,10 +89,10 @@ export default function Show() {
           </table>
         </div>
         <p className="text-stone-600 text-sm mb-8">
-          Registration opened June 1 at{' '}
-          <a className="underline" href="https://www.enjoysenoia.com/events/senoia-car-show-2" target="_blank" rel="noreferrer">
-            enjoysenoia.com
-          </a>.
+          Registration is for show vehicles only &mdash; spectator admission and
+          parking are always free. Same-day registration runs at the registration
+          tent from 7:00 to 11:00 AM on show day; check in by 10:00 AM to be
+          eligible for awards.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
