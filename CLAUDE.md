@@ -37,8 +37,8 @@ Prod seed (idempotent, preserves `spotsFilled`):
   downloads — **keep public pages free of any `src/firebase.js` import** (including
   indirectly, via a component such as `AwardsAdmin`) or that split collapses.
   The header bar fits exactly seven links at `md`, so a new one costs an existing
-  one — `/awards` took the Vendors slot, and `/vendors` is reached from the
-  landing page card.
+  one. `/awards` is deliberately kept out of the nav between shows — it is
+  reached from `/show` — and takes a slot back when the ceremony is close.
 - **Show day guide** (`/map`): base map is a Mapbox Static Images export at a fixed
   bounding box; `src/lib/venueGeo.js` converts lat/lon to a position on it exactly, so
   pins are geocoded, never hand-placed. Content lives in `src/data/eventMap.js`, where
