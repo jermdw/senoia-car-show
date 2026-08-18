@@ -12,6 +12,14 @@ import kellysLogo from '../assets/sponsor-kellys-automotive.webp'
 import clarissaLogo from '../assets/sponsor-clarissa-uhl.webp'
 import crooksLogo from '../assets/sponsor-crooks-tire.webp'
 import wolterLogo from '../assets/sponsor-wolter.webp'
+import earlsLogo from '../assets/sponsor-earls-quality-car-care.webp'
+import trinityLogo from '../assets/sponsor-trinity-air.webp'
+import wildWilliesLogo from '../assets/sponsor-wild-willies.webp'
+import rbaLogo from '../assets/sponsor-renewal-by-andersen.webp'
+import progressiveLogo from '../assets/sponsor-progressive-heating-air.webp'
+import dentGuysLogo from '../assets/sponsor-dent-guys.webp'
+import filmoresLogo from '../assets/sponsor-filmores-garage.webp'
+import scrubBrosLogo from '../assets/sponsor-scrubbros-detailing.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -27,6 +35,9 @@ const SPONSORS_2026 = [
       { name: 'Carolina Handling', logo: carolinaLogo, w: 400, h: 116, url: 'https://www.carolinahandling.com/' },
       { name: 'Landmark Dodge Chrysler Jeep RAM', logo: landmarkLogo, w: 400, h: 191, url: 'https://landmarkdodge.com/' },
       { name: 'Wolter, Inc.', logo: wolterLogo, w: 400, h: 77, url: 'https://www.wolterinc.com/' },
+      { name: "Earl's Quality Car Care", logo: earlsLogo, w: 400, h: 393, url: 'https://www.earlsqualitycarcare.com/' },
+      { name: 'Trinity Air', logo: trinityLogo, w: 400, h: 125, url: 'https://trinityair.com/' },
+      { name: 'Wild Willies Custom Accessories', logo: wildWilliesLogo, w: 400, h: 103, url: 'https://wildwilliesaccessories.com/' },
     ],
   },
   {
@@ -38,6 +49,20 @@ const SPONSORS_2026 = [
       { name: 'Atlanta Auto Restoration', logo: atlantaLogo, w: 400, h: 169, url: 'https://atlautoresto.com/' },
       { name: 'TDK Components USA', logo: tdkLogo, w: 400, h: 63, url: 'https://www.tdk.com/en/index.html' },
       { name: "Kelly's Automotive Repair", logo: kellysLogo, w: 400, h: 241, url: 'https://kellysautorepairpeachtreecity.com/' },
+      { name: 'Renewal by Andersen', logo: rbaLogo, w: 400, h: 137, url: 'https://www.renewalbyandersen.com/locations/atlanta-ga' },
+      { name: 'Progressive Heating, Air & Plumbing', logo: progressiveLogo, w: 400, h: 217, url: 'https://progressiveac.com/' },
+      // No findable website/logo for this one — text placeholder until the
+      // organizers can supply artwork.
+      { name: 'SS Chassis Works' },
+    ],
+  },
+  {
+    tier: 'Silver Sponsors',
+    cell: 'h-28',
+    sponsors: [
+      { name: 'The Dent Guys', logo: dentGuysLogo, w: 400, h: 181, url: 'https://dentguysatl.com/' },
+      { name: "Filmore's Garage", logo: filmoresLogo, w: 400, h: 217, url: 'https://www.filmoresgarage.com/' },
+      { name: 'ScrubBros Detailing', logo: scrubBrosLogo, w: 400, h: 328, url: 'https://scrubbrosdetailing.org/' },
     ],
   },
   {
@@ -147,9 +172,7 @@ export default function Sponsors() {
         {SPONSORS_2026.map(({ tier, cell, sponsors }) => (
           <section key={tier} className="mb-8">
             <h3 className="font-display text-xl uppercase tracking-wide text-gold-dark mb-3">{tier}</h3>
-            {/* Four title sponsors: two-up keeps every row full and every logo
-                large; three-up would orphan one on its own row. */}
-            <ul className={`grid gap-4 ${tier === 'Title Sponsors' ? 'sm:grid-cols-2' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
+            <ul className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
               {sponsors.map(({ name, logo, w, h, url }) => (
                 <li
                   key={name}
@@ -157,27 +180,37 @@ export default function Sponsors() {
                 >
                   {/* The whole cell is the link, not just the logo pixels — a
                       wordmark with whitespace around it is a frustrating target
-                      otherwise. The img alt is the link's accessible name. */}
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full h-full flex items-center justify-center p-4"
-                  >
-                    {/* Logos vary widely in aspect ratio; contain them in a
-                        fixed-height cell so the rows stay tidy. width/height
-                        carry the intrinsic ratio so the grid doesn't shift as
-                        they load. Deliberately not lazy: these are the whole
-                        point of the section and only ~140KB in total, and a
-                        lazy image that never intersects stays invisible. */}
-                    <img
-                      src={logo}
-                      alt={name}
-                      width={w}
-                      height={h}
-                      className="max-h-full max-w-full w-auto h-auto object-contain"
-                    />
-                  </a>
+                      otherwise. The img alt is the link's accessible name.
+                      Sponsors without a logo yet (no `logo`/`url`) fall back to
+                      a plain name so the tier list stays accurate even before
+                      artwork exists — not wrapped in a link since there's
+                      nowhere confirmed to send visitors. */}
+                  {logo ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full h-full flex items-center justify-center p-4"
+                    >
+                      {/* Logos vary widely in aspect ratio; contain them in a
+                          fixed-height cell so the rows stay tidy. width/height
+                          carry the intrinsic ratio so the grid doesn't shift as
+                          they load. Deliberately not lazy: these are the whole
+                          point of the section and only ~140KB in total, and a
+                          lazy image that never intersects stays invisible. */}
+                      <img
+                        src={logo}
+                        alt={name}
+                        width={w}
+                        height={h}
+                        className="max-h-full max-w-full w-auto h-auto object-contain"
+                      />
+                    </a>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center p-4 text-center">
+                      <span className="font-display uppercase tracking-wide text-ink">{name}</span>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
