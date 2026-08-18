@@ -10,6 +10,7 @@ import { db, auth, EVENT_ID } from '../firebase'
 import logoLight from '../assets/logo-light-bg.webp'
 import { SHIRT_SIZES } from '../shirtSizes.js'
 import usePageMeta from '../lib/usePageMeta.js'
+import AwardsAdmin from '../components/AwardsAdmin.jsx'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
@@ -182,6 +183,7 @@ function Dashboard({ user }) {
   const [loadError, setLoadError] = useState(false)
   const [editing, setEditing] = useState(null) // shift object or 'new'
   const [openRoster, setOpenRoster] = useState(null) // shiftId
+  const [tab, setTab] = useState('volunteers') // volunteers | awards
 
   useEffect(() => {
     // Only permission-denied means "not an organizer" — anything else
@@ -348,16 +350,40 @@ function Dashboard({ user }) {
     <div className="min-h-screen bg-cream">
       <header className="bg-ink text-white px-6 py-4 flex flex-wrap items-center gap-3">
         <h1 className="font-bold text-lg flex-1">Senoia Car Show — Organizer Dashboard</h1>
-        <span className="text-stone-300 text-sm">{totalFilled} / {totalSpots} spots filled</span>
-        <button onClick={exportCsv} className="bg-gold text-ink font-semibold px-4 py-2 rounded-lg text-sm">
-          Export CSV
-        </button>
-        <button onClick={() => setEditing('new')} className="bg-white/10 px-4 py-2 rounded-lg text-sm">
-          + Add Shift
-        </button>
+        {/* Shift tools belong to the volunteer view; on the awards tab they
+            would act on a list that isn't on screen. */}
+        {tab === 'volunteers' && (
+          <>
+            <span className="text-stone-300 text-sm">{totalFilled} / {totalSpots} spots filled</span>
+            <button onClick={exportCsv} className="bg-gold text-ink font-semibold px-4 py-2 rounded-lg text-sm">
+              Export CSV
+            </button>
+            <button onClick={() => setEditing('new')} className="bg-white/10 px-4 py-2 rounded-lg text-sm">
+              + Add Shift
+            </button>
+          </>
+        )}
         <button onClick={() => signOut(auth)} className="text-stone-400 underline text-sm">Sign out</button>
       </header>
 
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-4xl mx-auto px-4 flex gap-1">
+          {[['volunteers', 'Volunteers'], ['awards', 'Awards']].map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              aria-current={tab === id ? 'page' : undefined}
+              className={`px-4 py-3 font-display uppercase tracking-wide text-sm border-b-2 -mb-px ${
+                tab === id ? 'border-gold text-ink' : 'border-transparent text-stone-500 hover:text-ink'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {tab === 'awards' ? <AwardsAdmin /> : (
       <main className="max-w-4xl mx-auto p-4">
         {signups && totalFilled > 0 && (
           <div className="bg-white rounded-lg border border-stone-200 p-3 mb-4 flex flex-wrap items-center gap-2">
@@ -439,6 +465,7 @@ function Dashboard({ user }) {
           </ul>
         )}
       </main>
+      )}
 
       {editing && (
         <ShiftEditor

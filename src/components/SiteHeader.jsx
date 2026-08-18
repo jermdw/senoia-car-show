@@ -14,9 +14,9 @@ const prefetch = (to) => ({
 const LINKS = [
   { to: '/show', label: 'Show Info' },
   { to: '/map', label: 'Show Day' },
+  { to: '/awards', label: 'Awards' },
   { to: '/poker-run', label: 'Poker Run' },
   { to: '/sponsors', label: 'Sponsors' },
-  { to: '/vendors', label: 'Vendors' },
   { to: '/merch', label: 'Merch' },
   { to: '/volunteer', label: 'Volunteer' },
 ]
@@ -26,7 +26,9 @@ export default function SiteHeader() {
 
   // Seven links + "Organizers" only just fit the md band (768–~830px, iPad
   // portrait) — tighter padding there and no wrapping, or two-word labels
-  // break onto a second line and the sticky bar grows.
+  // break onto a second line and the sticky bar grows. An eighth link does not
+  // fit, which is why "Awards" took the Vendors slot rather than joining it;
+  // Vendors is reached from the card on the landing page.
   const linkClass = ({ isActive }) =>
     `font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
       isActive ? 'text-gold' : 'text-cream hover:text-gold-pale'

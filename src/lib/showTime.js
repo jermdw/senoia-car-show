@@ -42,6 +42,15 @@ export function isShowDay(now = new Date()) {
   return p.year === SHOW_DATE.year && p.month === SHOW_DATE.month && p.day === SHOW_DATE.day
 }
 
+// True once the event-local clock has reached `hhmm`, and only on show day —
+// "announcing now" on the awards board in March would be nonsense. Reads the
+// wall clock in the event's timezone rather than comparing against SHOW_START,
+// because the caller's cue is a scheduled local time ("3:00pm"), not an offset
+// from the gates opening.
+export function hasPassedOnShowDay(hhmm, now = new Date()) {
+  return isShowDay(now) && eventLocalParts(now).hhmm >= hhmm
+}
+
 // Time left until the gates open, split into whole units. Past the start it
 // returns a phase instead of numbers — the countdown must never render negative
 // digits, and "0 days 0 hours" during the show would read as a dead clock.

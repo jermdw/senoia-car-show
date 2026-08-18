@@ -104,12 +104,18 @@ export default function Show() {
           <li>The Maguires Lot returns to general parking (no longer reserved).</li>
           <li>Free spectator parking with shuttles running all day.</li>
         </ul>
-        <p className="mb-8">
+        <p className="mb-8 flex flex-wrap gap-x-6 gap-y-2">
           <Link
             to="/map"
             className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
           >
             See the show day guide →
+          </Link>
+          <Link
+            to="/awards"
+            className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
+          >
+            2026 award winners →
           </Link>
         </p>
 
