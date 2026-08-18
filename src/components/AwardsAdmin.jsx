@@ -61,16 +61,22 @@ export default function AwardsAdmin() {
     }
   }
 
-  async function publishStaged() {
+  // Publishing is per-group, never global: the Best in Show trophies are the
+  // finale, and a single "publish everything" button would put them on the
+  // board along with the Top 50 — spoiling the exact reveal that staging
+  // exists to protect.
+  async function publishGroup(rows, label) {
+    const pending = rows.filter((a) => !a.announced)
+    if (pending.length === 0) return
     if (!confirm(
-      `Publish ${staged.length} staged ${staged.length === 1 ? 'award' : 'awards'} to the public board now?`,
+      `Publish ${pending.length} staged ${label} ${pending.length === 1 ? 'award' : 'awards'} to the public board now?`,
     )) return
     try {
       // Well under the 500-write batch limit — the board is fifty-odd rows
       // typed by hand. One batch, because a partial publish would put half a
       // category on the board while the announcer reads the other half.
       const batch = writeBatch(db)
-      for (const a of staged) {
+      for (const a of pending) {
         batch.update(doc(db, 'events', EVENT_ID, 'awards', a.id), { announced: true })
       }
       await batch.commit()
@@ -110,14 +116,6 @@ export default function AwardsAdmin() {
           {awards && (
             <span className="text-sm text-stone-600">{liveCount} live · {staged.length} staged</span>
           )}
-          {staged.length > 0 && (
-            <button
-              onClick={publishStaged}
-              className="bg-gold text-ink font-semibold px-4 py-2 rounded-lg text-sm"
-            >
-              Publish {staged.length} staged
-            </button>
-          )}
         </div>
         <QuickAdd nextSortOrder={nextSortOrder} />
         <p className="text-stone-500 text-xs mt-3">
@@ -138,8 +136,10 @@ export default function AwardsAdmin() {
       ) : (
         <>
           <AwardGroup title="Featured trophies" rows={featured}
+            onPublishAll={() => publishGroup(featured, 'featured')}
             onToggle={setAnnounced} onEdit={setEditing} onDelete={removeAward} />
           <AwardGroup title="Top 50" rows={top50}
+            onPublishAll={() => publishGroup(top50, 'Top 50')}
             onToggle={setAnnounced} onEdit={setEditing} onDelete={removeAward} />
         </>
       )}
@@ -155,13 +155,24 @@ export default function AwardsAdmin() {
   )
 }
 
-function AwardGroup({ title, rows, onToggle, onEdit, onDelete }) {
+function AwardGroup({ title, rows, onPublishAll, onToggle, onEdit, onDelete }) {
   if (rows.length === 0) return null
+  const stagedCount = rows.filter((a) => !a.announced).length
   return (
     <section className="mb-6">
-      <h3 className="font-display uppercase tracking-wide text-stone-600 text-sm mb-2">
-        {title} ({rows.length})
-      </h3>
+      <div className="flex flex-wrap items-center gap-3 mb-2">
+        <h3 className="font-display uppercase tracking-wide text-stone-600 text-sm flex-1">
+          {title} ({rows.length})
+        </h3>
+        {stagedCount > 0 && (
+          <button
+            onClick={onPublishAll}
+            className="bg-gold text-ink font-semibold px-4 py-1.5 rounded-lg text-sm"
+          >
+            Publish {stagedCount} staged
+          </button>
+        )}
+      </div>
       <ul className="space-y-2">
         {rows.map((a) => (
           <li key={a.id} className="bg-white rounded-lg border border-stone-200 p-3 flex flex-wrap items-center gap-2">
@@ -322,7 +333,10 @@ function QuickAdd({ nextSortOrder }) {
 }
 
 function AwardEditor({ award, onClose }) {
-  const [form, setForm] = useState({ ...BLANK_AWARD, ...award })
+  // `tier` is not in BLANK_AWARD (QuickAdd holds it as its own state), and an
+  // older document may predate the field — without this the select goes
+  // uncontrolled and the save sends `tier: undefined`, which updateDoc rejects.
+  const [form, setForm] = useState({ ...BLANK_AWARD, ...award, tier: award.tier ?? TOP50 })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))

@@ -7,12 +7,18 @@
 //   node scripts/seed-awards.mjs winners.csv --prod      # judges' sheet → production, staged
 //   node scripts/seed-awards.mjs --clear-demo --prod     # remove only the demo rows
 //
+// Re-running an import is safe mid-ceremony: `announced` is written only when
+// a document is created, so fixing a typo in the sheet and re-importing never
+// pulls an already-called winner back off the board. To reset the demo to its
+// original mix of live and staged rows, --clear-demo first.
+//
 // CSV columns (header row required, order free):
 //   tier,title,carNumber,vehicle,owner,class
 // `tier` is top50 (default) or featured; `title` is the trophy name and only
 // applies to featured rows. Imported rows arrive STAGED — publish them from
 // the Awards tab of /admin when the announcer reaches them.
 import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
@@ -91,12 +97,17 @@ function fromCsv(path) {
     .filter((row) => at(row, 'vehicle'))
     .map((row, i) => {
       const tier = at(row, 'tier').toLowerCase() === 'featured' ? 'featured' : 'top50'
+      const vehicle = at(row, 'vehicle')
+      const carNumber = at(row, 'carnumber') || at(row, 'car #') || at(row, 'number')
       return {
-        id: `sheet-${String(i + 1).padStart(3, '0')}`,
+        // Hash the car, not the row position: inserting or deleting a line in
+        // the sheet must not shift every later winner onto the previous
+        // winner's document (mirrors seed-shifts.mjs).
+        id: `sheet-${createHash('sha1').update(`${tier}|${carNumber}|${vehicle}`).digest('hex').slice(0, 10)}`,
         tier,
         title: tier === 'featured' ? at(row, 'title') : '',
-        carNumber: at(row, 'carnumber') || at(row, 'car #') || at(row, 'number'),
-        vehicle: at(row, 'vehicle'),
+        carNumber,
+        vehicle,
         owner: at(row, 'owner'),
         awardClass: at(row, 'class') || at(row, 'awardclass'),
         photoUrl: '',
@@ -158,7 +169,12 @@ async function seedViaAdminSdk() {
   const db = adminDb()
   const batch = db.batch()
   for (const { id, ...data } of awards) {
-    batch.set(db.doc(`events/${EVENT_ID}/awards/${id}`), data, { merge: true })
+    const ref = db.doc(`events/${EVENT_ID}/awards/${id}`)
+    // `announced` belongs to the announcer, not the sheet: once a document
+    // exists, only the Awards tab may change whether it is on the board.
+    const payload = { ...data }
+    if ((await ref.get()).exists) delete payload.announced
+    batch.set(ref, payload, { merge: true })
   }
   await batch.commit()
 }
@@ -209,31 +225,41 @@ async function batchWrite({ docs, headers }, writes) {
 
 async function seedViaRest() {
   const ctx = restContext()
+  const existing = await listAwardIds(ctx)
   const str = (v) => ({ stringValue: v })
-  const writes = awards.map(({ id, ...a }) => ({
-    update: {
-      name: ctx.name(`events/${EVENT_ID}/awards/${id}`),
-      fields: {
-        tier: str(a.tier), title: str(a.title), carNumber: str(a.carNumber),
-        vehicle: str(a.vehicle), owner: str(a.owner), awardClass: str(a.awardClass),
-        photoUrl: str(a.photoUrl),
-        announced: { booleanValue: a.announced },
-        sortOrder: { integerValue: String(a.sortOrder) },
-      },
-    },
-    updateMask: {
-      fieldPaths: [
-        'tier', 'title', 'carNumber', 'vehicle', 'owner', 'awardClass',
-        'photoUrl', 'announced', 'sortOrder',
-      ],
-    },
-  }))
-  console.log(`batchWrite applied ${await batchWrite(ctx, writes)} writes`)
+  const writes = awards.map(({ id, ...a }) => {
+    const fields = {
+      tier: str(a.tier), title: str(a.title), carNumber: str(a.carNumber),
+      vehicle: str(a.vehicle), owner: str(a.owner), awardClass: str(a.awardClass),
+      photoUrl: str(a.photoUrl),
+      sortOrder: { integerValue: String(a.sortOrder) },
+    }
+    const fieldPaths = [
+      'tier', 'title', 'carNumber', 'vehicle', 'owner', 'awardClass',
+      'photoUrl', 'sortOrder',
+    ]
+    // `announced` belongs to the announcer, not the sheet: once a document
+    // exists, only the Awards tab may change whether it is on the board.
+    if (!existing.has(id)) {
+      fields.announced = { booleanValue: a.announced }
+      fieldPaths.push('announced')
+    }
+    return {
+      update: { name: ctx.name(`events/${EVENT_ID}/awards/${id}`), fields },
+      updateMask: { fieldPaths },
+    }
+  })
+  const kept = awards.filter((a) => existing.has(a.id)).length
+  console.log(
+    `batchWrite applied ${await batchWrite(ctx, writes)} writes` +
+    (kept ? ` (${kept} pre-existing awards kept their live/staged state)` : ''),
+  )
 }
 
-async function clearViaRest() {
-  const ctx = restContext()
-  const ids = []
+// Page the whole collection: an award missed here reads as new, and would get
+// its live/staged state overwritten by the sheet.
+async function listAwardIds(ctx) {
+  const ids = new Set()
   let pageToken
   do {
     const params = new URLSearchParams({ pageSize: '300', 'mask.fieldPaths': 'tier' })
@@ -241,9 +267,15 @@ async function clearViaRest() {
     const res = await fetch(`${ctx.docs}/events/${EVENT_ID}/awards?${params}`, { headers: ctx.headers })
     if (!res.ok) throw new Error(`list failed: ${res.status} ${await res.text()}`)
     const page = await res.json()
-    for (const d of page.documents ?? []) ids.push(d.name.split('/').pop())
+    for (const d of page.documents ?? []) ids.add(d.name.split('/').pop())
     pageToken = page.nextPageToken
   } while (pageToken)
+  return ids
+}
+
+async function clearViaRest() {
+  const ctx = restContext()
+  const ids = [...await listAwardIds(ctx)]
 
   const demoIds = ids.filter((id) => id.startsWith(DEMO_PREFIX))
   if (demoIds.length === 0) {

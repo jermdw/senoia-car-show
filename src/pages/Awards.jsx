@@ -9,7 +9,6 @@ import usePageMeta from '../lib/usePageMeta.js'
 import { hasPassedOnShowDay } from '../lib/showTime.js'
 import {
   FEATURED,
-  TOP50,
   matchesAwardSearch,
   sortFeatured,
   sortTop50,
@@ -75,8 +74,11 @@ export default function Awards() {
     () => sortFeatured((awards ?? []).filter((a) => a.tier === FEATURED)),
     [awards],
   )
+  // Anything that is not a featured trophy belongs on the numbered list, so a
+  // row saved without a tier still reaches the board rather than being
+  // announced by the organizer and rendered nowhere. Matches AwardsAdmin.
   const top50 = useMemo(
-    () => sortTop50((awards ?? []).filter((a) => a.tier === TOP50)),
+    () => sortTop50((awards ?? []).filter((a) => a.tier !== FEATURED)),
     [awards],
   )
   const matches = useMemo(

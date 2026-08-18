@@ -7,10 +7,14 @@
 #
 # What it does, and why:
 #  1. A dedicated service account, github-deploy, that only GitHub Actions uses.
-#  2. Least-privilege roles for `firebase deploy --only functions,hosting`
-#     (hosting admin; functions developer + serviceAccountUser to act as the
+#  2. Least-privilege roles for `firebase deploy --only firestore:rules,functions,hosting`
+#     (hosting admin; rules admin so a security-rule change ships with the page
+#     that depends on it; functions developer + serviceAccountUser to act as the
 #     runtime SA; read-only on secrets/APIs/registry so the CLI's pre-deploy
 #     checks pass). No editor/owner.
+#
+#     Re-run this script after adding a role — it is idempotent, and the deploy
+#     workflow fails loudly on the missing permission until you do.
 #  3. A Workload Identity pool + GitHub OIDC provider, restricted to THIS repo,
 #     so GitHub's short-lived job token can be exchanged for the SA — no
 #     downloaded key, nothing to rotate or leak.
@@ -52,6 +56,7 @@ bind_project_role() {
 echo "== Roles"
 for role in \
   roles/firebasehosting.admin \
+  roles/firebaserules.admin \
   roles/firebase.viewer \
   roles/cloudfunctions.developer \
   roles/iam.serviceAccountUser \
