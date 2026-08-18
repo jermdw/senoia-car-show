@@ -41,7 +41,10 @@ const EVENT_ID = '2026'
 // touching a real winner an organizer typed in alongside them.
 const DEMO_PREFIX = 'demo-'
 
-// Placeholder cars and initials-only owners — nothing here is a real entrant.
+// Placeholder cars, with owners named after cartoon characters — the demo set
+// goes on a public URL while organizers preview the board, so no row may be
+// mistakable for a real entrant. Names still use the announcer's form (first
+// name, last initial) so the layout matches a real ceremony.
 const DEMO_FEATURED = [
   ['Best in Show Car', '112', '1957 Chevrolet Bel Air', 'John D.', 'Tri-Five'],
   ['Best in Show Truck', '087', '1968 Ford F-100', 'Mike S.', 'Classic Truck'],
@@ -59,6 +62,26 @@ const DEMO_TOP50 = [
   ['10', '1965 Shelby Cobra', 'Pat V.', 'Classic Sports'],
   ['11', '1979 Jeep CJ-7', 'Sam T.', '4x4'],
   ['12', '1953 Buick Skylark', 'Nora F.', 'Post-War Classic'],
+  ['13', '1970 Plymouth Road Runner', 'Road R.', 'Muscle Car'],
+  ['14', '1949 Mercury Eight', 'Bugs B.', 'Post-War Classic'],
+  ['15', '1963 Volkswagen Beetle', 'Daffy D.', 'Import'],
+  ['16', '1957 Chevrolet Nomad', 'Porky P.', 'Tri-Five'],
+  ['17', '1936 Ford Coupe', 'Elmer F.', 'Hot Rod'],
+  ['18', '1967 Shelby GT500', 'Speedy G.', 'Muscle Car'],
+  ['19', '1952 Willys Jeep', 'Yosemite S.', '4x4'],
+  ['20', '1961 Jaguar E-Type', 'Pepé L.', 'Classic Sports'],
+  ['21', '1958 Chevrolet Apache', 'Foghorn L.', 'Classic Truck'],
+  ['22', '1959 Cadillac Coupe DeVille', 'Tweety B.', 'Post-War Classic'],
+  ['23', '1969 Dodge Charger', 'Sylvester C.', 'Muscle Car'],
+  ['24', '1932 Ford Tudor', 'Marvin M.', 'Hot Rod'],
+  ['25', '1968 Volvo P1800', 'Taz D.', 'Import'],
+  ['26', '1956 Chevrolet 3100', 'Granny G.', 'Classic Truck'],
+  ['27', '1964 Buick Riviera', 'Lola B.', 'Post-War Classic'],
+  ['28', '1955 Chevrolet Bel Air', 'Wile E. C.', 'Tri-Five'],
+  ['29', '1948 Chevrolet Fleetmaster', 'Michigan F.', 'Post-War Classic'],
+  ['30', '1972 Chevrolet K5 Blazer', 'Ralph W.', '4x4'],
+  ['31', '1957 Ford Fairlane 500', 'Sam S.', 'Post-War Classic'],
+  ['32', '1934 Ford Roadster', 'Beaky B.', 'Hot Rod'],
 ]
 
 function parseCsv(text) {
