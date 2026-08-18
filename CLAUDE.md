@@ -36,7 +36,9 @@ Prod seed (idempotent, preserves `spotsFilled`):
   behind `React.lazy` so the Firebase SDK stays out of the chunk every spectator
   downloads — **keep public pages free of any `src/firebase.js` import** (including
   indirectly, via a component such as `AwardsAdmin`) or that split collapses.
-  Eight nav links no longer fit iPad portrait, so the full header bar starts at `lg`.
+  The header bar fits exactly seven links at `md`, so a new one costs an existing
+  one — `/awards` took the Vendors slot, and `/vendors` is reached from the
+  landing page card.
 - **Show day guide** (`/map`): base map is a Mapbox Static Images export at a fixed
   bounding box; `src/lib/venueGeo.js` converts lat/lon to a position on it exactly, so
   pins are geocoded, never hand-placed. Content lives in `src/data/eventMap.js`, where

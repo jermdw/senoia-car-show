@@ -17,7 +17,6 @@ const LINKS = [
   { to: '/awards', label: 'Awards' },
   { to: '/poker-run', label: 'Poker Run' },
   { to: '/sponsors', label: 'Sponsors' },
-  { to: '/vendors', label: 'Vendors' },
   { to: '/merch', label: 'Merch' },
   { to: '/volunteer', label: 'Volunteer' },
 ]
@@ -26,10 +25,10 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false)
 
   // Seven links + "Organizers" only just fit the md band (768–~830px, iPad
-  // portrait); the eighth ("Awards") does not, and a wrapped second line grows
-  // the sticky bar on every page. So the full bar now starts at lg and iPad
-  // portrait gets the menu button — the padding below still tightens below lg
-  // for the same reason.
+  // portrait) — tighter padding there and no wrapping, or two-word labels
+  // break onto a second line and the sticky bar grows. An eighth link does not
+  // fit, which is why "Awards" took the Vendors slot rather than joining it;
+  // Vendors is reached from the card on the landing page.
   const linkClass = ({ isActive }) =>
     `font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
       isActive ? 'text-gold' : 'text-cream hover:text-gold-pale'
@@ -41,7 +40,7 @@ export default function SiteHeader() {
         <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
           <img src={logo} alt="The Senoia Car Show — home" className="h-14 w-auto" />
         </Link>
-        <nav className="hidden lg:flex flex-1 justify-end items-center">
+        <nav className="hidden md:flex flex-1 justify-end items-center">
           {LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
               {l.label}
@@ -59,13 +58,13 @@ export default function SiteHeader() {
           onClick={() => setOpen(!open)}
           aria-label="Menu"
           aria-expanded={open}
-          className="lg:hidden ml-auto text-cream text-3xl leading-none px-2"
+          className="md:hidden ml-auto text-cream text-3xl leading-none px-2"
         >
           ☰
         </button>
       </div>
       {open && (
-        <nav className="lg:hidden border-t border-gold/20 px-4 pb-3 flex flex-col">
+        <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
