@@ -2,11 +2,19 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
 
+// `advance` is the Ticket Tailor list price on the live registration event;
+// `sameDay` is the organizers' gate price, which Ticket Tailor never sees.
+// Main Street and North Main are fixed-size blocks and both sold out, so those
+// rows say so rather than quoting an advance price that would send owners to a
+// checkout with nothing in it for them. General parking is the only tier still
+// on open sale — the car corral tiers are access-code blocks held for car clubs
+// and deliberately stay off the public pages.
 const PRICING = [
-  { area: 'Main Street', advance: '$40', sameDay: '$50' },
-  { area: 'North Main Street', advance: '$30', sameDay: '$40' },
-  { area: 'General Parking', advance: '$25', sameDay: '$30' },
+  { area: 'Main Street', advance: '$40', sameDay: '$50', soldOut: true },
+  { area: 'North Main Street', advance: '$30', sameDay: '$40', soldOut: true },
+  { area: 'General Parking', advance: REGISTRATION_PRICE, sameDay: '$25' },
 ]
 
 const DATES = [
@@ -81,18 +89,42 @@ export default function Show() {
               {PRICING.map((r) => (
                 <tr key={r.area} className="border-t border-stone-100">
                   <td className="px-4 py-3 font-semibold text-ink">{r.area}</td>
-                  <td className="px-4 py-3 text-stone-700">{r.advance}</td>
+                  <td className="px-4 py-3 text-stone-700">
+                    {r.soldOut ? (
+                      <span className="flex flex-wrap items-center gap-2">
+                        <s className="text-stone-400">{r.advance}</s>
+                        <span className="font-display uppercase tracking-wide text-xs text-stone-500 border border-stone-300 rounded px-1.5 py-0.5">
+                          Sold out
+                        </span>
+                      </span>
+                    ) : (
+                      r.advance
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-stone-700">{r.sameDay}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <p className="text-stone-600 text-sm mb-4">
+          Advance registration is online through the Senoia DDA box office, and
+          general parking is the tier still on sale. Registering is for show
+          vehicles only &mdash; spectator admission and parking are always free.
+        </p>
+        <p className="mb-4">
+          <a
+            href={REGISTRATION_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
+          >
+            Register Your Vehicle &mdash; {REGISTRATION_PRICE}
+          </a>
+        </p>
         <p className="text-stone-600 text-sm mb-8">
-          Registration is for show vehicles only &mdash; spectator admission and
-          parking are always free. Same-day registration runs at the registration
-          tent from 7:00 to 11:00 AM on show day; check in by 10:00 AM to be
-          eligible for awards.
+          Same-day registration runs at the registration tent from 7:00 to
+          11:00 AM on show day; check in by 10:00 AM to be eligible for awards.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">

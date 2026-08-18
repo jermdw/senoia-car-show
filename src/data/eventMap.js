@@ -510,7 +510,7 @@ export const SCHEDULE = [
     time: '07:00',
     label: 'Registration opens',
     poiId: 'registration',
-    detail: 'Same-day registration is $30. Closes at 11:00am.',
+    detail: 'Same-day registration is $25. Closes at 11:00am.',
     confirmed: true,
   },
   {
