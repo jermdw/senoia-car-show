@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { pushPageView } from './gtm.js'
 
 const ORIGIN = 'https://senoiacar.show'
 
@@ -26,6 +27,7 @@ function upsertMeta(attr, key, content) {
 export default function usePageMeta({ title, description, path, noindex = false }) {
   useEffect(() => {
     document.title = title
+    pushPageView(title)
     upsertMeta('name', 'description', description)
     upsertMeta('property', 'og:title', title)
     upsertMeta('property', 'og:description', description)
