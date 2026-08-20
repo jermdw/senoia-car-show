@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import AppRoutes from './AppRoutes.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
+import { initGtm } from './lib/gtm.js'
+
+if (import.meta.env.PROD) initGtm()
 
 class ErrorBoundary extends Component {
   state = { failed: false }
