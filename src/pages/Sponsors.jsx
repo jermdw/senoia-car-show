@@ -20,6 +20,7 @@ import progressiveLogo from '../assets/sponsor-progressive-heating-air.webp'
 import dentGuysLogo from '../assets/sponsor-dent-guys.webp'
 import filmoresLogo from '../assets/sponsor-filmores-garage.webp'
 import scrubBrosLogo from '../assets/sponsor-scrubbros-detailing.webp'
+import superiorTreeLogo from '../assets/sponsor-superior-tree-service.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -71,6 +72,8 @@ const SPONSORS_2026 = [
     sponsors: [
       { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333, url: 'https://clarissauhl.bhhsgeorgia.com/' },
       { name: "Crook's Tire & Auto", logo: crooksLogo, w: 400, h: 181, url: 'https://www.crookstire.com/' },
+      // No standalone website found — links to their listed phone number instead.
+      { name: 'Superior Tree Service', logo: superiorTreeLogo, w: 400, h: 229, url: 'tel:+16784914703' },
     ],
   },
 ]
