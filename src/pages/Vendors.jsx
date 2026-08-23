@@ -113,8 +113,15 @@ export default function Vendors() {
                   />
                 </LogoCell>
               ) : (
-                <div className="w-full h-full flex items-center justify-center p-4 text-center">
-                  <span className="font-display uppercase tracking-wide text-ink">{name}</span>
+                /* Placeholder "logo" for vendors whose artwork we don't have yet:
+                   a plain bordered wordmark so the row reads as a logo cell and
+                   the listing looks complete. Rendered in markup rather than as
+                   an image so it stays sharp at any DPI and costs no bytes —
+                   dropping in real artwork is just adding `logo`/`w`/`h` above. */
+                <div className="w-full h-full flex items-center justify-center p-3">
+                  <span className="w-full border border-ink bg-white px-2 py-3 text-center font-display uppercase tracking-wide text-ink text-sm leading-tight">
+                    {name}
+                  </span>
                 </div>
               )}
             </li>
