@@ -63,7 +63,7 @@ const SPONSORS_2026 = [
     sponsors: [
       { name: 'The Dent Guys', logo: dentGuysLogo, w: 400, h: 181, url: 'https://dentguysatl.com/' },
       { name: "Filmore's Garage", logo: filmoresLogo, w: 400, h: 217, url: 'https://www.filmoresgarage.com/' },
-      { name: 'ScrubBros Detailing', logo: scrubBrosLogo, w: 400, h: 328, url: 'https://scrubbrosdetailing.org/' },
+      { name: 'ScrubBros Detailing', logo: scrubBrosLogo, w: 400, h: 326, url: 'https://scrubbrosdetailing.org/' },
     ],
   },
   {
