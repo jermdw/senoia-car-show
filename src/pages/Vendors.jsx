@@ -8,6 +8,7 @@ import littleMissJuicyLogo from '../assets/vendor-little-miss-juicy.webp'
 import auntZestysLogo from '../assets/vendor-aunt-zestys.webp'
 import kettleworksLogo from '../assets/vendor-kettleworks.webp'
 import bigDaddysLogo from '../assets/vendor-big-daddys-peanuts.webp'
+import perroLogo from '../assets/vendor-mr-perro-atl.webp'
 
 // The 2026 food vendor roster, supplied by Valerie Kinney (enjoysenoiafoodtrucks@
 // gmail.com), the DDA's food truck coordinator, on 2026-08-22 — her order is kept.
@@ -20,16 +21,18 @@ import bigDaddysLogo from '../assets/vendor-big-daddys-peanuts.webp'
 // **Circle M Barbeque** (Byrom Rd, Senoia), and `circlembbq.com` is an unrelated
 // whole-hog restaurant in Liberty, SC — it must never become this row's `url`.
 //
-// Mr. Perro ATL, Circle M Barbeque and Fosters Sandwiches have no artwork we
-// could source and no findable site, so they fall back to a plain name cell,
-// exactly as `SS Chassis Works` does on /sponsors. Val has their contacts and is
-// the right person to ask for logos — a wrong logo is worse than a text cell.
-// Kettleworks has artwork but no verified site, so its cell is deliberately
-// unlinked: `logo` and `url` are independent here, unlike the sponsor grid,
-// because food trucks routinely have one without the other.
+// Circle M Barbeque and Fosters Sandwiches have no artwork we could source and
+// no findable site, so they fall back to a plain name cell, exactly as
+// `SS Chassis Works` does on /sponsors. Val has their contacts and is the right
+// person to ask for logos — a wrong logo is worse than a text cell.
+// Kettleworks and Mr. Perro ATL have artwork but no standalone site (Mr. Perro's
+// logo is their Facebook profile picture, pulled 2026-08-23; only a Facebook page
+// exists), so those cells are deliberately unlinked: `logo` and `url` are
+// independent here, unlike the sponsor grid, because food trucks routinely have
+// one without the other.
 const FOOD_VENDORS_2026 = [
   { name: 'The Varsity', logo: varsityLogo, w: 400, h: 55, url: 'https://www.thevarsity.com/' },
-  { name: 'Mr. Perro ATL' },
+  { name: 'Mr. Perro ATL', logo: perroLogo, w: 400, h: 400 },
   { name: 'Circle M Barbeque' },
   { name: 'The Mad Greek', logo: madGreekLogo, w: 315, h: 315, url: 'https://www.themadgreekfood.com/' },
   { name: 'Jalapeno Express', logo: jalapenoLogo, w: 400, h: 160, url: 'https://jalapenoexpressbbq.com/' },
