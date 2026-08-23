@@ -1,22 +1,57 @@
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import varsityLogo from '../assets/vendor-varsity.webp'
+import madGreekLogo from '../assets/vendor-mad-greek.webp'
+import jalapenoLogo from '../assets/vendor-jalapeno-express.webp'
+import littleMissJuicyLogo from '../assets/vendor-little-miss-juicy.webp'
+import auntZestysLogo from '../assets/vendor-aunt-zestys.webp'
+import kettleworksLogo from '../assets/vendor-kettleworks.webp'
+import bigDaddysLogo from '../assets/vendor-big-daddys-peanuts.webp'
 
 // The 2026 food vendor roster, supplied by Valerie Kinney (enjoysenoiafoodtrucks@
 // gmail.com), the DDA's food truck coordinator, on 2026-08-22 — her order is kept.
 // Names are stored in title case; the cells render `uppercase` in CSS.
+//
+// Names and `url`s were verified against the vendors' own Ticket Tailor food
+// registrations (buyer email / menu description), which is the only place the
+// trading identity is recorded — the checkout form never asks for a business
+// name. Two traps that costs us if forgotten: Val's "CIRCLE M BBQ" trades as
+// **Circle M Barbeque** (Byrom Rd, Senoia), and `circlembbq.com` is an unrelated
+// whole-hog restaurant in Liberty, SC — it must never become this row's `url`.
+//
+// Mr. Perro ATL, Circle M Barbeque and Fosters Sandwiches have no artwork we
+// could source and no findable site, so they fall back to a plain name cell,
+// exactly as `SS Chassis Works` does on /sponsors. Val has their contacts and is
+// the right person to ask for logos — a wrong logo is worse than a text cell.
+// Kettleworks has artwork but no verified site, so its cell is deliberately
+// unlinked: `logo` and `url` are independent here, unlike the sponsor grid,
+// because food trucks routinely have one without the other.
 const FOOD_VENDORS_2026 = [
-  { name: 'The Varsity' },
+  { name: 'The Varsity', logo: varsityLogo, w: 400, h: 55, url: 'https://www.thevarsity.com/' },
   { name: 'Mr. Perro ATL' },
-  { name: 'Circle M BBQ' },
-  { name: 'The Mad Greek' },
-  { name: 'Jalapeno Express' },
+  { name: 'Circle M Barbeque' },
+  { name: 'The Mad Greek', logo: madGreekLogo, w: 315, h: 315, url: 'https://www.themadgreekfood.com/' },
+  { name: 'Jalapeno Express', logo: jalapenoLogo, w: 400, h: 160, url: 'https://jalapenoexpressbbq.com/' },
   { name: 'Fosters Sandwiches' },
-  { name: 'Little Miss Juicy' },
-  { name: 'Aunt Zesty\u2019s' },
-  { name: 'Kettleworks' },
-  { name: "Big Daddy's Peanuts" },
+  { name: 'Little Miss Juicy', logo: littleMissJuicyLogo, w: 290, h: 290, url: 'https://linktr.ee/littlemissjuicy' },
+  { name: 'Aunt Zesty\u2019s', logo: auntZestysLogo, w: 400, h: 59, url: 'https://auntzestys.com/' },
+  { name: 'Kettleworks', logo: kettleworksLogo, w: 400, h: 363 },
+  { name: "Big Daddy's Peanuts", logo: bigDaddysLogo, w: 400, h: 273, url: 'https://bigdaddyspeanuts.com/' },
 ]
+
+// A logo sits inside the cell either way; it only becomes a link when we have a
+// site we actually verified belongs to that vendor.
+function LogoCell({ url, children }) {
+  const className = 'w-full h-full flex items-center justify-center p-4'
+  return url ? (
+    <a href={url} target="_blank" rel="noreferrer" className={className}>
+      {children}
+    </a>
+  ) : (
+    <div className={className}>{children}</div>
+  )
+}
 
 export default function Vendors() {
   usePageMeta({
@@ -53,13 +88,35 @@ export default function Vendors() {
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
           2026 Food Vendors
         </h2>
-        <ul className="mb-8 grid gap-2 sm:grid-cols-2">
-          {FOOD_VENDORS_2026.map((v) => (
+        <ul className="mb-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          {FOOD_VENDORS_2026.map(({ name, logo, w, h, url }) => (
             <li
-              key={v.name}
-              className="bg-white rounded-lg border border-stone-200 px-4 py-3 font-display uppercase tracking-wide text-ink"
+              key={name}
+              className="bg-white rounded-xl border border-stone-200 hover:border-gold transition-colors h-32"
             >
-              {v.name}
+              {/* Same cell contract as the sponsor grid: the whole cell is the
+                  link so a wordmark surrounded by whitespace is still an easy
+                  target, width/height carry the intrinsic ratio so the grid
+                  doesn't reflow as logos load, and a fixed-height cell with
+                  object-contain keeps wildly different aspect ratios tidy.
+                  Not lazy-loaded, for the same reason as /sponsors. Unlike that
+                  grid, a logo without a `url` renders unlinked rather than
+                  falling back to text — see the roster comment. */}
+              {logo ? (
+                <LogoCell url={url}>
+                  <img
+                    src={logo}
+                    alt={name}
+                    width={w}
+                    height={h}
+                    className="max-h-full max-w-full w-auto h-auto object-contain"
+                  />
+                </LogoCell>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center p-4 text-center">
+                  <span className="font-display uppercase tracking-wide text-ink">{name}</span>
+                </div>
+              )}
             </li>
           ))}
         </ul>
