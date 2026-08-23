@@ -2,6 +2,22 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
 
+// The 2026 food vendor roster, supplied by Valerie Kinney (enjoysenoiafoodtrucks@
+// gmail.com), the DDA's food truck coordinator, on 2026-08-22 — her order is kept.
+// Names are stored in title case; the cells render `uppercase` in CSS.
+const FOOD_VENDORS_2026 = [
+  { name: 'The Varsity' },
+  { name: 'Mr. Perro ATL' },
+  { name: 'Circle M BBQ' },
+  { name: 'The Mad Greek' },
+  { name: 'Jalapeno Express' },
+  { name: 'Fosters Sandwiches' },
+  { name: 'Little Miss Juicy' },
+  { name: 'Aunt Zesty\u2019s' },
+  { name: 'Kettleworks' },
+  { name: "Big Daddy's Peanuts" },
+]
+
 export default function Vendors() {
   usePageMeta({
     title: 'Vendors & Food Trucks | Senoia Car Show',
@@ -38,18 +54,12 @@ export default function Vendors() {
           2026 Food Vendors
         </h2>
         <ul className="mb-8 grid gap-2 sm:grid-cols-2">
-          {[
-            'The Varsity',
-            'Jalapeno Express',
-            'The Mad Greek',
-            'Little Miss Juicy',
-            "Aunt Zesty’s",
-          ].map((v) => (
+          {FOOD_VENDORS_2026.map((v) => (
             <li
-              key={v}
+              key={v.name}
               className="bg-white rounded-lg border border-stone-200 px-4 py-3 font-display uppercase tracking-wide text-ink"
             >
-              {v}
+              {v.name}
             </li>
           ))}
         </ul>
