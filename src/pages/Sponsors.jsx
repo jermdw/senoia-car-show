@@ -22,6 +22,7 @@ import dentGuysLogo from '../assets/sponsor-dent-guys.webp'
 import filmoresLogo from '../assets/sponsor-filmores-garage.webp'
 import scrubBrosLogo from '../assets/sponsor-scrubbros-detailing.webp'
 import superiorTreeLogo from '../assets/sponsor-superior-tree-service.webp'
+import patriotLogo from '../assets/sponsor-patriot-performance.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -65,6 +66,13 @@ const SPONSORS_2026 = [
       { name: 'The Dent Guys', logo: dentGuysLogo, w: 400, h: 181, url: 'https://dentguysatl.com/' },
       { name: "Filmore's Garage", logo: filmoresLogo, w: 400, h: 217, url: 'https://www.filmoresgarage.com/' },
       { name: 'ScrubBros Detailing', logo: scrubBrosLogo, w: 400, h: 326, url: 'https://scrubbrosdetailing.org/' },
+      // The Williamson GA engine shop (~25 min out), not one of the several
+      // unrelated "Patriot Performance" businesses elsewhere — confirmed by
+      // matching the supplied artwork to their site's own header logo, which
+      // is the same lockup in its dark-background variant (white
+      // "Performance"); the file here is the light-background variant that
+      // reads on these white cells.
+      { name: 'Patriot Performance Engines', logo: patriotLogo, w: 400, h: 78, url: 'https://www.patriotperformanceengines.com/' },
     ],
   },
   {
