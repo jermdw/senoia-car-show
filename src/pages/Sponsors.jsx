@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
@@ -168,6 +169,17 @@ export default function Sponsors() {
               ) : (
                 <p className={`mt-4 text-xs uppercase tracking-wide font-display ${t.featured ? 'text-gold-pale/70' : 'text-stone-500'}`}>
                   Reserved through the SDDA
+                  {' · '}
+                  {/* Without this the note is a dead end: an already-approved
+                      sponsor reading it has no idea the payment instructions
+                      exist further down the page. Router Link rather than a bare
+                      anchor so ScrollToTop does the fragment scroll. */}
+                  <Link
+                    to="/sponsors#approved-payment"
+                    className={`underline underline-offset-2 ${t.featured ? 'text-gold hover:text-gold-pale' : 'text-gold-dark hover:text-ink'}`}
+                  >
+                    Approved? Pay here
+                  </Link>
                 </p>
               )}
             </div>
@@ -216,7 +228,10 @@ export default function Sponsors() {
             publish here even if we wanted to, and publishing one would let
             anyone buy a reserved space. The code stays in the SDDA's approval
             email; this block only tells them where to spend it. */}
-        <div className="mt-4 rounded-xl border border-stone-300 bg-white p-5">
+        <div
+          id="approved-payment"
+          className="scroll-mt-24 mt-4 rounded-xl border border-stone-300 bg-white p-5"
+        >
           <p className="font-display uppercase tracking-wide text-ink mb-2">
             Already approved for Title, Gold or Silver?
           </p>
