@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  collection, deleteDoc, doc, getDocs, onSnapshot, query, runTransaction, setDoc, updateDoc, where,
+  collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, runTransaction, setDoc, updateDoc, where,
 } from 'firebase/firestore'
 import {
   GoogleAuthProvider, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail,
@@ -184,6 +184,19 @@ function Dashboard({ user }) {
   const [editing, setEditing] = useState(null) // shift object or 'new'
   const [openRoster, setOpenRoster] = useState(null) // shiftId
   const [tab, setTab] = useState('volunteers') // volunteers | awards
+  // Defaults to read-only until the admin doc loads, so edit controls never
+  // flash on for a viewer before their role is known.
+  const [role, setRole] = useState(null)
+  const isViewer = role !== 'admin'
+
+  useEffect(() => {
+    getDoc(doc(db, 'admins', user.email))
+      .then((snap) => setRole(snap.exists() ? snap.data().role : null))
+      .catch((err) => {
+        console.error('role lookup failed', err)
+        setRole(null)
+      })
+  }, [user.email])
 
   useEffect(() => {
     // Only permission-denied means "not an organizer" — anything else
@@ -358,9 +371,11 @@ function Dashboard({ user }) {
             <button onClick={exportCsv} className="bg-gold text-ink font-semibold px-4 py-2 rounded-lg text-sm">
               Export CSV
             </button>
-            <button onClick={() => setEditing('new')} className="bg-white/10 px-4 py-2 rounded-lg text-sm">
-              + Add Shift
-            </button>
+            {!isViewer && (
+              <button onClick={() => setEditing('new')} className="bg-white/10 px-4 py-2 rounded-lg text-sm">
+                + Add Shift
+              </button>
+            )}
           </>
         )}
         <button onClick={() => signOut(auth)} className="text-stone-400 underline text-sm">Sign out</button>
@@ -368,7 +383,7 @@ function Dashboard({ user }) {
 
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-4xl mx-auto px-4 flex gap-1">
-          {[['volunteers', 'Volunteers'], ['awards', 'Awards']].map(([id, label]) => (
+          {[['volunteers', 'Volunteers'], !isViewer && ['awards', 'Awards']].filter(Boolean).map(([id, label]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -423,8 +438,12 @@ function Dashboard({ user }) {
                     }`}>
                       {roster.length} / {shift.spotsTotal}
                     </span>
-                    <button onClick={() => setEditing(shift)} className="text-stone-500 underline text-sm">Edit</button>
-                    <button onClick={() => deleteShift(shift)} className="text-red-500 underline text-sm">Delete</button>
+                    {!isViewer && (
+                      <>
+                        <button onClick={() => setEditing(shift)} className="text-stone-500 underline text-sm">Edit</button>
+                        <button onClick={() => deleteShift(shift)} className="text-red-500 underline text-sm">Delete</button>
+                      </>
+                    )}
                   </div>
                   {open && (
                     <div className="border-t border-stone-100 p-3">
@@ -447,11 +466,13 @@ function Dashboard({ user }) {
                                     <span className="text-stone-300 text-xs">—</span>
                                   )}
                                 </td>
-                                <td className="py-1 text-right">
-                                  <button onClick={() => removeVolunteer(v)} className="text-red-500 underline">
-                                    Remove
-                                  </button>
-                                </td>
+                                {!isViewer && (
+                                  <td className="py-1 text-right">
+                                    <button onClick={() => removeVolunteer(v)} className="text-red-500 underline">
+                                      Remove
+                                    </button>
+                                  </td>
+                                )}
                               </tr>
                             ))}
                           </tbody>

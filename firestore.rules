@@ -3,10 +3,26 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function adminDocExists() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    function adminRole() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data.role;
+    }
+
+    // Full organizer: can manage shifts, remove volunteers, stage awards.
     function isAdmin() {
-      return request.auth != null
-        && request.auth.token.email_verified == true
-        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+      return signedIn() && adminDocExists() && adminRole() == 'admin';
+    }
+
+    // Read-only: sees the volunteer roster (signups) but cannot write.
+    function isViewer() {
+      return signedIn() && adminDocExists() && adminRole() == 'viewer';
     }
 
     // Public event + shift info (counts only, never PII)
@@ -34,7 +50,8 @@ service cloud.firestore {
     // Volunteer PII — never publicly readable. Volunteers write via Cloud
     // Functions (Admin SDK bypasses rules); organizers manage via dashboard.
     match /signups/{signupId} {
-      allow read, update: if isAdmin();
+      allow read: if isAdmin() || isViewer();
+      allow update: if isAdmin();
       allow create, delete: if false;
     }
 
