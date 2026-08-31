@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
@@ -7,6 +7,7 @@ import MapCanvas from '../components/MapCanvas.jsx'
 import PoiList from '../components/PoiList.jsx'
 import ScheduleList from '../components/ScheduleList.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { isWithinMap } from '../lib/venueGeo.js'
 import {
   CATEGORIES,
   POIS,
@@ -49,12 +50,17 @@ export default function EventMap() {
   // Which tab is showing also lives in the URL, so signage can QR straight to the
   // schedule (/map?view=schedule) the same way it can QR to a single pin.
   const view = searchParams.get('view') === 'schedule' ? 'schedule' : 'locations'
-  const setView = (v) => {
-    const next = new URLSearchParams(searchParams)
-    if (v === 'schedule') next.set('view', v)
-    else next.delete('view')
-    setSearchParams(next, { replace: true })
-  }
+  // Memoised because an effect below depends on it: rebuilt every render, it would
+  // re-run that effect every render.
+  const setView = useCallback(
+    (v) => {
+      const next = new URLSearchParams(searchParams)
+      if (v === 'schedule') next.set('view', v)
+      else next.delete('view')
+      setSearchParams(next, { replace: true })
+    },
+    [searchParams, setSearchParams],
+  )
 
   // Arrow/Home/End movement between tabs, per the ARIA tabs pattern. Focus has to
   // follow the selection: with roving tabindex the old tab drops to tabIndex=-1, so
@@ -96,10 +102,55 @@ export default function EventMap() {
   const visible = pois.filter((p) => active.includes(p.category))
   const allOn = active.length === categories.length
 
-  const toggle = (id) =>
+  const toggle = (id) => {
+    const turningOff = active.includes(id)
     setActive((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+      turningOff ? prev.filter((c) => c !== id) : [...prev, id],
     )
+    // Hiding a category leaves a selected POI in it with no visible pin and no list
+    // row, while ?poi= goes on claiming a selection the page cannot show anywhere.
+    // Filtering it away is a deselection, so say so in the URL.
+    if (turningOff && selectedId) {
+      const poi = pois.find((p) => p.id === selectedId)
+      if (poi?.category === id) selectPoi(null)
+    }
+  }
+
+  // A selection has to be visible somewhere, and both of the things that can show
+  // one are conditional: MapCanvas centres on a pin only while its category is
+  // filtered in, and an off-map POI has no pin at all — its row in the locations
+  // list is the only representation it has. So a POI selected while its category is
+  // hidden (from the schedule tab, where the map ignores the filters, or straight
+  // from a ?poi= URL) ends up named by the URL and shown by nothing. Selecting is a
+  // request to see the thing, so the filter yields to it.
+  const selected = selectedId ? pois.find((p) => p.id === selectedId) : null
+  const selectedPinned = !!selected && isWithinMap(selected.lat, selected.lon)
+  useEffect(() => {
+    if (!selected) return
+    setActive((prev) =>
+      prev.includes(selected.category) ? prev : [...prev, selected.category],
+    )
+    // Guarded rather than called unconditionally: `searchParams` changes identity on
+    // every URL write, so an unguarded call here would write on each of its own
+    // re-runs. With the guard the write can only happen once per tab state.
+    if (!selectedPinned && view === 'schedule') setView('locations')
+  }, [selected, selectedPinned, view, setView])
+
+  // Scroll to the row once it is actually reachable — the two writes above land a
+  // render later, and scrollIntoView on a hidden panel does nothing. Once per
+  // selection: re-running it on every filter change would yank the page around
+  // while the visitor is using the chips.
+  const scrolledFor = useRef(null)
+  useEffect(() => {
+    if (!selectedId) {
+      scrolledFor.current = null
+      return
+    }
+    if (scrolledFor.current === selectedId || !selected || selectedPinned) return
+    if (view !== 'locations' || !active.includes(selected.category)) return
+    scrolledFor.current = selectedId
+    document.getElementById(`poi-item-${selectedId}`)?.scrollIntoView({ block: 'center' })
+  }, [selectedId, selected, selectedPinned, view, active])
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -245,14 +296,38 @@ export default function EventMap() {
           <p className="font-script text-gold text-2xl mb-2">
             Planning your day?
           </p>
-          <a
-            href="/flyer-2026.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
-          >
-            Download Info Flyer (PDF)
-          </a>
+          <p className="text-gold-pale/90 mb-4">
+            Take the whole guide with you &mdash; the map, every location and the
+            schedule print onto one sheet, or save as a PDF from the print dialog.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            {/* The page already has a full print stylesheet (both tab panels are
+                rendered, filters are ignored, the map resets to the whole venue on
+                beforeprint) — but nothing invoked it, so people asked us for a
+                downloadable map that was already sitting behind Ctrl+P. */}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
+            >
+              Print / Save as PDF
+            </button>
+            <a
+              href="/flyer-2026.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold uppercase tracking-wider px-8 py-[0.625rem] rounded-md transition-colors"
+            >
+              Download Info Flyer (PDF)
+            </a>
+          </div>
+          <p className="mt-5 text-gold-pale/90">
+            Bringing a car, a hauler, or a tent?{' '}
+            <Link to="/faq" className="text-cream underline underline-offset-2 hover:text-gold-pale">
+              Gate times and load-in answers
+            </Link>{' '}
+            are on the FAQ.
+          </p>
         </div>
       </main>
       <SiteFooter />

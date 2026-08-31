@@ -36,12 +36,15 @@ export default function SiteHeader() {
     }`
 
   return (
-    <header className="bg-ink sticky top-0 z-40 shadow-lg shadow-black/30">
+    // print:static — a sticky header prints wherever the viewport left it, which
+    // dropped the bar into the middle of the show day guide's printed handout.
+    // Static keeps it as a masthead at the top; the nav itself is dead ink on paper.
+    <header className="bg-ink sticky top-0 z-40 shadow-lg shadow-black/30 print:static print:shadow-none">
       <div className="max-w-5xl mx-auto flex items-center gap-2 px-4 py-2">
         <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
           <img src={logo} alt="The Senoia Car Show — home" className="h-14 w-auto" />
         </Link>
-        <nav className="hidden md:flex flex-1 justify-end items-center">
+        <nav className="hidden md:flex flex-1 justify-end items-center print:hidden">
           {LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
               {l.label}
@@ -59,13 +62,15 @@ export default function SiteHeader() {
           onClick={() => setOpen(!open)}
           aria-label="Menu"
           aria-expanded={open}
-          className="md:hidden ml-auto text-cream text-3xl leading-none px-2"
+          className="md:hidden ml-auto text-cream text-3xl leading-none px-2 print:hidden"
         >
           ☰
         </button>
       </div>
       {open && (
-        <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col">
+        // print:hidden too — the toggle that opened this is itself hidden on paper,
+        // so an open menu would print as an unexplained list of links.
+        <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col print:hidden">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}

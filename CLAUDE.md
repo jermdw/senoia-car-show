@@ -29,7 +29,7 @@ Prod seed (idempotent, preserves `spotsFilled`):
 
 - **SPA**: React 19 + Vite + Tailwind v4, routes in `src/AppRoutes.jsx` (`src/main.jsx`
   is just the error boundary + router): public info pages (`/`, `/show`, `/map`,
-  `/sponsors`, `/vendors`, `/merch`) use the shared `SiteHeader`/`SiteFooter`
+  `/sponsors`, `/vendors`, `/merch`, `/faq`) use the shared `SiteHeader`/`SiteFooter`
   components; `/awards` (live award board), `/volunteer` (shift board),
   `/cancel?token=` (from confirmation emails), `/admin` (organizer dashboard).
   The four Firebase-touching routes (`/awards`, `/volunteer`, `/cancel`, `/admin`) are
@@ -38,7 +38,16 @@ Prod seed (idempotent, preserves `spotsFilled`):
   indirectly, via a component such as `AwardsAdmin`) or that split collapses.
   The header bar fits exactly seven links at `md`, so a new one costs an existing
   one. `/awards` is deliberately kept out of the nav between shows — it is
-  reached from `/show` — and takes a slot back when the ceremony is close.
+  reached from `/show` — and takes a slot back when the ceremony is close. `/faq`
+  is reached from the footer (on every page) plus `/show`, `/map` and `/vendors`,
+  for the same reason.
+- **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
+  email them in. Content is `src/data/faq.js`, which re-states facts that already
+  live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new
+  ones, and carries the same `confirmed` flag convention. Answers are plain strings
+  with a separate `links` array so one copy feeds both the page and its FAQPage
+  JSON-LD. Every question is deep-linkable (`/faq#car-haulers`) and opens on
+  arrival — organizers answer email with those links, so cold loads must work.
 - **Show day guide** (`/map`): base map is a Mapbox Static Images export at a fixed
   bounding box; `src/lib/venueGeo.js` converts lat/lon to a position on it exactly, so
   pins are geocoded, never hand-placed. Content lives in `src/data/eventMap.js`, where

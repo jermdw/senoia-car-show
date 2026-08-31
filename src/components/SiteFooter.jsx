@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function SiteFooter() {
   return (
     <footer className="bg-ink text-gold-pale/70 text-sm">
@@ -13,6 +15,14 @@ export default function SiteFooter() {
             <a className="underline hover:text-gold-pale" href="tel:+17707279173">(770) 727-9173</a>
           </p>
           <p className="mt-1">PO Box 310, Senoia, GA 30276</p>
+          {/* The header bar is full at seven links, so the FAQ reaches every page
+              from here instead — it is the answer to most of what arrives in that
+              inbox, and it should be visible next to the address people write to. */}
+          <p className="mt-3">
+            <Link className="underline hover:text-gold-pale" to="/faq">
+              Frequently asked questions
+            </Link>
+          </p>
         </div>
         <div>
           <p className="font-display uppercase tracking-wide text-cream mb-2">The Show</p>
