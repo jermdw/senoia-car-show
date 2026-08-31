@@ -107,10 +107,19 @@ export default function EventMap() {
   const visible = pois.filter((p) => active.includes(p.category))
   const allOn = active.length === categories.length
 
-  const toggle = (id) =>
+  const toggle = (id) => {
+    const turningOff = active.includes(id)
     setActive((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+      turningOff ? prev.filter((c) => c !== id) : [...prev, id],
     )
+    // Hiding a category leaves a selected POI in it with no visible pin and no list
+    // row, while ?poi= goes on claiming a selection the page cannot show anywhere.
+    // Filtering it away is a deselection, so say so in the URL.
+    if (turningOff && selectedId) {
+      const poi = pois.find((p) => p.id === selectedId)
+      if (poi?.category === id) selectPoi(null)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">

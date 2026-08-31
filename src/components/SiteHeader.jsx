@@ -68,7 +68,9 @@ export default function SiteHeader() {
         </button>
       </div>
       {open && (
-        <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col">
+        // print:hidden too — the toggle that opened this is itself hidden on paper,
+        // so an open menu would print as an unexplained list of links.
+        <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col print:hidden">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}

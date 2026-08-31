@@ -35,6 +35,15 @@ function useFaqJsonLd(items) {
   }, [items])
 }
 
+/**
+ * The questions organizers answer by email, in the words people ask them in.
+ *
+ * Two contracts matter here. Every question is addressable — `/faq#car-haulers`
+ * opens that answer on arrival, including on a cold load, because the way these
+ * are read is a link pasted into a reply. And the page imports nothing from
+ * `src/firebase.js`, directly or through a component, so it stays in the eager
+ * chunk without dragging the Firebase SDK onto every spectator's phone.
+ */
 export default function Faq() {
   usePageMeta({
     title: 'FAQ — Gates, Load-In, Parking & Maps | Senoia Car Show',
