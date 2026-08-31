@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
@@ -150,6 +151,14 @@ export default function Vendors() {
             </a>{' '}
             or{' '}
             <a className="underline font-semibold" href="tel:+17707279173">(770) 727-9173</a>.
+          </p>
+          <p className="text-stone-700 mt-3">
+            Setting up on show day? Vendors enter at Seavy Street and Bridge
+            Street from 6:00am &mdash;{' '}
+            <Link to="/faq#vendor-entrance" className="underline font-semibold">
+              load-in times and entrances
+            </Link>{' '}
+            are on the FAQ.
           </p>
         </div>
       </main>

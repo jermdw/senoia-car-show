@@ -52,7 +52,9 @@ export default function PoiList({ categories, pois, selectedId, onSelect, idPref
                 </>
               )
               return (
-                <li key={poi.id}>
+                // Addressable so a ?poi= deep link can bring an unpinned entry
+                // into view — there is no pin for the map to centre on.
+                <li key={poi.id} id={`${idPrefix}-item-${poi.id}`} className="scroll-mt-24">
                   {pinned ? (
                     <button
                       type="button"
@@ -67,10 +69,20 @@ export default function PoiList({ categories, pois, selectedId, onSelect, idPref
                       {body}
                     </button>
                   ) : (
-                    // Not a button: with no pin there is nothing to select or centre.
+                    // Not a button: with no pin there is nothing to centre the map on.
                     // An <a> also cannot live inside a <button>, which is what the
-                    // directions link needs to be.
-                    <div className="rounded-lg border border-stone-200 bg-white p-4">
+                    // directions link needs to be. It still takes the selected
+                    // styling, so a deep link to an unpinned POI (Non-Profit Row,
+                    // the stage, the hauler lot) lands on something visible rather
+                    // than silently doing nothing.
+                    <div
+                      aria-current={selectedId === poi.id ? 'true' : undefined}
+                      className={`rounded-lg border p-4 ${
+                        selectedId === poi.id
+                          ? 'bg-gold-pale border-gold'
+                          : 'bg-white border-stone-200'
+                      }`}
+                    >
                       {body}
                       {poi.directions && (
                         <a

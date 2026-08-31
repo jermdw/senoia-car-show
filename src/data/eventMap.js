@@ -60,7 +60,8 @@ export const POIS = [
     name: 'Non-Profit Row',
     where: 'Main Street median',
     blurb:
-      'Local non-profits, veterans groups, the DDA, and the I-58 Mission food drive.',
+      'Local non-profits, veterans groups, the DDA, and the I-58 Mission food drive. ' +
+      'Median exhibitors load in through the Sponsor Gate at Seavy & Pylant from 6:00am.',
     lat: null,
     lon: null,
     confirmed: true,
@@ -99,11 +100,15 @@ export const POIS = [
   {
     // The playbook lumped sponsors and vendors together at Seavy/Pylant. The 2026
     // entrance-gates plan splits them: sponsors in from the west, vendors from the east.
+    // Non-profit exhibitors in the Main Street median come in here too, from 6:00am
+    // (organizers, 2026-08-31) — the median has to be set before show cars fill Main
+    // Street on both sides of it, so they cannot wait for the 7:00am show-car gates.
     id: 'gate-sponsors',
     category: 'gate',
-    name: 'Sponsor Gate — West',
+    name: 'Sponsor & Non-Profit Gate — West',
     where: 'Seavy Street at Pylant Street',
-    blurb: 'Sponsor setup entry from 6:00am.',
+    blurb:
+      'Sponsor and non-profit setup entry from 6:00am — including the Main Street median tents.',
     lat: 33.301342, // intersection: Seavy & Pylant
     lon: -84.556339,
     confirmed: true,

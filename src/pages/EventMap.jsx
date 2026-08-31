@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
@@ -7,6 +7,7 @@ import MapCanvas from '../components/MapCanvas.jsx'
 import PoiList from '../components/PoiList.jsx'
 import ScheduleList from '../components/ScheduleList.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { isWithinMap } from '../lib/venueGeo.js'
 import {
   CATEGORIES,
   POIS,
@@ -45,6 +46,16 @@ export default function EventMap() {
     else next.delete('poi')
     setSearchParams(next, { replace: true })
   }
+
+  // MapCanvas centres the map on a selected pin, but the off-map entries (the
+  // hauler lot, Non-Profit Row, the stage) have none — a ?poi= link to one of those
+  // would land at the top of the page with the highlight somewhere below the fold.
+  useEffect(() => {
+    if (!selectedId) return
+    const poi = pois.find((p) => p.id === selectedId)
+    if (!poi || isWithinMap(poi.lat, poi.lon)) return
+    document.getElementById(`poi-item-${selectedId}`)?.scrollIntoView({ block: 'center' })
+  }, [selectedId, pois])
 
   // Which tab is showing also lives in the URL, so signage can QR straight to the
   // schedule (/map?view=schedule) the same way it can QR to a single pin.
@@ -245,14 +256,38 @@ export default function EventMap() {
           <p className="font-script text-gold text-2xl mb-2">
             Planning your day?
           </p>
-          <a
-            href="/flyer-2026.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
-          >
-            Download Info Flyer (PDF)
-          </a>
+          <p className="text-gold-pale/90 mb-4">
+            Take the whole guide with you &mdash; the map, every location and the
+            schedule print onto one sheet, or save as a PDF from the print dialog.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            {/* The page already has a full print stylesheet (both tab panels are
+                rendered, filters are ignored, the map resets to the whole venue on
+                beforeprint) — but nothing invoked it, so people asked us for a
+                downloadable map that was already sitting behind Ctrl+P. */}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
+            >
+              Print / Save as PDF
+            </button>
+            <a
+              href="/flyer-2026.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold uppercase tracking-wider px-8 py-[0.625rem] rounded-md transition-colors"
+            >
+              Download Info Flyer (PDF)
+            </a>
+          </div>
+          <p className="mt-5 text-gold-pale/90">
+            Bringing a car, a hauler, or a tent?{' '}
+            <Link to="/faq" className="text-cream underline underline-offset-2 hover:text-gold-pale">
+              Gate times and load-in answers
+            </Link>{' '}
+            are on the FAQ.
+          </p>
         </div>
       </main>
       <SiteFooter />

@@ -135,6 +135,11 @@ export default function Show() {
           <li>North Main Street show parking has been expanded this year.</li>
           <li>The Maguires Lot returns to general parking (no longer reserved).</li>
           <li>Free spectator parking with shuttles running all day.</li>
+          <li>
+            Haulers and trailers unload at the Tencate gravel lot on Andrews
+            Parkway &mdash; see the{' '}
+            <Link to="/faq#car-haulers" className="underline font-semibold">FAQ</Link>.
+          </li>
         </ul>
         <p className="mb-8 flex flex-wrap gap-x-6 gap-y-2">
           <Link
@@ -148,6 +153,12 @@ export default function Show() {
             className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
           >
             2026 award winners →
+          </Link>
+          <Link
+            to="/faq"
+            className="font-display uppercase tracking-wide text-gold-dark underline underline-offset-2 hover:text-ink"
+          >
+            Gate times &amp; FAQ →
           </Link>
         </p>
 
