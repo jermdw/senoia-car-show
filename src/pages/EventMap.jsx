@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -47,25 +47,20 @@ export default function EventMap() {
     setSearchParams(next, { replace: true })
   }
 
-  // MapCanvas centres the map on a selected pin, but the off-map entries (the
-  // hauler lot, Non-Profit Row, the stage) have none — a ?poi= link to one of those
-  // would land at the top of the page with the highlight somewhere below the fold.
-  useEffect(() => {
-    if (!selectedId) return
-    const poi = pois.find((p) => p.id === selectedId)
-    if (!poi || isWithinMap(poi.lat, poi.lon)) return
-    document.getElementById(`poi-item-${selectedId}`)?.scrollIntoView({ block: 'center' })
-  }, [selectedId, pois])
-
   // Which tab is showing also lives in the URL, so signage can QR straight to the
   // schedule (/map?view=schedule) the same way it can QR to a single pin.
   const view = searchParams.get('view') === 'schedule' ? 'schedule' : 'locations'
-  const setView = (v) => {
-    const next = new URLSearchParams(searchParams)
-    if (v === 'schedule') next.set('view', v)
-    else next.delete('view')
-    setSearchParams(next, { replace: true })
-  }
+  // Memoised because an effect below depends on it: rebuilt every render, it would
+  // re-run that effect every render.
+  const setView = useCallback(
+    (v) => {
+      const next = new URLSearchParams(searchParams)
+      if (v === 'schedule') next.set('view', v)
+      else next.delete('view')
+      setSearchParams(next, { replace: true })
+    },
+    [searchParams, setSearchParams],
+  )
 
   // Arrow/Home/End movement between tabs, per the ARIA tabs pattern. Focus has to
   // follow the selection: with roving tabindex the old tab drops to tabIndex=-1, so
@@ -120,6 +115,42 @@ export default function EventMap() {
       if (poi?.category === id) selectPoi(null)
     }
   }
+
+  // A selection has to be visible somewhere, and both of the things that can show
+  // one are conditional: MapCanvas centres on a pin only while its category is
+  // filtered in, and an off-map POI has no pin at all — its row in the locations
+  // list is the only representation it has. So a POI selected while its category is
+  // hidden (from the schedule tab, where the map ignores the filters, or straight
+  // from a ?poi= URL) ends up named by the URL and shown by nothing. Selecting is a
+  // request to see the thing, so the filter yields to it.
+  const selected = selectedId ? pois.find((p) => p.id === selectedId) : null
+  const selectedPinned = !!selected && isWithinMap(selected.lat, selected.lon)
+  useEffect(() => {
+    if (!selected) return
+    setActive((prev) =>
+      prev.includes(selected.category) ? prev : [...prev, selected.category],
+    )
+    // Guarded rather than called unconditionally: `searchParams` changes identity on
+    // every URL write, so an unguarded call here would write on each of its own
+    // re-runs. With the guard the write can only happen once per tab state.
+    if (!selectedPinned && view === 'schedule') setView('locations')
+  }, [selected, selectedPinned, view, setView])
+
+  // Scroll to the row once it is actually reachable — the two writes above land a
+  // render later, and scrollIntoView on a hidden panel does nothing. Once per
+  // selection: re-running it on every filter change would yank the page around
+  // while the visitor is using the chips.
+  const scrolledFor = useRef(null)
+  useEffect(() => {
+    if (!selectedId) {
+      scrolledFor.current = null
+      return
+    }
+    if (scrolledFor.current === selectedId || !selected || selectedPinned) return
+    if (view !== 'locations' || !active.includes(selected.category)) return
+    scrolledFor.current = selectedId
+    document.getElementById(`poi-item-${selectedId}`)?.scrollIntoView({ block: 'center' })
+  }, [selectedId, selected, selectedPinned, view, active])
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
