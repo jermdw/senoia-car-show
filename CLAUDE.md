@@ -36,11 +36,12 @@ Prod seed (idempotent, preserves `spotsFilled`):
   behind `React.lazy` so the Firebase SDK stays out of the chunk every spectator
   downloads — **keep public pages free of any `src/firebase.js` import** (including
   indirectly, via a component such as `AwardsAdmin`) or that split collapses.
-  The header bar fits exactly seven links at `md`, so a new one costs an existing
-  one. `/awards` is deliberately kept out of the nav between shows — it is
-  reached from `/show` — and takes a slot back when the ceremony is close. `/faq`
-  is reached from the footer (on every page) plus `/show`, `/map` and `/vendors`,
-  for the same reason.
+  The header bar fits exactly seven direct links at `md`, so `SiteHeader.jsx` tucks
+  the two lowest-traffic ones (`/poker-run`, `/merch`) behind a "More ▾" dropdown
+  to make room for `/faq` and `/awards` as direct links — the dropdown only affects
+  the inline `md`+ bar; the mobile hamburger menu lists all nine links flat, since a
+  vertical list has no width to economize on. `/faq` is also reached from the
+  footer (on every page) plus `/show`, `/map` and `/vendors`.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new

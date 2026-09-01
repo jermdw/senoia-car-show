@@ -24,6 +24,13 @@ import scrubBrosLogo from '../assets/sponsor-scrubbros-detailing.webp'
 import superiorTreeLogo from '../assets/sponsor-superior-tree-service.webp'
 import patriotLogo from '../assets/sponsor-patriot-performance.webp'
 import sanyLogo from '../assets/sponsor-sany-america.webp'
+import hotRodBrothersLogo from '../assets/sponsor-hotrod-brothers-customs.webp'
+import gmpLogo from '../assets/sponsor-gmp-performance-south-atlanta.webp'
+import jwRodLogo from '../assets/sponsor-jw-rod-and-customs.webp'
+import fayetteHumaneLogo from '../assets/sponsor-fayette-humane-society.webp'
+import poolFxLogo from '../assets/sponsor-pool-fx.webp'
+import synovusLogo from '../assets/sponsor-synovus.webp'
+import carlSmithLogo from '../assets/sponsor-carl-smith-and-sons.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -42,6 +49,13 @@ const SPONSORS_2026 = [
       { name: "Earl's Quality Car Care", logo: earlsLogo, w: 400, h: 400, url: 'https://www.earlsqualitycarcare.com/' },
       { name: 'Trinity Air', logo: trinityLogo, w: 400, h: 125, url: 'https://trinityair.com/' },
       { name: 'Wild Willies Custom Accessories', logo: wildWilliesLogo, w: 400, h: 103, url: 'https://wildwilliesaccessories.com/' },
+      // Confirmed as "HotRod Brothers Customs" (hotrodbrotherscustoms.com,
+      // Sharpsburg GA) — the shop behind the show's featured Hot Rod Brothers
+      // Car reveal. Their site only carries a white-on-black knockout
+      // wordmark (no light-background variant); the ink was recolored to
+      // black so it reads on these white cells, with the typography
+      // otherwise untouched.
+      { name: 'HotRod Brothers Customs', logo: hotRodBrothersLogo, w: 400, h: 198, url: 'https://www.hotrodbrotherscustoms.com/' },
     ],
   },
   {
@@ -58,6 +72,19 @@ const SPONSORS_2026 = [
       // No findable website/logo for this one — text placeholder until the
       // organizers can supply artwork.
       { name: 'SS Chassis Works' },
+      // Confirmed as GMP Performance's South Atlanta location, 435-D Dividend
+      // Dr, Peachtree City GA 30269 (gmpperformance.com; contacts Paul &
+      // Hannah Brooker) — not an unrelated same-initialed business. The logo
+      // is the chain's single sitewide wordmark (also used at their
+      // Charlotte and Lake Norman locations); the South Atlanta branch has
+      // no separate mark of its own.
+      { name: 'GMP Performance – South Atlanta', logo: gmpLogo, w: 400, h: 32, url: 'https://www.gmpperformance.com/locations' },
+      // Confirmed as Jody Wilkerson's Sharpsburg GA shop (Facebook
+      // facebook.com/jwrodncustoms, contact jwrodncustoms@yahoo.com). Placed
+      // in Gold per explicit instruction, though the internal plaque list
+      // had them in Silver. No standalone website — the logo is their
+      // Facebook profile photo, a shop-sign photograph of their "JW" mark.
+      { name: 'JW Rod & Customs', logo: jwRodLogo, w: 400, h: 263, url: 'https://www.facebook.com/jwrodncustoms' },
     ],
   },
   {
@@ -74,17 +101,31 @@ const SPONSORS_2026 = [
       // "Performance"); the file here is the light-background variant that
       // reads on these white cells.
       { name: 'Patriot Performance Engines', logo: patriotLogo, w: 400, h: 78, url: 'https://www.patriotperformanceengines.com/' },
+      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333, url: 'https://clarissauhl.bhhsgeorgia.com/' },
+      // Fayette County animal welfare nonprofit, confirmed at fayettehumane.org.
+      { name: 'Fayette Humane Society', logo: fayetteHumaneLogo, w: 400, h: 390, url: 'https://fayettehumane.org/' },
+      // Confirmed as the Peachtree City/Newnan/Fayetteville pool builder
+      // (swimmingpoolfx.com, owner Joey Massengale), serving Fayette/Coweta
+      // County — not an unrelated national "PoolFX".
+      { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
     ],
   },
   {
     tier: 'Bronze Sponsors',
     cell: 'h-28',
     sponsors: [
-      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333, url: 'https://clarissauhl.bhhsgeorgia.com/' },
       { name: "Crook's Tire & Auto", logo: crooksLogo, w: 400, h: 181, url: 'https://www.crookstire.com/' },
       // No standalone website found — links to their listed phone number instead.
       { name: 'Superior Tree Service', logo: superiorTreeLogo, w: 400, h: 229, url: 'tel:+16784914703' },
       { name: 'SANY America', logo: sanyLogo, w: 400, h: 114, url: 'https://sanyamerica.com/' },
+      // Regional bank (synovus.com), NYSE: SNV, headquartered in Columbus GA.
+      // Logo is their official brand SVG wordmark, rasterized at high
+      // resolution.
+      { name: 'Synovus', logo: synovusLogo, w: 400, h: 72, url: 'https://www.synovus.com/' },
+      // Matches both "Carl Smith Lumber" and the plaque list's "Carl Smith &
+      // Sons" — confirmed as the same Senoia GA business, full name "Carl E.
+      // Smith & Sons Building Materials" (smithbuildingmaterials.com).
+      { name: 'Carl E. Smith & Sons Building Materials', logo: carlSmithLogo, w: 400, h: 67, url: 'https://smithbuildingmaterials.com/' },
     ],
   },
 ]
