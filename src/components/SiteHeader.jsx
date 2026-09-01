@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/logo-header.webp'
 import { warmRoute } from '../lib/routeLoaders.js'
 
@@ -11,27 +11,56 @@ const prefetch = (to) => ({
   onFocus: () => warmRoute(to),
 })
 
+// Direct top-level links. Kept to seven so the md band (768–~830px, iPad
+// portrait) still fits them without wrapping — see the "More" dropdown below
+// for how an eighth and ninth link (Poker Run, Merch) get out of the way.
 const LINKS = [
   { to: '/show', label: 'Show Info' },
   { to: '/map', label: 'Show Day' },
-  { to: '/poker-run', label: 'Poker Run' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors' },
-  { to: '/merch', label: 'Merch' },
   { to: '/volunteer', label: 'Volunteer' },
+  { to: '/faq', label: 'FAQ' },
+  { to: '/awards', label: 'Awards' },
 ]
+
+// Lower-traffic links tucked behind "More" on the inline desktop/tablet bar
+// so LINKS above can stay at seven. The mobile hamburger menu below ignores
+// this grouping and lists everything flat, since a vertical list has no
+// width constraint to work around.
+const MORE_LINKS = [
+  { to: '/poker-run', label: 'Poker Run' },
+  { to: '/merch', label: 'Merch' },
+]
+
+const ALL_LINKS = [...LINKS.slice(0, 2), ...MORE_LINKS, ...LINKS.slice(2)]
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const moreRef = useRef(null)
+  const location = useLocation()
 
-  // Seven links + "Organizers" only just fit the md band (768–~830px, iPad
-  // portrait) — tighter padding there and no wrapping, or two-word labels
-  // break onto a second line and the sticky bar grows. An eighth does not fit,
-  // so adding one costs an existing one. `/awards` is deliberately not here:
-  // it is a show-day page, reached from the Show Info page until the ceremony
-  // is close, when it takes a slot back.
+  useEffect(() => {
+    setMoreOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const onClickOutside = (e) => {
+      if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false)
+    }
+    document.addEventListener('pointerdown', onClickOutside)
+    return () => document.removeEventListener('pointerdown', onClickOutside)
+  }, [moreOpen])
+
   const linkClass = ({ isActive }) =>
     `font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
+      isActive ? 'text-gold' : 'text-cream hover:text-gold-pale'
+    }`
+
+  const moreLinkClass = ({ isActive }) =>
+    `block font-display uppercase tracking-wide whitespace-nowrap px-4 py-2 transition-colors ${
       isActive ? 'text-gold' : 'text-cream hover:text-gold-pale'
     }`
 
@@ -45,7 +74,38 @@ export default function SiteHeader() {
           <img src={logo} alt="The Senoia Car Show — home" className="h-14 w-auto" />
         </Link>
         <nav className="hidden md:flex flex-1 justify-end items-center print:hidden">
-          {LINKS.map((l) => (
+          {LINKS.slice(0, 2).map((l) => (
+            <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
+              {l.label}
+            </NavLink>
+          ))}
+          <div className="relative" ref={moreRef}>
+            <button
+              onClick={() => setMoreOpen((v) => !v)}
+              aria-haspopup="true"
+              aria-expanded={moreOpen}
+              className={`font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
+                moreOpen || MORE_LINKS.some((l) => l.to === location.pathname)
+                  ? 'text-gold'
+                  : 'text-cream hover:text-gold-pale'
+              }`}
+            >
+              More ▾
+            </button>
+            {moreOpen && (
+              <div
+                role="menu"
+                className="absolute right-0 top-full mt-1 bg-ink border border-gold/20 rounded-md shadow-lg py-1 min-w-max"
+              >
+                {MORE_LINKS.map((l) => (
+                  <NavLink key={l.to} to={l.to} className={moreLinkClass} {...prefetch(l.to)}>
+                    {l.label}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+          {LINKS.slice(2).map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
               {l.label}
             </NavLink>
@@ -71,7 +131,7 @@ export default function SiteHeader() {
         // print:hidden too — the toggle that opened this is itself hidden on paper,
         // so an open menu would print as an unexplained list of links.
         <nav className="md:hidden border-t border-gold/20 px-4 pb-3 flex flex-col print:hidden">
-          {LINKS.map((l) => (
+          {ALL_LINKS.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
