@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-version: "2"
 language: "en-US"
 tone_instructions: "Be direct, concise, and prioritize security, React 19 best practices, and Firebase rule safety."
 

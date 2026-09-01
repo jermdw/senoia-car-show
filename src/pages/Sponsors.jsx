@@ -23,6 +23,7 @@ import filmoresLogo from '../assets/sponsor-filmores-garage.webp'
 import scrubBrosLogo from '../assets/sponsor-scrubbros-detailing.webp'
 import superiorTreeLogo from '../assets/sponsor-superior-tree-service.webp'
 import patriotLogo from '../assets/sponsor-patriot-performance.webp'
+import sanyLogo from '../assets/sponsor-sany-america.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -63,7 +64,7 @@ const SPONSORS_2026 = [
     tier: 'Silver Sponsors',
     cell: 'h-28',
     sponsors: [
-      { name: 'The Dent Guys', logo: dentGuysLogo, w: 400, h: 181, url: 'https://dentguysatl.com/' },
+      { name: 'The Dent Guys', logo: dentGuysLogo, w: 400, h: 170, url: 'https://dentguysatl.com/' },
       { name: "Filmore's Garage", logo: filmoresLogo, w: 400, h: 217, url: 'https://www.filmoresgarage.com/' },
       { name: 'ScrubBros Detailing', logo: scrubBrosLogo, w: 400, h: 326, url: 'https://scrubbrosdetailing.org/' },
       // The Williamson GA engine shop (~25 min out), not one of the several
@@ -83,6 +84,7 @@ const SPONSORS_2026 = [
       { name: "Crook's Tire & Auto", logo: crooksLogo, w: 400, h: 181, url: 'https://www.crookstire.com/' },
       // No standalone website found — links to their listed phone number instead.
       { name: 'Superior Tree Service', logo: superiorTreeLogo, w: 400, h: 229, url: 'tel:+16784914703' },
+      { name: 'SANY America', logo: sanyLogo, w: 400, h: 114, url: 'https://sanyamerica.com/' },
     ],
   },
 ]
