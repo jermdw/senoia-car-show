@@ -50,8 +50,17 @@ export default function SiteHeader() {
     const onClickOutside = (e) => {
       if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false)
     }
+    const onKeyDown = (e) => {
+      if (e.key !== 'Escape') return
+      setMoreOpen(false)
+      moreRef.current?.querySelector('button')?.focus()
+    }
     document.addEventListener('pointerdown', onClickOutside)
-    return () => document.removeEventListener('pointerdown', onClickOutside)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onClickOutside)
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [moreOpen])
 
   const linkClass = ({ isActive }) =>
@@ -79,11 +88,18 @@ export default function SiteHeader() {
               {l.label}
             </NavLink>
           ))}
-          <div className="relative" ref={moreRef}>
+          <div
+            className="relative"
+            ref={moreRef}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) setMoreOpen(false)
+            }}
+          >
             <button
+              id="more-nav-button"
               onClick={() => setMoreOpen((v) => !v)}
-              aria-haspopup="true"
               aria-expanded={moreOpen}
+              aria-controls="more-nav-panel"
               className={`font-display uppercase tracking-wide whitespace-nowrap px-2 lg:px-3 py-2 transition-colors ${
                 moreOpen || MORE_LINKS.some((l) => l.to === location.pathname)
                   ? 'text-gold'
@@ -93,8 +109,15 @@ export default function SiteHeader() {
               More ▾
             </button>
             {moreOpen && (
+              // A plain disclosure panel of ordinary nav links, not an ARIA
+              // menu widget — role="menu" implies arrow-key/Home/End
+              // navigation and Escape-to-close that this doesn't implement,
+              // which would announce as "menu" to screen readers while
+              // behaving like a static list. Escape and outside-click/blur
+              // still close it (see the effect above and onBlur here).
               <div
-                role="menu"
+                id="more-nav-panel"
+                aria-labelledby="more-nav-button"
                 className="absolute right-0 top-full mt-1 bg-ink border border-gold/20 rounded-md shadow-lg py-1 min-w-max"
               >
                 {MORE_LINKS.map((l) => (
