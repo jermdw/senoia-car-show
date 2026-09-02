@@ -11,6 +11,7 @@ import logoLight from '../assets/logo-light-bg.webp'
 import { SHIRT_SIZES } from '../shirtSizes.js'
 import usePageMeta from '../lib/usePageMeta.js'
 import AwardsAdmin from '../components/AwardsAdmin.jsx'
+import AnnouncementAdmin from '../components/AnnouncementAdmin.jsx'
 
 const EMAIL_LINK_KEY = 'scsEmailForSignIn'
 
@@ -383,7 +384,11 @@ function Dashboard({ user }) {
 
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-4xl mx-auto px-4 flex gap-1">
-          {[['volunteers', 'Volunteers'], !isViewer && ['awards', 'Awards']].filter(Boolean).map(([id, label]) => (
+          {[
+            ['volunteers', 'Volunteers'],
+            !isViewer && ['awards', 'Awards'],
+            !isViewer && ['announcement', 'Announcement'],
+          ].filter(Boolean).map(([id, label]) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -398,7 +403,7 @@ function Dashboard({ user }) {
         </div>
       </div>
 
-      {tab === 'awards' ? <AwardsAdmin /> : (
+      {tab === 'awards' ? <AwardsAdmin /> : tab === 'announcement' ? <AnnouncementAdmin /> : (
       <main className="max-w-4xl mx-auto p-4">
         {signups && totalFilled > 0 && (
           <div className="bg-white rounded-lg border border-stone-200 p-3 mb-4 flex flex-wrap items-center gap-2">
