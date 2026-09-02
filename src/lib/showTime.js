@@ -42,6 +42,16 @@ export function isShowDay(now = new Date()) {
   return p.year === SHOW_DATE.year && p.month === SHOW_DATE.month && p.day === SHOW_DATE.day
 }
 
+// True from the start of show day onward (event-local calendar date >= SHOW_DATE),
+// never re-flipping false the day after. Drives the nav swap in SiteHeader — day-of
+// links (Volunteer, Poker Run) drop off and Awards appears — without a redeploy.
+export function hasShowDayArrived(now = new Date()) {
+  const p = eventLocalParts(now)
+  if (p.year !== SHOW_DATE.year) return p.year > SHOW_DATE.year
+  if (p.month !== SHOW_DATE.month) return p.month > SHOW_DATE.month
+  return p.day >= SHOW_DATE.day
+}
+
 // True once the event-local clock has reached `hhmm`, and only on show day —
 // "announcing now" on the awards board in March would be nonsense. Reads the
 // wall clock in the event's timezone rather than comparing against SHOW_START,
