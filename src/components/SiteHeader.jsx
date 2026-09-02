@@ -47,13 +47,20 @@ export default function SiteHeader() {
   const [moreOpen, setMoreOpen] = useState(false)
   const moreRef = useRef(null)
   const location = useLocation()
-  // Recomputed per render (route change, remount) rather than on a running
-  // timer — a stale nav for the remainder of a session someone had open
-  // before 10am is an acceptable trade for not polling the clock all day.
-  const showDayArrived = hasShowDayArrived()
+  const [showDayArrived, setShowDayArrived] = useState(hasShowDayArrived)
   const links = LINKS.filter((l) => isVisible(l, showDayArrived))
   const moreLinks = MORE_LINKS.filter((l) => isVisible(l, showDayArrived))
   const allLinks = [...links.slice(0, 2), ...moreLinks, ...links.slice(2)]
+
+  // Once true this never reverts, so the interval only needs to run beforehand —
+  // it clears itself as soon as the flip happens. Keeps a tab left open across
+  // the event-local midnight from being stuck on the pre-show nav until the
+  // visitor happens to navigate.
+  useEffect(() => {
+    if (showDayArrived) return
+    const interval = setInterval(() => setShowDayArrived(hasShowDayArrived()), 60_000)
+    return () => clearInterval(interval)
+  }, [showDayArrived])
 
   useEffect(() => {
     setMoreOpen(false)
