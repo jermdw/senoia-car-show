@@ -101,7 +101,11 @@ const SPONSORS_2026 = [
       // "Performance"); the file here is the light-background variant that
       // reads on these white cells.
       { name: 'Patriot Performance Engines', logo: patriotLogo, w: 400, h: 78, url: 'https://www.patriotperformanceengines.com/' },
-      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 333, url: 'https://clarissauhl.bhhsgeorgia.com/' },
+      // 2026-09-02: Clarissa supplied a new combined ad (her BHHS listing plus
+      // her mortgage partner Dan Aiken of loanDepot) to replace the old
+      // BHHS-only artwork — see the "Car Show Ad Sponsorship Upgrade to
+      // Silver" email thread.
+      { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 156, url: 'https://clarissauhl.bhhsgeorgia.com/' },
       // Fayette County animal welfare nonprofit, confirmed at fayettehumane.org.
       { name: 'Fayette Humane Society', logo: fayetteHumaneLogo, w: 400, h: 390, url: 'https://fayettehumane.org/' },
       // Confirmed as the Peachtree City/Newnan/Fayetteville pool builder
