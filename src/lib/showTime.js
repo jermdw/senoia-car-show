@@ -2,6 +2,17 @@
 // exercised at a fixed `now` — changing the system clock to test "happening now"
 // breaks TLS and Firebase auth token validation.
 
+// ROLLING OVER TO NEXT YEAR: these three constants are the switch, and they have
+// to move together with the dates in `index.html`'s Event JSON-LD.
+//
+// They are also a one-way cliff, which is the part that bites. `hasShowDayArrived`
+// is true for every date at or after SHOW_DATE and never flips back, so the moment
+// the 2026 show ends the site is permanently in show-day mode: Volunteer and Poker
+// Run are gone from the nav and the home page, Awards is pinned there instead, and
+// the hero countdown reads "that's a wrap on 2026" forever. That is correct for the
+// weeks after the show — but if next year's content lands before these constants
+// do, volunteer sign-ups open with no link to them anywhere on the site. Bump these
+// FIRST. The dev-only warning below is the tripwire for exactly that.
 export const SHOW_DATE = { year: 2026, month: 8, day: 26 } // month is 0-indexed
 
 // Gates open 10am and the show closes at 4pm, Eastern. Late September is still
@@ -9,6 +20,17 @@ export const SHOW_DATE = { year: 2026, month: 8, day: 26 } // month is 0-indexed
 // the instant is the same one `index.html`'s Event JSON-LD advertises.
 export const SHOW_START = new Date('2026-09-26T10:00:00-04:00')
 export const SHOW_END = new Date('2026-09-26T16:00:00-04:00')
+
+// Optional-chained: this module is deliberately dependency-free so it can be
+// imported by the test suite under plain Node, where `import.meta.env` is absent.
+if (import.meta.env?.DEV && Date.now() > SHOW_END.getTime() + 45 * 86_400_000) {
+  console.warn(
+    `[showTime] SHOW_DATE is ${SHOW_DATE.year}-${SHOW_DATE.month + 1}-${SHOW_DATE.day}, ` +
+    'more than 45 days past. The site is stuck in show-day mode: the Volunteer and ' +
+    'Poker Run links are hidden everywhere and the countdown reads "that\'s a wrap". ' +
+    'Update SHOW_DATE/SHOW_START/SHOW_END here and the Event JSON-LD in index.html.',
+  )
+}
 
 export function formatTime(hhmm) {
   const [h, m] = hhmm.split(':').map(Number)
@@ -59,6 +81,16 @@ export function hasShowDayArrived(now = new Date()) {
 // from the gates opening.
 export function hasPassedOnShowDay(hhmm, now = new Date()) {
   return isShowDay(now) && eventLocalParts(now).hhmm >= hhmm
+}
+
+// A scheduled window on show day, as three states rather than a boolean: an
+// "is it happening" flag has no way to say "it already finished", so the awards
+// board's "Announcing now" pill stayed lit until midnight and its empty-board
+// copy still promised results "starting at 3:00 PM" at five o'clock.
+// Off show day everything is 'before' — hasPassedOnShowDay is false then.
+export function phaseOnShowDay(startHhmm, endHhmm, now = new Date()) {
+  if (!hasPassedOnShowDay(startHhmm, now)) return 'before'
+  return hasPassedOnShowDay(endHhmm, now) ? 'after' : 'during'
 }
 
 // Time left until the gates open, split into whole units. Past the start it
