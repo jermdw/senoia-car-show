@@ -65,12 +65,17 @@ Prod seed (idempotent, preserves `spotsFilled`):
   bypasses rules). Resend confirmation emails are best-effort by design — email
   failure must never fail a signup.
 - **Firestore**: `events/2026` (`signupOpen: false` closes sign-ups),
-  `events/2026/shifts/{id}` (`role, time, day, category, spotsTotal, spotsFilled,
+  `events/2026/shifts/{id}` (`role, time, day, spotsTotal, spotsFilled,
   sortOrder`), `events/2026/awards/{id}` (`tier, title, carNumber, vehicle, owner,
   awardClass, photoUrl, announced, sortOrder`),
   `signups/{autoId}` (volunteer PII + `status` + `cancelToken`),
   `admins/{email}` (organizer allowlist; doc ID = lowercase email; data-only, no
-  deploy needed to change).
+  deploy needed to change). Carries `role: 'admin' | 'viewer'` — `admin` manages
+  shifts, removes volunteers and gets the Awards/Announcement tabs; `viewer` can
+  only read and export the roster. **Write the role explicitly when adding
+  someone.** A doc with no `role` is read as `admin` (rules and `Admin.jsx` both
+  default it), because entries predating the viewer role were full organizers —
+  that fallback is backwards compatibility, not the way to grant access.
 
 ## Invariants
 
@@ -117,7 +122,12 @@ sign-in card). Keep header art sized for its slot — it loads on every page.
 - **SEO plumbing**: `public/robots.txt` + `public/sitemap.xml` must list any new
   public route (the SPA rewrite otherwise answers everything, even robots.txt,
   with the app shell). `index.html` carries the Event JSON-LD and social-card
-  meta — update dates/status and `share-card-2026.png` each year. Per-route
+  meta — update dates/status and `share-card-2026.png` each year, together with
+  `SHOW_DATE`/`SHOW_START`/`SHOW_END` in `src/lib/showTime.js`. Bump those
+  **first**: `hasShowDayArrived()` is a one-way switch, so until they move, next
+  year's site stays in show-day mode with the Volunteer and Poker Run links
+  hidden from the nav and the home page. A dev-only console warning fires once
+  the date is more than 45 days stale. Per-route
   titles/canonicals come from `src/lib/usePageMeta.js`; every new page should
   call it (`noindex: true` for anything private). senoiacar.show is the
   canonical host — the `.web.app`/`.firebaseapp.com` mirrors must never be

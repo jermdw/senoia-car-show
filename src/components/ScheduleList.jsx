@@ -19,11 +19,15 @@ export default function ScheduleList({ schedule, onSelectPoi, now }) {
   const current = now ?? clock
   const live = isShowDay(current)
   const activeIndex = live ? currentEntryIndex(schedule, current) : -1
+  // Match on the time, not the index: two things genuinely start at 7:00am (the
+  // show car gates and registration), and currentEntryIndex can only name one of
+  // them, so keying off the index left the other silently unhighlighted.
+  const activeTime = activeIndex >= 0 ? schedule[activeIndex].time : null
 
   return (
     <ol className="space-y-2">
-      {schedule.map((entry, i) => {
-        const isNow = i === activeIndex
+      {schedule.map((entry) => {
+        const isNow = entry.time === activeTime
         return (
           <li
             key={entry.time + entry.label}

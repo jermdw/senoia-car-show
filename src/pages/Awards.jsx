@@ -6,7 +6,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import { ClockMark, Medallion, SearchMark, TrophyMark } from '../components/AwardArt.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { hasPassedOnShowDay } from '../lib/showTime.js'
+import { phaseOnShowDay } from '../lib/showTime.js'
 import {
   FEATURED,
   matchesAwardSearch,
@@ -21,6 +21,15 @@ import {
 const CEREMONY_TIME = '15:00'
 const CEREMONY_LABEL = '3:00 PM'
 const CEREMONY_PLACE = 'The Stage — bottom of the hill, by the gazebo'
+// The show's own close, from the 16:00 "Show ends" entry in `src/data/eventMap.js`
+// and SHOW_END in `src/lib/showTime.js`. Without an upper bound "Announcing now"
+// stayed lit for the rest of show day — the board still claimed a live ceremony
+// at 11pm.
+const CEREMONY_END = '16:00'
+
+// 'before' | 'during' | 'after'. Off show day it is 'before', so the board reads
+// as pre-ceremony in March rather than claiming the show has been and gone.
+const ceremonyPhase = (now) => phaseOnShowDay(CEREMONY_TIME, CEREMONY_END, now)
 
 // The board is a passive display: nobody reloads it during the ceremony, so
 // the "announcing now" state has to arrive on its own.
@@ -37,15 +46,10 @@ export default function Awards() {
   const [awards, setAwards] = useState(null)
   const [loadError, setLoadError] = useState(false)
   const [term, setTerm] = useState('')
-  const [ceremonyStarted, setCeremonyStarted] = useState(() =>
-    hasPassedOnShowDay(CEREMONY_TIME),
-  )
+  const [phase, setPhase] = useState(ceremonyPhase)
 
   useEffect(() => {
-    const id = setInterval(
-      () => setCeremonyStarted(hasPassedOnShowDay(CEREMONY_TIME)),
-      TICK_MS,
-    )
+    const id = setInterval(() => setPhase(ceremonyPhase()), TICK_MS)
     return () => clearInterval(id)
   }, [])
 
@@ -103,7 +107,7 @@ export default function Awards() {
       </header>
 
       <main className="flex-1 w-full max-w-3xl mx-auto px-4 py-8">
-        <CeremonyCard started={ceremonyStarted} />
+        <CeremonyCard phase={phase} />
 
         {loadError ? (
           <p className="text-center text-red-300 py-14" role="alert">
@@ -113,7 +117,7 @@ export default function Awards() {
         ) : awards === null ? (
           <p className="text-center text-gold-pale/60 py-14">Loading results…</p>
         ) : nothingYet ? (
-          <NoResultsYet started={ceremonyStarted} />
+          <NoResultsYet phase={phase} />
         ) : (
           <>
             {featured.length > 0 && (
@@ -197,7 +201,7 @@ function Section({ title, children }) {
   )
 }
 
-function CeremonyCard({ started }) {
+function CeremonyCard({ phase }) {
   return (
     <div className="rounded-xl border border-gold/40 bg-white/5 px-5 py-4 text-center">
       <p className="font-display text-xl uppercase tracking-wide text-gold">
@@ -214,7 +218,7 @@ function CeremonyCard({ started }) {
           Find the stage →
         </Link>
       </p>
-      {started && (
+      {phase === 'during' && (
         <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-gold text-ink font-display uppercase tracking-widest text-xs px-3 py-1">
           <span className="w-2 h-2 rounded-full bg-ink animate-pulse" />
           Announcing now
@@ -224,18 +228,31 @@ function CeremonyCard({ started }) {
   )
 }
 
-function NoResultsYet({ started }) {
+// An empty board means something different in each phase, and getting it wrong is
+// worse than saying nothing: "starting at 3:00 PM" shown at 5pm reads as a site
+// that doesn't know the show happened.
+const EMPTY_BOARD = {
+  before: {
+    lead: `Winners are posted here live, starting at ${CEREMONY_LABEL}.`,
+    sub: 'Leave this page open; it updates on its own.',
+  },
+  during: {
+    lead: 'The ceremony is underway — winners appear here within moments of being called.',
+    sub: 'Leave this page open; it updates on its own.',
+  },
+  after: {
+    lead: 'The ceremony has finished for this year.',
+    sub: 'Winners were read out from the stage. If you missed them, email carshow@enjoysenoia.com.',
+  },
+}
+
+function NoResultsYet({ phase }) {
+  const { lead, sub } = EMPTY_BOARD[phase]
   return (
     <div className="text-center py-14">
       <Medallion label="2026" className="w-24 h-24 mx-auto text-gold/50" />
-      <p className="text-cream text-lg mt-4">
-        {started
-          ? 'The ceremony is underway — winners appear here within moments of being called.'
-          : `Winners are posted here live, starting at ${CEREMONY_LABEL}.`}
-      </p>
-      <p className="text-gold-pale/60 mt-2">
-        Leave this page open; it updates on its own.
-      </p>
+      <p className="text-cream text-lg mt-4">{lead}</p>
+      <p className="text-gold-pale/60 mt-2">{sub}</p>
     </div>
   )
 }

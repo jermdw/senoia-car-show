@@ -191,8 +191,12 @@ function Dashboard({ user }) {
   const isViewer = role !== 'admin'
 
   useEffect(() => {
+    // `?? 'admin'` mirrors the same default in firestore.rules: an allowlist doc
+    // written before the viewer role existed carries no `role` and means full
+    // organizer. Without this the UI would hide every edit control from an
+    // organizer the rules still let write.
     getDoc(doc(db, 'admins', user.email))
-      .then((snap) => setRole(snap.exists() ? snap.data().role : null))
+      .then((snap) => setRole(snap.exists() ? (snap.data().role ?? 'admin') : null))
       .catch((err) => {
         console.error('role lookup failed', err)
         setRole(null)
@@ -507,7 +511,7 @@ function Dashboard({ user }) {
 
 function ShiftEditor({ shift, activeCount, maxSortOrder, onClose }) {
   const [form, setForm] = useState(
-    shift ?? { role: '', time: '', day: '2026-09-26', spotsTotal: 2, category: '' },
+    shift ?? { role: '', time: '', day: '2026-09-26', spotsTotal: 2 },
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -535,7 +539,10 @@ function ShiftEditor({ shift, activeCount, maxSortOrder, onClose }) {
       role: form.role.trim(),
       time: form.time.trim(),
       day: form.day,
-      category: form.category?.trim() ?? '',
+      // `category` is deliberately absent: no form field ever set it and nothing
+      // reads it, so the editor was writing '' to every shift it touched. Omitting
+      // it from the update leaves the six legacy shifts that carry a value alone
+      // rather than blanking them.
       spotsTotal,
     }
     try {

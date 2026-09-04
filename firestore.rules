@@ -11,8 +11,17 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
     }
 
+    // Missing `role` defaults to 'admin' on purpose. Before the viewer role
+    // existed, an `admins/{email}` doc was membership alone and every entry was
+    // a full organizer — so a doc written under the old shape must keep meaning
+    // exactly what it meant then. Reading `.data.role` directly returned null
+    // for those, which failed BOTH isAdmin() and isViewer() and locked the
+    // organizer out of the dashboard entirely. New entries should still be
+    // written with an explicit role; this is the compatibility floor, not the
+    // documented way to add someone.
     function adminRole() {
-      return get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data.role;
+      return get(/databases/$(database)/documents/admins/$(request.auth.token.email))
+        .data.get('role', 'admin');
     }
 
     // Full organizer: can manage shifts, remove volunteers, stage awards.

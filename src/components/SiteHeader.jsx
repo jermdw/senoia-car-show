@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/logo-header.webp'
 import { warmRoute } from '../lib/routeLoaders.js'
-import { hasShowDayArrived } from '../lib/showTime.js'
+import { isVisibleOnShowDay, useShowDayArrived } from '../lib/useShowDay.js'
 import AnnouncementBanner from './AnnouncementBanner.jsx'
 
 // Start fetching a lazily-loaded route's chunk as soon as intent is visible, so the
@@ -39,28 +39,15 @@ const MORE_LINKS = [
   { to: '/merch', label: 'Merch' },
 ]
 
-const isVisible = (l, showDayArrived) =>
-  l.showOnShowDay ? showDayArrived : !(l.hideOnShowDay && showDayArrived)
-
 export default function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const moreRef = useRef(null)
   const location = useLocation()
-  const [showDayArrived, setShowDayArrived] = useState(hasShowDayArrived)
-  const links = LINKS.filter((l) => isVisible(l, showDayArrived))
-  const moreLinks = MORE_LINKS.filter((l) => isVisible(l, showDayArrived))
+  const showDayArrived = useShowDayArrived()
+  const links = LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived))
+  const moreLinks = MORE_LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived))
   const allLinks = [...links.slice(0, 2), ...moreLinks, ...links.slice(2)]
-
-  // Once true this never reverts, so the interval only needs to run beforehand —
-  // it clears itself as soon as the flip happens. Keeps a tab left open across
-  // the event-local midnight from being stuck on the pre-show nav until the
-  // visitor happens to navigate.
-  useEffect(() => {
-    if (showDayArrived) return
-    const interval = setInterval(() => setShowDayArrived(hasShowDayArrived()), 60_000)
-    return () => clearInterval(interval)
-  }, [showDayArrived])
 
   useEffect(() => {
     setMoreOpen(false)

@@ -320,8 +320,11 @@ export default function Sponsors() {
                   {logo ? (
                     <a
                       href={url}
-                      target="_blank"
-                      rel="noreferrer"
+                      // Only http(s) links leave the site; a `tel:` sponsor (Superior
+                      // Tree Service has no website) hands off to the phone app and
+                      // must not also open a blank tab. Mirrors the same guard in
+                      // pages/Faq.jsx.
+                      {...(url?.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
                       className="w-full h-full flex items-center justify-center p-4"
                     >
                       {/* Logos vary widely in aspect ratio; contain them in a

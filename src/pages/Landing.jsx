@@ -3,6 +3,8 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import Countdown from '../components/Countdown.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { isVisibleOnShowDay, useShowDayArrived } from '../lib/useShowDay.js'
+import { ROUTE_LOADERS, warmRoute } from '../lib/routeLoaders.js'
 import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
 import logo from '../assets/logo-hero.webp'
 
@@ -12,6 +14,12 @@ const HIGHLIGHTS = [
   ['10am–4pm', 'Live music, food trucks, awards & door prizes'],
 ]
 
+// `hideOnShowDay`/`showOnShowDay` carry the same meaning as in SiteHeader's nav
+// and are filtered by the same predicate — the home page must not still be
+// selling Friday's poker run and a volunteer shift on Saturday morning after the
+// header has already retired both. The featured flag moves with them: whichever
+// of Volunteer (before) or Awards (on the day) is the standing ask takes the
+// full-width banner at the foot of the grid.
 const SECTIONS = [
   {
     to: '/show',
@@ -27,6 +35,7 @@ const SECTIONS = [
     to: '/poker-run',
     title: 'Poker Run',
     text: 'Friday, Sept 25: cruise five landmarks, draw a hand, best hand wins $200. Any vehicle, $25 per entry — tickets on sale now.',
+    hideOnShowDay: true,
   },
   {
     to: '/sponsors',
@@ -48,6 +57,14 @@ const SECTIONS = [
     title: 'Volunteer',
     text: 'The show runs on volunteers — grab a shift and be part of it.',
     featured: true,
+    hideOnShowDay: true,
+  },
+  {
+    to: '/awards',
+    title: 'Award Winners',
+    text: 'Top 50, Best in Show Car & Truck — posted live as they’re called from the stage at 3:00 PM.',
+    featured: true,
+    showOnShowDay: true,
   },
 ]
 
@@ -58,6 +75,23 @@ export default function Landing() {
       'The 21st Annual Senoia Car Show: 600+ collector and classic vehicles on Historic Main Street in Senoia, Georgia. Saturday, September 26, 2026, 10am–4pm. Free spectator admission.',
     path: '/',
   })
+
+  const showDayArrived = useShowDayArrived()
+  const sections = SECTIONS.filter((s) => isVisibleOnShowDay(s, showDayArrived))
+
+  // Both show-day CTAs below point at /awards, which is lazy and pulls the
+  // Firebase chunk. Warm it on visible intent, exactly as SiteHeader does for the
+  // nav — on show day this is the busiest link on the site, opened on cell signal
+  // in a crowd, and an unwarmed tap looks like nothing happened. Volunteer and
+  // Cancel are lazy too, but /volunteer is already warmed from the header.
+  const prefetch = (to) =>
+    ROUTE_LOADERS[to]
+      ? {
+          onPointerEnter: () => warmRoute(to),
+          onPointerDown: () => warmRoute(to),
+          onFocus: () => warmRoute(to),
+        }
+      : {}
 
   return (
     <div className="min-h-screen bg-ink flex flex-col">
@@ -99,11 +133,15 @@ export default function Landing() {
             >
               Register Your Vehicle
             </a>
+            {/* The standing second ask, which changes on the morning of the show:
+                sign-ups are over by then, and the board is what people are on the
+                site for. Mirrors the same swap in the header nav and the grid. */}
             <Link
-              to="/volunteer"
+              to={showDayArrived ? '/awards' : '/volunteer'}
+              {...prefetch(showDayArrived ? '/awards' : '/volunteer')}
               className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-[0.875rem] rounded-md transition-colors"
             >
-              Volunteer Sign-Up
+              {showDayArrived ? 'Award Winners' : 'Volunteer Sign-Up'}
             </Link>
           </div>
           {/* A countdown over a pair of buttons reads like a ticket sale, so the
@@ -146,14 +184,16 @@ export default function Landing() {
 
         <section className="bg-cream pb-14 px-4">
           <div className="max-w-4xl mx-auto grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SECTIONS.map((s) => (
+            {sections.map((s) => (
               <Link
                 key={s.to}
                 to={s.to}
+                {...prefetch(s.to)}
                 className={`rounded-xl border p-6 transition-shadow hover:shadow-md ${
                   s.featured
-                    ? // Seven cards leave one orphan; the featured CTA takes the whole
-                      // last row as a banner rather than sitting alone at a third width.
+                    ? // The card count leaves an orphan either way (seven before show
+                      // day, six on it); the featured CTA takes the whole last row as a
+                      // banner rather than sitting alone at a third width.
                       'bg-ink border-gold sm:col-span-2 lg:col-span-3 text-center'
                     : 'bg-white border-stone-200'
                 }`}

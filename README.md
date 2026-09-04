@@ -16,7 +16,7 @@ live at [senoiacar.show](https://senoiacar.show).
 | `/` | Landing page |
 | `/volunteer` | Public shift board — claim a spot with name/email/phone, no account |
 | `/cancel?token=…` | Cancellation link from the confirmation email |
-| `/admin` | Organizer dashboard — Google sign-in, allowlisted via `admins/{email}` docs |
+| `/admin` | Organizer dashboard — Google sign-in, allowlisted via `admins/{email}` docs (each carrying `role: 'admin'` or `role: 'viewer'`) |
 
 ## Development
 
@@ -25,7 +25,13 @@ npm install && (cd functions && npm install)
 npx firebase-tools emulators:start --only auth,functions,firestore
 npm run dev   # separate terminal; dev build auto-connects to emulators
 node scripts/seed-shifts.mjs data/event_signups_2025_template.csv   # seed emulator
+npm test      # pure-logic tests; no emulator or network needed
+npm run lint
 ```
+
+`npm test` covers the show-day time helpers, the awards ordering and the map
+projection — the logic that is hard to exercise by hand because it only behaves
+differently on one day of the year. CI runs it on every push to `main`.
 
 ## Deploy
 

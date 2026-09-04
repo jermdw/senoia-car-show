@@ -7,16 +7,25 @@
 //   node scripts/seed-awards.mjs winners.csv --prod      # judges' sheet → production, staged
 //   node scripts/seed-awards.mjs --clear-demo --prod     # remove only the demo rows
 //
-// Re-running an import is safe mid-ceremony: `announced` is written only when
-// a document is created, so fixing a typo in the sheet and re-importing never
-// pulls an already-called winner back off the board. To reset the demo to its
-// original mix of live and staged rows, --clear-demo first.
+// Re-running an import is safe mid-ceremony: `announced` is written only when a
+// document is created, so re-importing never pulls an already-called winner back
+// off the board. To reset the demo to its original mix of live and staged rows,
+// --clear-demo first.
+//
+// What "fixing a typo and re-importing" updates in place depends on WHICH field
+// was wrong, because the document id is derived from the row's identity (see
+// awardId below): a Top 50 row is keyed on its car number, a featured row on its
+// trophy name. Correcting the vehicle, owner or class updates the existing row.
+// Correcting a car number or a trophy name changes the identity, so it writes a
+// NEW staged row and leaves the wrong one live — fix that case by adding an `id`
+// column and keeping the id stable across the correction.
 //
 // CSV columns (header row required, order free):
-//   tier,title,carNumber,vehicle,owner,class
+//   id,tier,title,carNumber,vehicle,owner,class
 // `tier` is top50 (default) or featured; `title` is the trophy name and only
-// applies to featured rows. Imported rows arrive STAGED — publish them from
-// the Awards tab of /admin when the announcer reaches them.
+// applies to featured rows. `id` is optional and pins a row's document across
+// re-imports. Imported rows arrive STAGED — publish them from the Awards tab of
+// /admin when the announcer reaches them.
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { initializeApp } from 'firebase-admin/app'
@@ -26,10 +35,14 @@ const args = process.argv.slice(2)
 const prod = args.includes('--prod')
 const demo = args.includes('--demo')
 const clearDemo = args.includes('--clear-demo')
+// Parse and print the plan, touching no database. The point is to see the
+// document ids before a prod import: an id that shifts between runs is the
+// difference between correcting a winner and publishing a second copy of them.
+const dryRun = args.includes('--dry-run')
 const csvPath = args.find((a) => !a.startsWith('--'))
 
 if (!demo && !clearDemo && !csvPath) {
-  console.error('Usage: node scripts/seed-awards.mjs (<csv> | --demo | --clear-demo) [--prod]')
+  console.error('Usage: node scripts/seed-awards.mjs (<csv> | --demo | --clear-demo) [--prod] [--dry-run]')
   process.exit(1)
 }
 if (!prod && !process.env.FIRESTORE_EMULATOR_HOST) {
@@ -116,30 +129,88 @@ function fromCsv(path) {
     process.exit(1)
   }
   const at = (row, key) => (col[key] === undefined ? '' : (row[col[key]] ?? '').trim())
-  return rows
-    .filter((row) => at(row, 'vehicle'))
-    .map((row, i) => {
+  // The CSV line number is carried alongside each award rather than on it, so
+  // error messages can point at the row the organizer has to edit without a
+  // throwaway field riding along into Firestore. Numbered before the filter, so
+  // a skipped blank row doesn't shift every later line number in the message.
+  const parsed = rows
+    .map((row, i) => ({ row, line: i + 2 }))
+    .filter(({ row }) => at(row, 'vehicle'))
+    .map(({ row, line }, i) => {
       const tier = at(row, 'tier').toLowerCase() === 'featured' ? 'featured' : 'top50'
       const vehicle = at(row, 'vehicle')
       const carNumber = at(row, 'carnumber') || at(row, 'car #') || at(row, 'number')
       return {
-        // Hash the car, not the row position: inserting or deleting a line in
-        // the sheet must not shift every later winner onto the previous
-        // winner's document (mirrors seed-shifts.mjs).
-        id: `sheet-${createHash('sha1').update(`${tier}|${carNumber}|${vehicle}`).digest('hex').slice(0, 10)}`,
-        tier,
-        title: tier === 'featured' ? at(row, 'title') : '',
-        carNumber,
-        vehicle,
-        owner: at(row, 'owner'),
-        awardClass: at(row, 'class') || at(row, 'awardclass'),
-        photoUrl: '',
-        // Never auto-publish an imported sheet: the point of the import is to
-        // have the winners loaded *before* they are called from the stage.
-        announced: false,
-        sortOrder: i,
+        line,
+        award: {
+          id: awardId(tier, { id: at(row, 'id'), carNumber, title: at(row, 'title'), vehicle }),
+          tier,
+          title: tier === 'featured' ? at(row, 'title') : '',
+          carNumber,
+          vehicle,
+          owner: at(row, 'owner'),
+          awardClass: at(row, 'class') || at(row, 'awardclass'),
+          photoUrl: '',
+          // Never auto-publish an imported sheet: the point of the import is to
+          // have the winners loaded *before* they are called from the stage.
+          announced: false,
+          sortOrder: i,
+        },
       }
     })
+
+  // Two rows landing on one document would silently drop a winner — the second
+  // overwrites the first and the board is one row short, which nobody notices
+  // until the owner asks why their car isn't listed. Fail instead, and name the
+  // fix: an `id` column pins identity for rows the derivation can't separate.
+  const seen = new Map()
+  const clashes = []
+  for (const { line, award } of parsed) {
+    const prior = seen.get(award.id)
+    if (prior) {
+      clashes.push(`  lines ${prior.line} and ${line}: "${prior.award.vehicle}" / "${award.vehicle}"`)
+    } else {
+      seen.set(award.id, { line, award })
+    }
+  }
+  if (clashes.length) {
+    console.error(
+      `${clashes.length} row(s) share an identity with an earlier row:\n${clashes.join('\n')}\n` +
+      'Give each an explicit, stable value in an "id" column and re-run.',
+    )
+    process.exit(1)
+  }
+  return parsed.map((p) => p.award)
+}
+
+/**
+ * The document id for a sheet row — the thing that decides whether a re-import
+ * updates a winner or creates a second copy of them.
+ *
+ * Derived from the row's STABLE identity, never from the whole row: the reason
+ * to re-import mid-ceremony is that someone mistyped a car, so hashing the
+ * mistyped text would create a fresh staged document and leave the wrong one
+ * live on the public board. A Top 50 row is identified by its entrant number
+ * (what the judges' sheet is keyed on) and a featured row by its trophy name
+ * (there is exactly one "Best in Show Car").
+ *
+ * Neither of those is itself typo-proof, so an explicit `id` column wins when
+ * present — that is the escape hatch for correcting a car number, or for two
+ * rows the derivation can't tell apart. `vehicle` is only the last resort, for
+ * a Top 50 row with no number at all.
+ */
+function awardId(tier, { id, carNumber, title, vehicle }) {
+  // An explicit id is hashed WITHOUT the tier. Pinning a row across a correction
+  // is the whole point of the column, and the tier is one of the things that can
+  // be wrong: a car promoted from top50 to featured after the judges confer must
+  // keep its document, not leave the old one live on the board beside a new
+  // staged copy. Derived keys keep the tier, because an entrant number and a
+  // trophy name are separate namespaces. The `id|`/`derived|` prefixes stop an
+  // explicit id from ever colliding with a derived key.
+  const key = id
+    ? `id|${id}`
+    : `derived|${tier}|${tier === 'featured' ? title || vehicle : carNumber || vehicle}`
+  return `sheet-${createHash('sha1').update(key).digest('hex').slice(0, 10)}`
 }
 
 function demoAwards() {
@@ -165,20 +236,25 @@ function demoAwards() {
 
 const awards = clearDemo ? [] : (demo ? demoAwards() : fromCsv(csvPath))
 
+const target = dryRun ? 'DRY RUN (no writes)' : prod ? 'PRODUCTION' : 'emulator'
+
 if (clearDemo) {
-  console.log(`Clearing demo awards → ${prod ? 'PRODUCTION' : 'emulator'}`)
-  if (prod) await clearViaRest()
+  console.log(`Clearing demo awards → ${target}`)
+  if (dryRun) console.log(`  would delete every award id starting "${DEMO_PREFIX}"`)
+  else if (prod) await clearViaRest()
   else await clearViaAdminSdk()
   console.log('Done.')
 } else {
   const staged = awards.filter((a) => !a.announced).length
-  console.log(
-    `Seeding ${awards.length} awards (${staged} staged) → ${prod ? 'PRODUCTION' : 'emulator'}`,
-  )
-  if (prod) await seedViaRest()
-  else await seedViaAdminSdk()
+  console.log(`Seeding ${awards.length} awards (${staged} staged) → ${target}`)
+  if (!dryRun) {
+    if (prod) await seedViaRest()
+    else await seedViaAdminSdk()
+  }
   for (const a of awards) {
-    console.log(`  ${a.announced ? 'live  ' : 'staged'} ${a.carNumber || '—'}  ${a.title || a.tier}  ${a.vehicle}`)
+    console.log(
+      `  ${a.announced ? 'live  ' : 'staged'} ${a.id}  ${a.carNumber || '—'}  ${a.title || a.tier}  ${a.vehicle}`,
+    )
   }
   console.log('Done.')
 }
