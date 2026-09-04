@@ -17,6 +17,11 @@ export default function AnnouncementAdmin() {
   // plausibly in this dashboard at once, so the local edit wins until it's
   // committed. `dirty` is a ref, not state: it must not re-run the subscription.
   const dirty = useRef(false)
+  // Bumped on every edit and compared once the write lands. The form stays
+  // editable while `updateDoc` is in flight, so an organizer who keeps typing
+  // during that wait would otherwise have the newer text marked clean by a save
+  // that never carried it — and the next snapshot would wipe it.
+  const revision = useRef(0)
 
   useEffect(() => onSnapshot(doc(db, 'events', EVENT_ID), (snap) => {
     if (dirty.current) return
@@ -27,19 +32,24 @@ export default function AnnouncementAdmin() {
 
   const edit = (setter, value) => {
     dirty.current = true
+    revision.current += 1
     setter(value)
   }
 
   async function save() {
     setSaving(true)
+    // The values this write actually carries are the ones from this render;
+    // anything typed after it is not in the payload and must stay dirty.
+    const sent = revision.current
     try {
       await updateDoc(doc(db, 'events', EVENT_ID), {
         announcement: { text, active, updatedAt: serverTimestamp() },
       })
       // Only now may the listener drive the form again — what is on screen is
       // what is stored. Cleared after the await so a failed save keeps the
-      // organizer's text on screen to retry with.
-      dirty.current = false
+      // organizer's text on screen to retry with, and only when nothing was
+      // typed while the write was in flight.
+      if (revision.current === sent) dirty.current = false
     } catch (e) {
       console.error('save announcement failed', e)
       alert('That didn’t save. Check your connection and try again.')

@@ -200,8 +200,17 @@ function fromCsv(path) {
  * a Top 50 row with no number at all.
  */
 function awardId(tier, { id, carNumber, title, vehicle }) {
-  const key = id || (tier === 'featured' ? title || vehicle : carNumber || vehicle)
-  return `sheet-${createHash('sha1').update(`${tier}|${key}`).digest('hex').slice(0, 10)}`
+  // An explicit id is hashed WITHOUT the tier. Pinning a row across a correction
+  // is the whole point of the column, and the tier is one of the things that can
+  // be wrong: a car promoted from top50 to featured after the judges confer must
+  // keep its document, not leave the old one live on the board beside a new
+  // staged copy. Derived keys keep the tier, because an entrant number and a
+  // trophy name are separate namespaces. The `id|`/`derived|` prefixes stop an
+  // explicit id from ever colliding with a derived key.
+  const key = id
+    ? `id|${id}`
+    : `derived|${tier}|${tier === 'featured' ? title || vehicle : carNumber || vehicle}`
+  return `sheet-${createHash('sha1').update(key).digest('hex').slice(0, 10)}`
 }
 
 function demoAwards() {
