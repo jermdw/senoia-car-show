@@ -17,9 +17,12 @@ npx firebase-tools deploy --only hosting --project senoiacar             # site 
 npx firebase-tools deploy --only functions,hosting --project senoiacar   # after functions changes
 ```
 
-Merging to `main` auto-deploys via `.github/workflows/deploy.yml` (hosting every
-push; functions too when `functions/**` changed, or via "Run workflow" with the
-box ticked). Keyless auth (Workload Identity Federation) — one-time GCP setup is
+Merging to `main` auto-deploys via `.github/workflows/deploy.yml` (hosting and
+Firestore rules every push; functions too when `functions/**` changed, or via
+"Run workflow" with the box ticked). Rules go out unconditionally — gating them
+on a `firestore.rules` diff skipped them whenever a rules-changing push failed
+before that step, leaving hosting live against the old ruleset. Node version
+comes from `.nvmrc`; keep local and CI on it. Keyless auth (Workload Identity Federation) — one-time GCP setup is
 `scripts/setup-ci-deploy.sh`. The manual commands above remain the fallback.
 
 Prod seed (idempotent, preserves `spotsFilled`):

@@ -20,6 +20,9 @@ live at [senoiacar.show](https://senoiacar.show).
 
 ## Development
 
+Node 22 — `nvm use` reads `.nvmrc`, and CI pins the same file. On an older
+Node, `npm install` warns `EBADENGINE`.
+
 ```bash
 npm install && (cd functions && npm install)
 npx firebase-tools emulators:start --only auth,functions,firestore
