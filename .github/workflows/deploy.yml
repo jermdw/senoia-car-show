@@ -1,9 +1,9 @@
 # Deploys senoiacar.show from `main`.
 #
-# Every push to main: lint, build, deploy Firestore rules (when they changed),
-# then Hosting. Functions are deployed too when the push touched functions/ (or
-# when run by hand with the box ticked) — a functions deploy is slow and rebinds
-# secrets, so it isn't done for a copy change.
+# Every push to main: lint, test, build, deploy Firestore rules, then Hosting.
+# Functions are deployed too when the push touched functions/ or firebase.json
+# (or when run by hand with the box ticked) — a functions deploy is slow and
+# rebinds secrets, so it isn't done for a copy change.
 #
 # Rules go out BEFORE Hosting on purpose: a page whose reads depend on a new
 # rule must not reach users ahead of the rule itself. If the rules deploy
@@ -52,7 +52,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # From .nvmrc, so CI and a local `nvm use` cannot drift apart. They
+          # did: dev ran Node 20 while this pinned 22, and `node --test test/`
+          # (a directory arg Node 20 accepts, a glob Node 22 matches nothing
+          # with) passed every local run and broke the #43 deploy.
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: |
             package-lock.json
@@ -70,17 +74,6 @@ jobs:
           fi
           echo "functions=$want" >> "$GITHUB_OUTPUT"
           echo "Deploy functions: $want"
-
-          # A manual run has no meaningful HEAD^ diff, so push rules then too —
-          # re-uploading an unchanged ruleset is a no-op.
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || \
-             ! git diff --quiet HEAD^ HEAD -- firestore.rules; then
-            rules=true
-          else
-            rules=false
-          fi
-          echo "rules=$rules" >> "$GITHUB_OUTPUT"
-          echo "Deploy Firestore rules: $rules"
 
       - run: npm ci
       - run: npm run lint
@@ -107,8 +100,17 @@ jobs:
 
       # Ahead of Hosting — see the header comment. Needs roles/firebaserules.admin
       # on github-deploy@, which scripts/setup-ci-deploy.sh binds.
+      #
+      # Unconditional on purpose. This used to run only when the push touched
+      # firestore.rules, which silently skips them in the one case that matters:
+      # a push that DID change the rules but failed before this step (#43 died at
+      # npm test) leaves the fix-forward push — which doesn't touch the file —
+      # deploying hosting against the OLD ruleset. That shipped an admin lockout
+      # fix whose UI half was live and whose rules half was not.
+      # Re-uploading an unchanged ruleset is a no-op, so the diff bought nothing
+      # but that failure mode. Functions stay conditional: that deploy is slow
+      # and rebinds secrets, so it is not worth paying on every copy change.
       - name: Deploy Firestore rules
-        if: steps.scope.outputs.rules == 'true'
         run: |
           npx --yes "$FIREBASE_TOOLS" deploy --only firestore:rules \
             --project "$FIREBASE_PROJECT" --non-interactive
