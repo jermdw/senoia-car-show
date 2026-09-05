@@ -5,6 +5,11 @@ Live at https://senoiacar.show on Firebase project `senoiacar` (Hosting, Firesto
 Cloud Functions, Auth). The volunteer system replaced volunteersignup.org; the
 informational pages replaced the legacy page at enjoysenoia.com.
 
+The human-facing planning playbook lives in `docs/` — year-rollover checklist,
+asset recipes (incl. the Mapbox map export), show-day runbook, accounts. This
+file is the compressed version of the same knowledge; when you change something
+covered by both, update both in the same commit.
+
 ## Commands
 
 ```bash

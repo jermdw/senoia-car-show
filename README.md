@@ -3,6 +3,12 @@
 Website and volunteer sign-up system for the Annual Fall Senoia Car Show —
 live at [senoiacar.show](https://senoiacar.show).
 
+## Planning playbook
+
+Running the show next year? Start at **[docs/README.md](docs/README.md)** — the
+year-rollover checklist, asset recipes, show-day runbook and account inventory.
+This README only covers getting the code running.
+
 ## Stack
 
 - **Frontend**: React (Vite) + Tailwind, deployed to Firebase Hosting
