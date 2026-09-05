@@ -37,15 +37,23 @@ all**, before next year's page goes up.
 The DDA's food-truck coordinator has contacts for the two vendors. A text cell
 is a correct outcome, not a bug — but artwork would be better.
 
-### 4. ⚠️ Ticket Tailor access-code examples are in a public file
+### 4. ⚠️ Ticket Tailor access codes need rotating
 
-`src/data/sponsorship.js` contains a comment giving two real-looking per-slot
-access codes as examples of the `?a=CODE` mechanism. Those codes each unlock one
-reserved curbside sponsor space, and this repository is public.
+`src/data/sponsorship.js` used to carry two real per-slot access codes in a
+comment, as worked examples of the `?a=CODE` mechanism. Each unlocks one
+reserved curbside sponsor space, and this repository is public. They were
+redacted from the file in PR #47.
 
-**Action:** replace them with `<code>` placeholders in the comment, and — if
-they were ever live — rotate them in Ticket Tailor. The mechanism is worth
-documenting; the codes are not. See
+**That is not remediation.** The codes remain in this repo's history from
+commit `6269627` and are reachable by anyone who clones it. Rewriting history
+on a public repo with existing clones buys very little for the disruption, so:
+
+**Action for the SDDA:** rotate those two codes in Ticket Tailor. First check
+whether either was ever actually issued to a sponsor — if neither was, this is
+tidy-up rather than an incident.
+
+The mechanism is worth documenting; the codes are not, in this file or any
+other. See
 [06-content-map.md](06-content-map.md#the-ticket-tailor-tier-mechanics).
 
 ## Needs an organizer to fill in
