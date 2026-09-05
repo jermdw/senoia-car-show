@@ -28,8 +28,12 @@ export const BRONZE_PRICE = '$250'
 //   https://www.tickettailor.com/events/senoiadda/2207650?a=<their code>
 //
 // Two gotchas. It only works on the www.tickettailor.com/events/… form — the
-// buytickets.at short link drops the query string. And codes are *per slot*
-// (SCSST2 = Title 2, SCSSG1 = Gold 1), not per tier, so such a link is unique
-// to one sponsor and must never be published on this site: it would let anyone
-// buy that reserved space.
+// buytickets.at short link drops the query string. And codes are *per slot*,
+// not per tier: Title 2 and Gold 1 each have their own, so such a link is
+// unique to one sponsor and must never be published on this site — it would
+// let anyone buy that reserved curbside space.
+//
+// The codes themselves live in Ticket Tailor and in the SDDA's approval email,
+// and belong in neither this file nor docs/. This repo is public, so a code
+// committed here is a code given away; not even as an example.
 
