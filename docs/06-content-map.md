@@ -71,7 +71,7 @@ Nothing is sold on this site. Two external box offices:
 
 | What | Where | Notes |
 | --- | --- | --- |
-| Show vehicle registration | Ticket Tailor `buytickets.at/senoiadda/2164595` | Interactive seat-map checkout, which is why we link out rather than embed |
+| Show vehicle registration | Ticket Tailor **direct checkout** `www.tickettailor.com/checkout/view-event/id/8046457/chk/bdc3/` | Interactive seat-map checkout, which is why we link out rather than embed. Deliberately **not** the `buytickets.at/senoiadda/2164595` landing page — see below. |
 | Sponsorships | Ticket Tailor `buytickets.at/senoiadda/2207650` | Deliberately **absent from the public listing** at tickettailor.com/events/senoiadda — it is Published and selling, reachable only by direct link. Don't conclude from the listing that it's offline. |
 | Shirts (online) | `enjoysenoia.com` store | That's where the DDA's payment processing lives |
 | Poker run tickets | `senoiahistory.com` (Stripe) | Embedded as an iframe on `/poker-run` |
@@ -101,6 +101,37 @@ gotchas:
 > else.** They must not be committed to this repo or written into these docs.
 > See [09-open-questions.md](09-open-questions.md) — there is a cleanup item
 > outstanding on this.
+
+### Why registration skips the Ticket Tailor landing page
+
+Registration links straight to the checkout, bypassing the event page that
+`buytickets.at/senoiadda/2164595` resolves to. **This is a workaround for a
+Ticket Tailor bug, not a preference — don't "tidy" it back to the short link.**
+
+At phone widths Ticket Tailor hides the in-flow buy button
+(`.hero__content__cta { display: none }`) and leaves a
+`position: fixed; bottom: 0` bar as the *only* way to buy. There is no second
+buy button anywhere on that page. So when anything covers that one bar — iOS
+Safari's bottom toolbar, or a content blocker's cosmetic filter, both of which
+hit fixed bottom bars specifically — a buyer on a phone sees a page with no way
+to pay and gives up. A car owner reported exactly this in Sept 2026 and it was
+reproduced on a second phone.
+
+The checkout page puts its Next button in `position: sticky` inside normal
+document flow, so scrolling to the bottom always reaches it. Same seat map, one
+fewer fixed bar between a buyer and their $20.
+
+Two things to know if this link ever breaks:
+
+1. The `chk` hash is the event's published checkout token — the landing page's
+   own buy button links to it. Re-copy it from the Ticket Tailor dashboard under
+   the event's **Links & widgets** if registration starts 404ing.
+2. **Do not apply the same swap to sponsorships.** `?a=CODE` only works on the
+   `www.tickettailor.com/events/…` form, so `SPONSORSHIP_URL` must stay as it
+   is or approved sponsors' access-code links stop unlocking their tier.
+
+The registration event also has no description text in Ticket Tailor — see
+[09-open-questions.md](09-open-questions.md).
 
 ### The poker run ticket embed
 
