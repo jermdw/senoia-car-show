@@ -126,6 +126,12 @@ Two things to know if this link ever breaks:
 1. The `chk` hash is the event's published checkout token — the landing page's
    own buy button links to it. Re-copy it from the Ticket Tailor dashboard under
    the event's **Links & widgets** if registration starts 404ing.
+   **Don't test it with curl.** Ticket Tailor's edge 403s every non-browser
+   client — their homepage and a deliberately bogus token return the same 403 —
+   so curl cannot tell a live link from a dead one. Same trap as App Check on
+   our callables. Check it from a real browser: a cookie-free
+   `fetch(url, {credentials: 'omit'})` gives 200 and ~54kB containing
+   "Non-Reserved General Parking"; a bad token gives 404 and ~1kB.
 2. **Do not apply the same swap to sponsorships.** `?a=CODE` only works on the
    `www.tickettailor.com/events/…` form, so `SPONSORSHIP_URL` must stay as it
    is or approved sponsors' access-code links stop unlocking their tier.

@@ -19,9 +19,17 @@
 //
 // The `chk` hash is the event's published checkout token, not a session
 // artifact: it is what the landing page's own buy button points at, and a
-// cookie-free request for it returns the live tier list. If registration ever
-// 404s, re-copy it from the Ticket Tailor dashboard under the event's
-// "Links & widgets".
+// cookie-free browser request for it returns 200 with the live tier list. If
+// registration ever 404s, re-copy it from the Ticket Tailor dashboard under the
+// event's "Links & widgets".
+//
+// Don't check this link with curl — Ticket Tailor's edge returns 403 to every
+// non-browser client, including their own homepage and a deliberately bogus
+// token, so a 403 says nothing about whether the link works. It is the same
+// trap as App Check on our callables. Verify from a real browser instead: a
+// cookie-free `fetch(url, {credentials: 'omit'})` returns 200 and ~54kB
+// containing "Non-Reserved General Parking", where a bad token returns 404 and
+// ~1kB.
 export const REGISTRATION_URL =
   'https://www.tickettailor.com/checkout/view-event/id/8046457/chk/bdc3/'
 
