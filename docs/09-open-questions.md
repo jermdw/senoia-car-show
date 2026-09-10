@@ -56,16 +56,28 @@ The mechanism is worth documenting; the codes are not, in this file or any
 other. See
 [06-content-map.md](06-content-map.md#the-ticket-tailor-tier-mechanics).
 
+### 5. The registration event has no description in Ticket Tailor
+
+`src/data/registration.js` now sends buyers straight to checkout, so most people
+never see it — but anyone who reaches the event page (an old link, a search
+result, the DDA's own box office listing) gets a title, a date, and then a large
+blank gap where the description should be. It reads as a broken page.
+
+**Someone with Ticket Tailor access should paste a short description into event
+es_2164595** — what the $20 buys, the 7:00–11:00am check-in window, and that
+spectators don't need a ticket. Five minutes in the dashboard, and it is on the
+one page where a buyer decides whether to pay.
+
 ## Needs an organizer to fill in
 
-### 5. Where does the operations playbook live?
+### 6. Where does the operations playbook live?
 
 `src/data/eventMap.js` cites "the 2026 Senoia Car Show Playbook
 (organizer-maintained)" as the source of truth for every event fact. Nothing
 records *where it is* or *who holds it*. Put a link or a location in
 [README.md](README.md) — without it, the citation is unverifiable.
 
-### 6. Print & physical signage
+### 7. Print & physical signage
 
 The whole of the "⬜ Print & physical signage" section in
 [05-assets-and-artwork.md](05-assets-and-artwork.md) — porch signs, "You Are
@@ -74,14 +86,14 @@ source files, costs, who stores what between years.
 
 **This is the single biggest gap in the playbook.**
 
-### 7. The bus-factor list
+### 8. The bus-factor list
 
 [07-accounts-and-access.md](07-accounts-and-access.md) ends with a list of "who
 holds this credential" that only the current maintainers can complete. It needs
 to live somewhere the DDA controls, not only in this repo — the repo is one of
 the things it grants access to.
 
-### 8. Decisions for the 2027 cycle
+### 9. Decisions for the 2027 cycle
 
 - [ ] **Confirm show day.** The fourth Saturday in September has been the
       pattern, but the date moved between 2025 and 2026. Everything in
