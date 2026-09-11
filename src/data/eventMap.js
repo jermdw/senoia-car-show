@@ -413,11 +413,13 @@ export const POIS = [
   {
     id: 'parking-tencate',
     category: 'parking',
-    name: 'Tencate Gravel Lot',
-    where: 'Andrews Parkway, just before Highway 74',
+    // 2026-09-10: organizers confirmed a paved warehouse lot (not gravel) at
+    // 66 Andrews Parkway — see the car-haulers answer in faq.js.
+    name: 'Tencate Warehouse Lot',
+    where: '66 Andrews Parkway, just before Highway 74',
     blurb:
       'Free spectator parking, and the drop-off point for car haulers and trailers.',
-    directions: 'Andrews Parkway, Senoia, GA 30276',
+    directions: '66 Andrews Parkway, Senoia, GA 30276',
     lat: null,
     lon: null,
     confirmed: true,

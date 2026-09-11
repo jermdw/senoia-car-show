@@ -37,18 +37,21 @@ const PHONE = '(770) 727-9173'
 export const FAQ = [
   // ---- Getting in & setting up ---------------------------------------------
   {
+    // 2026-09-10: organizers supplied this wording, which corrects the lot to
+    // paved (not gravel) and gives its street address. Mirrored in eventMap.js
+    // and Show.jsx.
     id: 'car-haulers',
     section: 'load-in',
     q: 'Where do car haulers and trailers park, load and unload?',
     a: [
-      'Haulers and trailers use the Tencate gravel lot on Andrews Parkway, just before Highway 74. That is the drop-off point for rigs — unload your show vehicle there, drive it into town through one of the show-car gates, and leave the hauler parked at Tencate for the day. There is no room to turn a rig around inside the street closure once Main Street fills.',
+      'Car haulers unload at the Tencate warehouse paved lot at 66 Andrews Parkway. Unload there, drive your car into town, and leave the trailer and tow vehicle at Tencate for the day. There is no room to turn a rig around inside the street closure once Main Street fills.',
       `The Senoia Welcome Center on Main Street is where car-hauler parking and shuttle service are arranged, so get in touch ahead of show day if you are bringing one: ${EMAIL} or ${PHONE}.`,
     ],
     links: [
       { label: 'Tencate lot on the show day guide', to: '/map?poi=parking-tencate' },
       {
         label: 'Driving directions to the Tencate lot',
-        href: 'https://www.google.com/maps/dir/?api=1&destination=Andrews%20Parkway%2C%20Senoia%2C%20GA%2030276',
+        href: 'https://www.google.com/maps/dir/?api=1&destination=66%20Andrews%20Parkway%2C%20Senoia%2C%20GA%2030276',
       },
     ],
     confirmed: true,
@@ -215,7 +218,7 @@ export const FAQ = [
     section: 'spectators',
     q: 'Where do spectators park?',
     a: [
-      'Free lots ring the show. Seavy Street Park to the east (Shuttle 1), the Rockaway grass lots to the north (Shuttle 2), and Marimac Lakes and the public library to the west (Shuttle 3) are each on a shuttle route. The Housing Authority field off Bridge Street is a short walk east of the show and is not on a route, and the Tencate gravel lot on Andrews Parkway takes cars as well.',
+      'Free lots ring the show. Seavy Street Park to the east (Shuttle 1), the Rockaway grass lots to the north (Shuttle 2), and Marimac Lakes and the public library to the west (Shuttle 3) are each on a shuttle route. The Housing Authority field off Bridge Street is a short walk east of the show and is not on a route, and the Tencate paved lot at 66 Andrews Parkway takes cars as well.',
       'Free golf-cart shuttles run from 9:00am to 5:00pm. If you are arriving by golf cart, cart parking is marked with "Carts Only" barrels on North Main above Johnson, South Main below Gin, and on Baggarly.',
     ],
     links: [{ label: 'All lots, with driving directions', to: '/map' }],

@@ -136,7 +136,7 @@ export default function Show() {
           <li>The Maguires Lot returns to general parking (no longer reserved).</li>
           <li>Free spectator parking with shuttles running all day.</li>
           <li>
-            Haulers and trailers unload at the Tencate gravel lot on Andrews
+            Haulers and trailers unload at the Tencate paved lot at 66 Andrews
             Parkway &mdash; see the{' '}
             <Link to="/faq#car-haulers" className="underline font-semibold">FAQ</Link>.
           </li>
