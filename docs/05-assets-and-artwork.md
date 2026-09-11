@@ -147,8 +147,8 @@ what makes next year's check a ten-second read instead of a re-investigation.
    correct outcome, not a gap.
 6. Food trucks routinely have a logo but no website (or a Facebook page only),
    so on `/vendors` `logo` and `url` are independent — a logo can render
-   unlinked. The sponsor grid does the same: Flint! Grinders LLC supplied
-   artwork but has no website, so its logo shows without a link.
+   unlinked. The sponsor grid does the same when a sponsor's `url` is left
+   off, so artwork can go up before a website is confirmed.
 
 ---
 
