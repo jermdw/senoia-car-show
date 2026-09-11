@@ -31,6 +31,7 @@ import fayetteHumaneLogo from '../assets/sponsor-fayette-humane-society.webp'
 import poolFxLogo from '../assets/sponsor-pool-fx.webp'
 import synovusLogo from '../assets/sponsor-synovus.webp'
 import carlSmithLogo from '../assets/sponsor-carl-smith-and-sons.webp'
+import flintGrindersLogo from '../assets/sponsor-flint-grinders.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -112,6 +113,10 @@ const SPONSORS_2026 = [
       // (swimmingpoolfx.com, owner Joey Massengale), serving Fayette/Coweta
       // County — not an unrelated national "PoolFX".
       { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
+      // Woodbury GA forestry/stump grinding business. Artwork supplied by the
+      // organizers (Sept 2026), trimmed of its white margin. No website found,
+      // so the logo renders unlinked until a confirmed URL turns up.
+      { name: 'Flint! Grinders LLC', logo: flintGrindersLogo, w: 400, h: 239 },
     ],
   },
   {
@@ -305,7 +310,9 @@ export default function Sponsors() {
           <section key={tier} className="mb-8">
             <h3 className="font-display text-xl uppercase tracking-wide text-gold-dark mb-3">{tier}</h3>
             <ul className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-              {sponsors.map(({ name, logo, w, h, url }) => (
+              {sponsors.map(({ name, logo, w, h, url }) => {
+                const LogoWrapper = url ? 'a' : 'div'
+                return (
                 <li
                   key={name}
                   className={`bg-white rounded-xl border border-stone-200 hover:border-gold transition-colors ${cell}`}
@@ -318,7 +325,9 @@ export default function Sponsors() {
                       artwork exists — not wrapped in a link since there's
                       nowhere confirmed to send visitors. */}
                   {logo ? (
-                    <a
+                    // A logo with no confirmed `url` (Flint! Grinders) renders in
+                    // a plain div — an href-less <a> is neither a link nor honest.
+                    <LogoWrapper
                       href={url}
                       // Only http(s) links leave the site; a `tel:` sponsor (Superior
                       // Tree Service has no website) hands off to the phone app and
@@ -340,14 +349,15 @@ export default function Sponsors() {
                         height={h}
                         className="max-h-full max-w-full w-auto h-auto object-contain"
                       />
-                    </a>
+                    </LogoWrapper>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center p-4 text-center">
                       <span className="font-display uppercase tracking-wide text-ink">{name}</span>
                     </div>
                   )}
                 </li>
-              ))}
+                )
+              })}
             </ul>
           </section>
         ))}

@@ -37,7 +37,7 @@ next year.
 | `src/assets/shirt-a250-art.webp` | 720×678 | America 250 back print |
 | `src/assets/shirt-kids-art.webp` | 600×600 | Kids' racer print |
 | `src/assets/shirt-21st-mockup.webp` | 720×383 | Photographed/rendered mockup of the annual shirt |
-| `src/assets/sponsor-*.webp` | 400 px wide | 29 sponsor logos |
+| `src/assets/sponsor-*.webp` | 400 px wide | 30 sponsor logos |
 | `src/assets/vendor-*.webp` | 400 px wide | 8 food vendor logos |
 
 ---
@@ -147,7 +147,8 @@ what makes next year's check a ten-second read instead of a re-investigation.
    correct outcome, not a gap.
 6. Food trucks routinely have a logo but no website (or a Facebook page only),
    so on `/vendors` `logo` and `url` are independent — a logo can render
-   unlinked. The sponsor grid pairs them.
+   unlinked. The sponsor grid does the same: Flint! Grinders LLC supplied
+   artwork but has no website, so its logo shows without a link.
 
 ---
 
