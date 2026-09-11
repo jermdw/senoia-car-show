@@ -31,6 +31,19 @@ old ruleset. Node version comes from `.nvmrc`; keep local and CI on it. Keyless
 auth (Workload Identity Federation) — one-time GCP setup is
 `scripts/setup-ci-deploy.sh`. The manual commands above remain the fallback.
 
+## Workflow
+
+- **Every code change ships as a pull request.** This is standing
+  authorization: don't ask whether to commit — branch from current `main`
+  (`git fetch && git switch -c <topic> origin/main`), commit, push, and open the
+  PR with `gh pr create`. Never commit or push directly to `main`; every merge
+  deploys to production.
+- One concern per PR. Related small fixes can share one as separate commits,
+  so each reverts on its own.
+- Before opening: `npm run lint`, `npm test`, `npm run build`, and list what was
+  checked in the PR's test plan.
+- Merging is the human's call — don't merge a PR unless asked.
+
 Prod seed (idempotent, preserves `spotsFilled`):
 `GCLOUD_ACCESS_TOKEN=$(gcloud auth print-access-token) node scripts/seed-shifts.mjs <csv> --prod`
 
