@@ -114,9 +114,10 @@ const SPONSORS_2026 = [
       // County — not an unrelated national "PoolFX".
       { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
       // Woodbury GA forestry/stump grinding business. Artwork supplied by the
-      // organizers (Sept 2026), trimmed of its white margin. No website found,
-      // so the logo renders unlinked until a confirmed URL turns up.
-      { name: 'Flint! Grinders LLC', logo: flintGrindersLogo, w: 400, h: 239 },
+      // organizers (Sept 2026), trimmed of its white margin. URL supplied by
+      // the organizers and confirmed by the site's own name, Woodbury GA
+      // address and forestry-mulching/stump-grinding services.
+      { name: 'Flint! Grinders LLC', logo: flintGrindersLogo, w: 400, h: 239, url: 'https://flintgrinders.com/' },
     ],
   },
   {
@@ -325,8 +326,8 @@ export default function Sponsors() {
                       artwork exists — not wrapped in a link since there's
                       nowhere confirmed to send visitors. */}
                   {logo ? (
-                    // A logo with no confirmed `url` (Flint! Grinders) renders in
-                    // a plain div — an href-less <a> is neither a link nor honest.
+                    // A logo with no confirmed `url` renders in a plain div — an
+                    // href-less <a> is neither a link nor honest.
                     <LogoWrapper
                       href={url}
                       // Only http(s) links leave the site; a `tel:` sponsor (Superior
