@@ -128,6 +128,10 @@ Merge to `main`. `.github/workflows/deploy.yml` runs lint → test → build →
 **Firestore rules** → Hosting (and Functions when the push touched `functions/`
 or `firebase.json`, or when you tick the box on a manual `workflow_dispatch`).
 
+Because every merge deploys, changes reach `main` only through pull requests —
+never a direct push. One concern per PR; small related fixes can share one as
+separate commits so each can be reverted alone.
+
 Two deliberate design decisions in that workflow, both bought with a real
 outage:
 
