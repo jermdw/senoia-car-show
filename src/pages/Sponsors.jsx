@@ -86,6 +86,12 @@ const SPONSORS_2026 = [
       // had them in Silver. No standalone website — the logo is their
       // Facebook profile photo, a shop-sign photograph of their "JW" mark.
       { name: 'JW Rod & Customs', logo: jwRodLogo, w: 400, h: 263, url: 'https://www.facebook.com/jwrodncustoms' },
+      // Slot G10 (Senoia Marquee), paid. Name-only: the organizers' list gives
+      // a contact but no artwork, and Anytime Fitness is a franchise — the
+      // corporate site is not a confirmed URL for this location, so linking
+      // there would be a guess. Add logo + the location's own page when Steve
+      // supplies them.
+      { name: 'Anytime Fitness' },
     ],
   },
   {
@@ -118,6 +124,23 @@ const SPONSORS_2026 = [
       // the organizers and confirmed by the site's own name, Woodbury GA
       // address and forestry-mulching/stump-grinding services.
       { name: 'Flint! Grinders LLC', logo: flintGrindersLogo, w: 400, h: 239, url: 'https://flintgrinders.com/' },
+      // Slot S4 (Seavy & Baggerly N2), paid. The organizers' 2026 row
+      // abbreviates this to "Community Church"; the full name confirmed by the
+      // organizers is Community Bible Church, matching the 2024 rows and the
+      // contact's own address (brooks.everett@communitybiblechurch.com).
+      { name: 'Community Bible Church' },
+      // Slot S6 (Seavy & Baggerly N4), paid. Name-only: the organizers' list
+      // has "westsideshowerandbath.com" sitting in the email column, which is
+      // suggestive but not a supplied URL, and unverified. Link it once the
+      // organizers confirm it.
+      { name: 'Westside Shower & Bath' },
+      // Slot S17 (Snap Fitness), committed by invoice. Weaker standing than
+      // the other committed entries here: the organizers' list notes no access
+      // code has been issued yet. Included because `committed` is this page's
+      // existing inclusion bar (Flint! Grinders, JW Rod, GMP, Synovus and SANY
+      // are all on the page on that basis); drop it if the organizers would
+      // rather hold until payment.
+      { name: 'AV8 Precision Coatings' },
     ],
   },
   {
