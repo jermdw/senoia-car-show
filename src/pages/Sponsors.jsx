@@ -124,13 +124,11 @@ const SPONSORS_2026 = [
       // the organizers and confirmed by the site's own name, Woodbury GA
       // address and forestry-mulching/stump-grinding services.
       { name: 'Flint! Grinders LLC', logo: flintGrindersLogo, w: 400, h: 239, url: 'https://flintgrinders.com/' },
-      // Slot S4 (Seavy & Baggerly N2), paid. NAME UNCONFIRMED: the organizers'
-      // 2026 row says "Community Church", but the 2024 rows of the same sheet
-      // carry the same contact (Brooks Everett) as "Community Bible Church".
-      // Spelled here exactly as the 2026 row has it rather than promoting the
-      // fuller 2024 spelling — a sponsor's name on a public page is not
-      // something to infer. Confirm with the organizers before this ships.
-      { name: 'Community Church' },
+      // Slot S4 (Seavy & Baggerly N2), paid. The organizers' 2026 row
+      // abbreviates this to "Community Church"; the full name confirmed by the
+      // organizers is Community Bible Church, matching the 2024 rows and the
+      // contact's own address (brooks.everett@communitybiblechurch.com).
+      { name: 'Community Bible Church' },
       // Slot S6 (Seavy & Baggerly N4), paid. Name-only: the organizers' list
       // has "westsideshowerandbath.com" sitting in the email column, which is
       // suggestive but not a supplied URL, and unverified. Link it once the
