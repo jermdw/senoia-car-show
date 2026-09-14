@@ -32,6 +32,8 @@ import poolFxLogo from '../assets/sponsor-pool-fx.webp'
 import synovusLogo from '../assets/sponsor-synovus.webp'
 import carlSmithLogo from '../assets/sponsor-carl-smith-and-sons.webp'
 import flintGrindersLogo from '../assets/sponsor-flint-grinders.webp'
+import anytimeFitnessLogo from '../assets/sponsor-anytime-fitness.webp'
+import av8Logo from '../assets/sponsor-av8-precision-coatings.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -86,12 +88,19 @@ const SPONSORS_2026 = [
       // had them in Silver. No standalone website — the logo is their
       // Facebook profile photo, a shop-sign photograph of their "JW" mark.
       { name: 'JW Rod & Customs', logo: jwRodLogo, w: 400, h: 263, url: 'https://www.facebook.com/jwrodncustoms' },
-      // Slot G10 (Senoia Marquee), paid. Name-only: the organizers' list gives
-      // a contact but no artwork, and Anytime Fitness is a franchise — the
-      // corporate site is not a confirmed URL for this location, so linking
-      // there would be a guess. Add logo + the location's own page when Steve
-      // supplies them.
-      { name: 'Anytime Fitness' },
+      // Slot G10 (Senoia Marquee), paid. A franchise trades under the national
+      // brand mark, so the corporate logo is the right artwork; this file is the
+      // one the same sponsor's PorchFest 2026 listing uses (rasterized from the
+      // SVG anytimefitness.com serves). The URL is the Senoia club's own page,
+      // not the corporate home page — the SDDA confirmed that club as the
+      // sponsor for PorchFest. It still read "Opening Soon" on 2026-09-14.
+      {
+        name: 'Anytime Fitness',
+        logo: anytimeFitnessLogo,
+        w: 400,
+        h: 107,
+        url: 'https://www.anytimefitness.com/locations/senoia-georgia-5654',
+      },
     ],
   },
   {
@@ -139,8 +148,12 @@ const SPONSORS_2026 = [
       // code has been issued yet. Included because `committed` is this page's
       // existing inclusion bar (Flint! Grinders, JW Rod, GMP, Synovus and SANY
       // are all on the page on that basis); drop it if the organizers would
-      // rather hold until payment.
-      { name: 'AV8 Precision Coatings' },
+      // rather hold until payment. Logo is the sponsor's own dark-lettering
+      // artwork, sent by owner Rob Tuck and forwarded by Steve on 2026-09-12.
+      // The URL is not the domain in his email (av8pc.com is an unfinished
+      // placeholder with a broken certificate); av8precisioncoatings.com is the
+      // live site, and it names the same Peachtree City Cerakote shop.
+      { name: 'AV8 Precision Coatings', logo: av8Logo, w: 400, h: 175, url: 'https://av8precisioncoatings.com/' },
     ],
   },
   {
