@@ -101,6 +101,11 @@ const SPONSORS_2026 = [
         h: 107,
         url: 'https://www.anytimefitness.com/locations/senoia-georgia-5654',
       },
+      // Confirmed as the Peachtree City/Newnan/Fayetteville pool builder
+      // (swimmingpoolfx.com, owner Joey Massengale), serving Fayette/Coweta
+      // County — not an unrelated national "PoolFX". Gold, not Silver, per the
+      // organizers (2026-09-16).
+      { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
     ],
   },
   {
@@ -124,10 +129,6 @@ const SPONSORS_2026 = [
       { name: 'Clarissa Uhl – Realtor, Berkshire Hathaway HomeServices Georgia Properties', logo: clarissaLogo, w: 400, h: 156, url: 'https://clarissauhl.bhhsgeorgia.com/' },
       // Fayette County animal welfare nonprofit, confirmed at fayettehumane.org.
       { name: 'Fayette Humane Society', logo: fayetteHumaneLogo, w: 400, h: 390, url: 'https://fayettehumane.org/' },
-      // Confirmed as the Peachtree City/Newnan/Fayetteville pool builder
-      // (swimmingpoolfx.com, owner Joey Massengale), serving Fayette/Coweta
-      // County — not an unrelated national "PoolFX".
-      { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
       // Woodbury GA forestry/stump grinding business. Artwork supplied by the
       // organizers (Sept 2026), trimmed of its white margin. URL supplied by
       // the organizers and confirmed by the site's own name, Woodbury GA
