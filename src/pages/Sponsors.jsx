@@ -34,6 +34,7 @@ import carlSmithLogo from '../assets/sponsor-carl-smith-and-sons.webp'
 import flintGrindersLogo from '../assets/sponsor-flint-grinders.webp'
 import anytimeFitnessLogo from '../assets/sponsor-anytime-fitness.webp'
 import av8Logo from '../assets/sponsor-av8-precision-coatings.webp'
+import westsideLogo from '../assets/sponsor-westside-shower-and-bath.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -139,11 +140,22 @@ const SPONSORS_2026 = [
       // organizers is Community Bible Church, matching the 2024 rows and the
       // contact's own address (brooks.everett@communitybiblechurch.com).
       { name: 'Community Bible Church' },
-      // Slot S6 (Seavy & Baggerly N4), paid. Name-only: the organizers' list
-      // has "westsideshowerandbath.com" sitting in the email column, which is
-      // suggestive but not a supplied URL, and unverified. Link it once the
-      // organizers confirm it.
-      { name: 'Westside Shower & Bath' },
+      // Slot S6 (Seavy & Baggerly N4), paid. One business, two storefronts,
+      // one duck: it also trades as Westside Construction. Listed under the
+      // organizers' spelling and linked to the matching site per their
+      // instruction (2026-09-22) — so if artwork or a row arrives later as
+      // "Westside Construction", it belongs on THIS row, not a new one.
+      //
+      // Each storefront runs its own variant of the same duck-and-script mark,
+      // with its own number, which is how they were tied together:
+      //   westsideshowerandbath.com  shower/bath only, 770-676-BATH (linked)
+      //   westsideconstruction.net   + roof/tub, "SHOWER·BATH·ROOFING·
+      //                              CONSTRUCTION", 877-71-WESTSIDE
+      // The artwork here is the combined variant the organizers supplied
+      // (Sept 2026), so the cell shows the 877 number while the link goes to
+      // the 770 site. That is the sponsor's own file and the organizers' own
+      // link choice — not a mismatch to "fix".
+      { name: 'Westside Shower & Bath', logo: westsideLogo, w: 400, h: 295, url: 'https://westsideshowerandbath.com/' },
       // Slot S17 (Snap Fitness), committed by invoice. Weaker standing than
       // the other committed entries here: the organizers' list notes no access
       // code has been issued yet. Included because `committed` is this page's

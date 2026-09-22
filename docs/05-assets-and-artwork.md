@@ -129,6 +129,17 @@ unrelated company. Recorded in the 2026 comments, each next to its row:
   matching the supplied artwork to their site's own header logo.
 - *Pool FX* — the Peachtree City pool builder, not a national firm of the same name.
 
+**And the inverse: one business under two names.** *Westside Shower & Bath* (how
+the page lists it) and *Westside Construction* are one sponsor (Slot S6) trading
+under one duck-and-script mark — each storefront runs its own variant of it with
+its own number (`westsideshowerandbath.com`, 770-676-BATH; `westsideconstruction.net`,
+877-71-WESTSIDE), which is how they were tied together. The failure mode here is not a wrong link but
+a **duplicate cell thanking one sponsor twice**, and it is easy to walk into,
+because the request arrives as "add this sponsor" and the existing row may be a
+name-only cell that scans right past you. Before adding any row, grep the tier
+for the distinctive word in the name, and check the phone number on supplied
+artwork against the row you already have.
+
 Leave a one-line comment recording *how* you confirmed each one. That comment is
 what makes next year's check a ten-second read instead of a re-investigation.
 
