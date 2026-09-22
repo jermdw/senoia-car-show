@@ -6,13 +6,26 @@ import usePageMeta from '../lib/usePageMeta.js'
 
 // The five photo stops, in the suggested driving order from the organizers' route
 // map (Senoia → Sharpsburg → Newnan → GA-16 → back to Senoia, ~33 miles / ~51 min).
+// Stops 2–5 were re-confirmed against a GPS recording of the drive on 2026-09-19
+// (32.7 miles, ~50 min moving) and all four matched this list.
 // Participants may visit them in any order. Each `address` is exactly what Google
-// Maps resolves, so the per-stop links land on the right pin.
+// Maps resolves, so the per-stop links land on the right pin — verify any change
+// against Maps, since names alone are ambiguous here ("Senoia City Park" resolves
+// to Seavy Street Park, a different park).
+//
+// Stop 1 was the Senoia City Cemetery through 2026-09-21; the organizers replaced
+// it after community objection to using a cemetery as a photo stop. Its
+// replacement is deliberately city-owned public land, so no private owner has to
+// consent and the site carries no sacred or memorial significance.
 //
 // TODO(organizers): stop 3 is a private address — confirm the name it should be
 // listed under before the run (the route map labels it "Woodies").
 const STOPS = [
-  { name: 'Senoia City Cemetery', address: 'Senoia City Cemetery, Senoia, GA 30276' },
+  {
+    name: 'Seavy Street Park',
+    address: '423 Seavy St, Senoia, GA 30276',
+    note: 'A city-owned public park with its own lot — room to pull in and park for the photo.',
+  },
   { name: 'Clayton Appliances', address: '51 Marion Beavers Rd, Sharpsburg, GA 30277' },
   { name: '1 Wood Dr, Newnan', address: '1 Wood Dr, Newnan, GA 30263' },
   { name: 'Aqua Design Systems', address: '5127 GA-16, Senoia, GA 30276' },
