@@ -140,18 +140,22 @@ const SPONSORS_2026 = [
       // organizers is Community Bible Church, matching the 2024 rows and the
       // contact's own address (brooks.everett@communitybiblechurch.com).
       { name: 'Community Bible Church' },
-      // Slot S6 (Seavy & Baggerly N4), paid. One business under two names: it
-      // also trades as Westside Construction, and brands shower/bath, roofing
-      // and construction under the single duck mark shown here. Listed under
-      // the organizers' spelling per their instruction (2026-09-22) — so if
-      // artwork or a row arrives later as "Westside Construction", it belongs
-      // on THIS row, not a new one. Confirmed by the supplied artwork: the same
-      // lockup is the header logo at westsideconstruction.net, and the
-      // 877-71-WESTSIDE number on it is 877-719-3787, the number both that site
-      // and westsideshowerandbath.com publish. Artwork supplied by the
-      // organizers (Sept 2026) — the sponsor's own variant, which carries the
-      // phone banner the websites' copies omit.
-      { name: 'Westside Shower & Bath', logo: westsideLogo, w: 400, h: 295, url: 'https://westsideconstruction.net/' },
+      // Slot S6 (Seavy & Baggerly N4), paid. One business, two storefronts,
+      // one duck: it also trades as Westside Construction. Listed under the
+      // organizers' spelling and linked to the matching site per their
+      // instruction (2026-09-22) — so if artwork or a row arrives later as
+      // "Westside Construction", it belongs on THIS row, not a new one.
+      //
+      // Each storefront runs its own variant of the same duck-and-script mark,
+      // with its own number, which is how they were tied together:
+      //   westsideshowerandbath.com  shower/bath only, 770-676-BATH (linked)
+      //   westsideconstruction.net   + roof/tub, "SHOWER·BATH·ROOFING·
+      //                              CONSTRUCTION", 877-71-WESTSIDE
+      // The artwork here is the combined variant the organizers supplied
+      // (Sept 2026), so the cell shows the 877 number while the link goes to
+      // the 770 site. That is the sponsor's own file and the organizers' own
+      // link choice — not a mismatch to "fix".
+      { name: 'Westside Shower & Bath', logo: westsideLogo, w: 400, h: 295, url: 'https://westsideshowerandbath.com/' },
       // Slot S17 (Snap Fitness), committed by invoice. Weaker standing than
       // the other committed entries here: the organizers' list notes no access
       // code has been issued yet. Included because `committed` is this page's
