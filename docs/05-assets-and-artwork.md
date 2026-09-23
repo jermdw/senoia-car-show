@@ -37,7 +37,7 @@ next year.
 | `src/assets/shirt-a250-art.webp` | 720×678 | America 250 back print |
 | `src/assets/shirt-kids-art.webp` | 600×600 | Kids' racer print |
 | `src/assets/shirt-21st-mockup.webp` | 720×383 | Photographed/rendered mockup of the annual shirt |
-| `src/assets/sponsor-*.webp` | 400 px wide | 30 sponsor logos |
+| `src/assets/sponsor-*.webp` | 400 px wide | 34 sponsor logos |
 | `src/assets/vendor-*.webp` | 400 px wide | 8 food vendor logos |
 
 ---
@@ -150,8 +150,9 @@ what makes next year's check a ten-second read instead of a re-investigation.
 3. Normalise to **400 px wide**, WebP, transparent background where the source
    has one. Record the real `w`/`h` in the data array — the grid uses them.
 4. Cells are white, so a white-knockout wordmark won't read. HotRod Brothers
-   Customs only publish a white-on-black mark; the ink was recoloured to black
-   with the typography otherwise untouched. That is the acceptable edit — do not
+   Customs and Senoia Sim Racing only publish white-knockout marks; the white
+   ink was recoloured to black (Senoia Sim Racing's red arcs kept as-is) with
+   the typography otherwise untouched. That is the acceptable edit — do not
    redraw or re-typeset someone's mark.
 5. **No artwork you can verify? Ship a plain text cell.** `SS Chassis Works`,
    `Circle M Barbeque` and `Fosters Sandwiches` all render as text. That is the
