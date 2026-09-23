@@ -35,6 +35,7 @@ import flintGrindersLogo from '../assets/sponsor-flint-grinders.webp'
 import anytimeFitnessLogo from '../assets/sponsor-anytime-fitness.webp'
 import av8Logo from '../assets/sponsor-av8-precision-coatings.webp'
 import westsideLogo from '../assets/sponsor-westside-shower-and-bath.webp'
+import senoiaSimRacingLogo from '../assets/sponsor-senoia-sim-racing.webp'
 
 // `url` is each sponsor's own site, verified individually (Aug 2026) — a wrong
 // link on a page thanking a paying sponsor is worse than no link. TDK Components
@@ -107,6 +108,18 @@ const SPONSORS_2026 = [
       // County — not an unrelated national "PoolFX". Gold, not Silver, per the
       // organizers (2026-09-16).
       { name: 'Pool FX', logo: poolFxLogo, w: 400, h: 580, url: 'https://swimmingpoolfx.com/' },
+      // The iRacing simulator venue at 48 Main St (lower level), downtown
+      // Senoia — confirmed by the supplied artwork matching the SSR logo on
+      // senoiasimracing.com. Like HotRod Brothers, they only publish a
+      // white-knockout mark, so the white ink was recoloured black; the red
+      // arcs are untouched. Added to Gold per the organizers (2026-09-23).
+      {
+        name: 'Senoia Sim Racing',
+        logo: senoiaSimRacingLogo,
+        w: 400,
+        h: 101,
+        url: 'https://senoiasimracing.com/',
+      },
     ],
   },
   {
