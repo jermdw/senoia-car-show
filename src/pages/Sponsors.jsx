@@ -80,12 +80,13 @@ const SPONSORS_2026 = [
       // Confirmed as GMP Performance's South Atlanta location, 435-D Dividend
       // Dr, Peachtree City GA 30269 (gmpperformance.com; contacts Paul &
       // Hannah Brooker) — not an unrelated same-initialed business. The logo
-      // is the chain's single sitewide wordmark (also used at their
-      // Charlotte and Lake Norman locations); the South Atlanta branch has
-      // no separate mark of its own. Links to the home page: /locations was
+      // is the branch's own "GMP Performance / South Atlanta" lockup, from the
+      // profile image of the Facebook page GMP runs for this location; the
+      // chain-wide wordmark we showed before read to the sponsor as plain
+      // text (2026-09-24). Links to the home page: /locations was
       // replaced by an empty WordPress install in Sept 2026 and the sponsor
       // flagged that the link no longer reached their site.
-      { name: 'GMP Performance – South Atlanta', logo: gmpLogo, w: 400, h: 32, url: 'https://www.gmpperformance.com/' },
+      { name: 'GMP Performance – South Atlanta', logo: gmpLogo, w: 400, h: 150, url: 'https://www.gmpperformance.com/' },
       // Confirmed as Jody Wilkerson's Sharpsburg GA shop (Facebook
       // facebook.com/jwrodncustoms, contact jwrodncustoms@yahoo.com). Placed
       // in Gold per explicit instruction, though the internal plaque list
