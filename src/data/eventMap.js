@@ -150,9 +150,12 @@ export const POIS = [
     // Settled for 2026 after the playbook contradicted itself four times (Buggy Shop ->
     // not Buggy Shop -> Welcome Center? -> DDA table by the gazebo), then moved by the
     // organizers on 2026-09-24 from the alley off Baggarly at Seavy to the old Señor
-    // Taco building, 90 Main St (the address every listing still gives the
-    // restaurant). Pin is the OSM building outline for 90 Main; the Census geocoder
-    // agrees within ~5 m.
+    // Taco building. Not the current restaurant (90 Main, west side at Johnson): the
+    // organizers' annotated screenshot (Melissa Quinn, 2026-09-23) circles "OLD SR
+    // TACO" on the east side of Main, about a third of the way from Johnson to
+    // Seavy. The pin is that circle, scaled off the two Seavy intersections; it lands
+    // within ~7 m of the small building OSM tags as Beez Freeze (75 Main). No street
+    // number is published because none is confirmed for the old building.
     //
     // The two times are not a contradiction: the desk is open 7:00-11:00 (moved up
     // from 8:00 per organizer feedback, Aug 2026), but a car has to be checked in,
@@ -160,11 +163,11 @@ export const POIS = [
     id: 'registration',
     category: 'info',
     name: 'Show Car Registration',
-    where: 'Old Señor Taco building, 90 Main Street',
+    where: 'Old Señor Taco building, east side of Main Street between Johnson and Seavy',
     blurb:
       'Every show car owner checks in here. Open 7:00am–11:00am, but you must be checked in by 10:00am to be eligible for awards.',
-    lat: 33.302268,
-    lon: -84.554165,
+    lat: 33.30198,
+    lon: -84.55382,
     confirmed: true,
   },
 

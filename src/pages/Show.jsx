@@ -124,8 +124,8 @@ export default function Show() {
         </p>
         <p className="text-stone-600 text-sm mb-8">
           Same-day registration runs at the registration desk in the old
-          Se&ntilde;or Taco building, 90 Main Street, from 7:00 to 11:00 AM on
-          show day; check in by 10:00 AM to be eligible for awards.
+          Se&ntilde;or Taco building (east side of Main Street, between Johnson
+          and Seavy) from 7:00 to 11:00 AM on show day; check in by 10:00 AM to be eligible for awards.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
