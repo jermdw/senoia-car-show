@@ -171,7 +171,7 @@ export const FAQ = [
     section: 'show-cars',
     q: 'Where do I check in once I am parked?',
     a: [
-      'Every show car owner checks in at the registration desk, in the alley off Baggarly Way at Seavy Street, near 48 Main. It is open 7:00 to 11:00am.',
+      'Every show car owner checks in at the registration desk, in the old Señor Taco building at 90 Main Street. It is open 7:00 to 11:00am.',
       'Check in by 10:00am to be eligible for awards — that is a hard cutoff, and it is an hour before the desk itself closes. Show vehicles displayed on Main Street also have to be parked by 9:00am.',
     ],
     links: [{ label: 'Registration desk on the map', to: '/map?poi=registration' }],

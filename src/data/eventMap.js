@@ -148,9 +148,11 @@ export const POIS = [
   },
   {
     // Settled for 2026 after the playbook contradicted itself four times (Buggy Shop ->
-    // not Buggy Shop -> Welcome Center? -> DDA table by the gazebo). The tent sits in
-    // the alley off Baggarly at Seavy, about 17 m from that intersection — near the
-    // FedEx drop box at 48 Main, though not on top of it.
+    // not Buggy Shop -> Welcome Center? -> DDA table by the gazebo), then moved by the
+    // organizers on 2026-09-24 from the alley off Baggarly at Seavy to the old Señor
+    // Taco building, 90 Main St (the address every listing still gives the
+    // restaurant). Pin is the OSM building outline for 90 Main; the Census geocoder
+    // agrees within ~5 m.
     //
     // The two times are not a contradiction: the desk is open 7:00-11:00 (moved up
     // from 8:00 per organizer feedback, Aug 2026), but a car has to be checked in,
@@ -158,11 +160,11 @@ export const POIS = [
     id: 'registration',
     category: 'info',
     name: 'Show Car Registration',
-    where: 'Alley off Baggarly Way at Seavy Street, near 48 Main',
+    where: 'Old Señor Taco building, 90 Main Street',
     blurb:
       'Every show car owner checks in here. Open 7:00am–11:00am, but you must be checked in by 10:00am to be eligible for awards.',
-    lat: 33.301382,
-    lon: -84.554646,
+    lat: 33.302268,
+    lon: -84.554165,
     confirmed: true,
   },
 
