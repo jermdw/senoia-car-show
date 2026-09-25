@@ -2,7 +2,12 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
+import {
+  ONLINE_REGISTRATION_CLOSES_LABEL,
+  REGISTRATION_PRICE,
+  REGISTRATION_URL,
+} from '../data/registration.js'
+import { useOnlineRegistrationOpen } from '../lib/useRegistrationOpen.js'
 
 // `advance` is the Ticket Tailor list price on the live registration event;
 // `sameDay` is the organizers' gate price, which Ticket Tailor never sees.
@@ -27,6 +32,7 @@ const DATES = [
 ]
 
 export default function Show() {
+  const registrationOpen = useOnlineRegistrationOpen()
   usePageMeta({
     title: 'Show Info — Key Dates, Pricing & Parking | Senoia Car Show',
     description:
@@ -107,21 +113,33 @@ export default function Show() {
             </tbody>
           </table>
         </div>
-        <p className="text-stone-600 text-sm mb-4">
-          Advance registration is online through the Senoia DDA box office, and
-          general parking is the tier still on sale. Registering is for show
-          vehicles only &mdash; spectator admission and parking are always free.
-        </p>
-        <p className="mb-4">
-          <a
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
-          >
-            Register Your Vehicle &mdash; {REGISTRATION_PRICE}
-          </a>
-        </p>
+        {registrationOpen ? (
+          <>
+            <p className="text-stone-600 text-sm mb-4">
+              Advance registration is online through the Senoia DDA box office
+              until {ONLINE_REGISTRATION_CLOSES_LABEL}, and general parking is the
+              tier still on sale. Registering is for show vehicles only &mdash;
+              spectator admission and parking are always free.
+            </p>
+            <p className="mb-4">
+              <a
+                href={REGISTRATION_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
+              >
+                Register Your Vehicle &mdash; {REGISTRATION_PRICE}
+              </a>
+            </p>
+          </>
+        ) : (
+          <p className="text-stone-700 mb-4">
+            <strong>Online registration closed {ONLINE_REGISTRATION_CLOSES_LABEL}.</strong>{' '}
+            You can still register at the gate for the same-day price.
+            Registering is for show vehicles only &mdash; spectator admission and
+            parking are always free.
+          </p>
+        )}
         <p className="text-stone-600 text-sm mb-8">
           Same-day registration runs at the registration desk in the old
           Se&ntilde;or Taco building (east side of Main Street, between Johnson

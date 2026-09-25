@@ -6,6 +6,7 @@ import usePageMeta from '../lib/usePageMeta.js'
 import { isVisibleOnShowDay, useShowDayArrived } from '../lib/useShowDay.js'
 import { ROUTE_LOADERS, warmRoute } from '../lib/routeLoaders.js'
 import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
+import { useOnlineRegistrationOpen } from '../lib/useRegistrationOpen.js'
 import logo from '../assets/logo-hero.webp'
 
 const HIGHLIGHTS = [
@@ -77,6 +78,7 @@ export default function Landing() {
   })
 
   const showDayArrived = useShowDayArrived()
+  const registrationOpen = useOnlineRegistrationOpen()
   const sections = SECTIONS.filter((s) => isVisibleOnShowDay(s, showDayArrived))
 
   // Both show-day CTAs below point at /awards, which is lazy and pulls the
@@ -125,14 +127,26 @@ export default function Landing() {
               stops the moment the spots run out, so it leads; volunteering is the
               standing ask beside it. */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
-            >
-              Register Your Vehicle
-            </a>
+            {/* After online registration closes, the lead button points at the
+                same-day details instead of a checkout that is no longer selling. */}
+            {registrationOpen ? (
+              <a
+                href={REGISTRATION_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+              >
+                Register Your Vehicle
+              </a>
+            ) : (
+              <Link
+                to="/show"
+                {...prefetch('/show')}
+                className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+              >
+                Same-Day Registration
+              </Link>
+            )}
             {/* The standing second ask, which changes on the morning of the show:
                 sign-ups are over by then, and the board is what people are on the
                 site for. Mirrors the same swap in the header nav and the grid. */}
@@ -156,8 +170,11 @@ export default function Landing() {
             <Link to="/show" className="underline underline-offset-2 hover:text-gold-pale">
               Registration
             </Link>{' '}
-            is {REGISTRATION_PRICE}, for display vehicles only &mdash; 25 years
-            and older.
+            is{' '}
+            {registrationOpen
+              ? REGISTRATION_PRICE
+              : '$25 same-day at the registration desk, 7–11am'}
+            , for display vehicles only &mdash; 25 years and older.
           </p>
           <p className="mt-6">
             <a

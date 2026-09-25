@@ -158,7 +158,7 @@ export const FAQ = [
     q: 'What does it cost to show a car, and how do I register?',
     a: [
       `Unreserved General Parking is ${REGISTRATION_PRICE} in advance or $25 same-day. The Main Street and North Main Street blocks are fixed-size and have sold out for 2026, so General Parking is the tier still on sale.`,
-      'Advance registration is online through the Senoia DDA box office. Same-day registration runs at the registration desk from 7:00 to 11:00am on show day. Registering is for show vehicles only — spectator admission and parking are always free.',
+      'Advance registration is online through the Senoia DDA box office and closes Friday, September 25 at 6:00pm. Same-day registration runs at the registration desk from 7:00 to 11:00am on show day. Registering is for show vehicles only — spectator admission and parking are always free.',
     ],
     links: [
       { label: 'Register your vehicle', href: REGISTRATION_URL },
