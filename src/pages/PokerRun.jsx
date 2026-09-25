@@ -98,7 +98,7 @@ const STEPS = [
   ['Cruise the stops', 'Drive to all five landmarks below, in any order, at your own pace. There’s no official start time — go whenever suits you on Friday afternoon.'],
   ['Snap a photo', 'Take a picture of your vehicle at each stop. A selfie with the car counts! Tell any onlookers to come see the show on Saturday.'],
   ['Draw your hand', 'Bring your five photos to the Stone Lodge at Marimac Lakes between 6:00 and 7:00 PM. Each photo earns you a playing card — five cards is your poker hand.'],
-  ['Win', 'The best five-card poker hand (standard poker rules) takes the $200 cash prize. Winner announced at 7:00 PM, followed by a free hot dog dinner for all participants.'],
+  ['Win', 'The best five-card poker hand (standard poker rules) takes the $200 cash prize. Winner announced at 7:00 PM, and Crust and Craft Pizza will be there serving pizza.'],
 ]
 
 const FACTS = [
@@ -234,8 +234,8 @@ export default function PokerRun() {
           <p className="text-gold-pale/80 mt-3">
             Proceed across the lake to the Stone Lodge between{' '}
             <strong className="text-cream">6:00 and 7:00 PM</strong> with your
-            five photos to draw your hand. Winner announced at 7:00, hot dog
-            dinner to follow.
+            five photos to draw your hand. Winner announced at 7:00, and Crust
+            and Craft Pizza will be there serving pizza.
           </p>
         </div>
 
