@@ -22,7 +22,12 @@
 // the page and the JSON-LD (which must be text), so the two can never disagree.
 // An `href` link is external/asset, a `to` link is an in-app route.
 
-import { REGISTRATION_URL, REGISTRATION_PRICE } from './registration.js'
+import { REGISTRATION_URL, REGISTRATION_PRICE, hasRegistrationClosed } from './registration.js'
+
+// Read once, when the module loads. A tab left open across the 6:00pm cutoff
+// keeps the pre-close wording until it reloads, but every link an organizer
+// pastes into an email is a cold load, and that is how this page is read.
+const registrationClosed = hasRegistrationClosed()
 
 export const FAQ_SECTIONS = [
   { id: 'load-in', label: 'Getting In & Setting Up' },
@@ -156,14 +161,24 @@ export const FAQ = [
     id: 'registration-cost',
     section: 'show-cars',
     q: 'What does it cost to show a car, and how do I register?',
-    a: [
-      `Unreserved General Parking is ${REGISTRATION_PRICE} in advance or $25 same-day. The Main Street and North Main Street blocks are fixed-size and have sold out for 2026, so General Parking is the tier still on sale.`,
-      'Advance registration is online through the Senoia DDA box office. Same-day registration runs at the registration desk from 7:00 to 11:00am on show day. Registering is for show vehicles only — spectator admission and parking are always free.',
-    ],
-    links: [
-      { label: 'Register your vehicle', href: REGISTRATION_URL },
-      { label: 'Full pricing table', to: '/show' },
-    ],
+    a: registrationClosed
+      ? [
+          'Online advance registration has closed for 2026. Unreserved General Parking is $25 same-day, at the registration desk from 7:00 to 11:00am on show day. The Main Street and North Main Street blocks sold out in advance.',
+          'Registering is for show vehicles only — spectator admission and parking are always free.',
+        ]
+      : [
+          `Unreserved General Parking is ${REGISTRATION_PRICE} in advance or $25 same-day. The Main Street and North Main Street blocks are fixed-size and have sold out for 2026, so General Parking is the tier still on sale.`,
+          'Advance registration is online through the Senoia DDA box office. Same-day registration runs at the registration desk from 7:00 to 11:00am on show day. Registering is for show vehicles only — spectator admission and parking are always free.',
+        ],
+    links: registrationClosed
+      ? [
+          { label: 'Where the registration desk is', to: '/faq#registration-desk' },
+          { label: 'Full pricing table', to: '/show' },
+        ]
+      : [
+          { label: 'Register your vehicle', href: REGISTRATION_URL },
+          { label: 'Full pricing table', to: '/show' },
+        ],
     confirmed: true,
   },
   {

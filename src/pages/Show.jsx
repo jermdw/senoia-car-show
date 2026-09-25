@@ -3,6 +3,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
 import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
+import { useRegistrationClosed } from '../lib/useShowDay.js'
 
 // `advance` is the Ticket Tailor list price on the live registration event;
 // `sameDay` is the organizers' gate price, which Ticket Tailor never sees.
@@ -33,6 +34,16 @@ export default function Show() {
       'Everything about the 21st Annual Senoia Car Show, Sept 26, 2026: key dates, show vehicle display pricing (25 years and older), free spectator parking with shuttles, awards, and door prizes.',
     path: '/show',
   })
+
+  // After the online cutoff General Parking reads like the sold-out rows — the
+  // advance price struck through — and the checkout button gives way to the
+  // same-day desk, which is the only way left to register.
+  const registrationClosed = useRegistrationClosed()
+  const pricing = PRICING.map((r) =>
+    r.area === 'General Parking' && registrationClosed
+      ? { ...r, soldOut: true, badge: 'Online closed' }
+      : r,
+  )
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -86,7 +97,7 @@ export default function Show() {
               </tr>
             </thead>
             <tbody>
-              {PRICING.map((r) => (
+              {pricing.map((r) => (
                 <tr key={r.area} className="border-t border-stone-100">
                   <td className="px-4 py-3 font-semibold text-ink">{r.area}</td>
                   <td className="px-4 py-3 text-stone-700">
@@ -94,7 +105,7 @@ export default function Show() {
                       <span className="flex flex-wrap items-center gap-2">
                         <s className="text-stone-400">{r.advance}</s>
                         <span className="font-display uppercase tracking-wide text-xs text-stone-500 border border-stone-300 rounded px-1.5 py-0.5">
-                          Sold out
+                          {r.badge ?? 'Sold out'}
                         </span>
                       </span>
                     ) : (
@@ -107,21 +118,32 @@ export default function Show() {
             </tbody>
           </table>
         </div>
-        <p className="text-stone-600 text-sm mb-4">
-          Advance registration is online through the Senoia DDA box office, and
-          general parking is the tier still on sale. Registering is for show
-          vehicles only &mdash; spectator admission and parking are always free.
-        </p>
-        <p className="mb-4">
-          <a
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
-          >
-            Register Your Vehicle &mdash; {REGISTRATION_PRICE}
-          </a>
-        </p>
+        {registrationClosed ? (
+          <p className="text-stone-600 text-sm mb-4">
+            Online advance registration has closed. Show vehicles can still
+            register same-day for $25 at the desk on the morning of the show.
+            Registering is for show vehicles only &mdash; spectator admission and
+            parking are always free.
+          </p>
+        ) : (
+          <>
+            <p className="text-stone-600 text-sm mb-4">
+              Advance registration is online through the Senoia DDA box office, and
+              general parking is the tier still on sale. Registering is for show
+              vehicles only &mdash; spectator admission and parking are always free.
+            </p>
+            <p className="mb-4">
+              <a
+                href={REGISTRATION_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-6 py-3 rounded-md transition-colors"
+              >
+                Register Your Vehicle &mdash; {REGISTRATION_PRICE}
+              </a>
+            </p>
+          </>
+        )}
         <p className="text-stone-600 text-sm mb-8">
           Same-day registration runs at the registration desk in the old
           Se&ntilde;or Taco building (east side of Main Street, between Johnson

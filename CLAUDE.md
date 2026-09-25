@@ -145,7 +145,9 @@ sign-in card). Keep header art sized for its slot — it loads on every page.
   public route (the SPA rewrite otherwise answers everything, even robots.txt,
   with the app shell). `index.html` carries the Event JSON-LD and social-card
   meta — update dates/status and `share-card-2026.png` each year, together with
-  `SHOW_DATE`/`SHOW_START`/`SHOW_END` in `src/lib/showTime.js`. Bump those
+  `SHOW_DATE`/`SHOW_START`/`SHOW_END` in `src/lib/showTime.js` and
+  `REGISTRATION_CLOSES` in `src/data/registration.js` (the site-side mirror of
+  the Ticket Tailor sales-end — it swaps the Register buttons for same-day copy). Bump those
   **first**: `hasShowDayArrived()` is a one-way switch, so until they move, next
   year's site stays in show-day mode with the Volunteer and Poker Run links
   hidden from the nav and the home page. A dev-only console warning fires once

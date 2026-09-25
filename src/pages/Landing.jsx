@@ -3,7 +3,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import Countdown from '../components/Countdown.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { isVisibleOnShowDay, useShowDayArrived } from '../lib/useShowDay.js'
+import { isVisibleOnShowDay, useRegistrationClosed, useShowDayArrived } from '../lib/useShowDay.js'
 import { ROUTE_LOADERS, warmRoute } from '../lib/routeLoaders.js'
 import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
 import logo from '../assets/logo-hero.webp'
@@ -78,6 +78,7 @@ export default function Landing() {
 
   const showDayArrived = useShowDayArrived()
   const sections = SECTIONS.filter((s) => isVisibleOnShowDay(s, showDayArrived))
+  const registrationClosed = useRegistrationClosed()
 
   // Both show-day CTAs below point at /awards, which is lazy and pulls the
   // Firebase chunk. Warm it on visible intent, exactly as SiteHeader does for the
@@ -125,14 +126,26 @@ export default function Landing() {
               stops the moment the spots run out, so it leads; volunteering is the
               standing ask beside it. */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
-            >
-              Register Your Vehicle
-            </a>
+            {/* Once online sales close the lead ask is still "bring your car", but
+                the only way left to do it is the desk on the morning, and that FAQ
+                answer says where and when. */}
+            {registrationClosed ? (
+              <Link
+                to="/faq#registration-desk"
+                className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+              >
+                Same-Day Registration
+              </Link>
+            ) : (
+              <a
+                href={REGISTRATION_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+              >
+                Register Your Vehicle
+              </a>
+            )}
             {/* The standing second ask, which changes on the morning of the show:
                 sign-ups are over by then, and the board is what people are on the
                 site for. Mirrors the same swap in the header nav and the grid. */}
@@ -156,7 +169,7 @@ export default function Landing() {
             <Link to="/show" className="underline underline-offset-2 hover:text-gold-pale">
               Registration
             </Link>{' '}
-            is {REGISTRATION_PRICE}, for display vehicles only &mdash; 25 years
+            is {registrationClosed ? '$25 same-day' : REGISTRATION_PRICE}, for display vehicles only &mdash; 25 years
             and older.
           </p>
           <p className="mt-6">

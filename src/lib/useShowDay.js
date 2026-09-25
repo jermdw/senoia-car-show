@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { hasShowDayArrived } from './showTime.js'
+import { hasRegistrationClosed } from '../data/registration.js'
 
 /**
  * Show-day nav state, shared by every surface that has to swap links on the
@@ -37,3 +38,21 @@ export function useShowDayArrived() {
  */
 export const isVisibleOnShowDay = (item, arrived) =>
   item.showOnShowDay ? arrived : !(item.hideOnShowDay && arrived)
+
+/**
+ * Same one-way flip as useShowDayArrived, for the online registration cutoff.
+ * The poll matters here more than for the nav: the cutoff is 6:00pm, when
+ * people are actively on the page, so an open tab has to catch it without a
+ * reload rather than leave a live-looking button pointing at a closed checkout.
+ */
+export function useRegistrationClosed() {
+  const [closed, setClosed] = useState(hasRegistrationClosed)
+
+  useEffect(() => {
+    if (closed) return
+    const interval = setInterval(() => setClosed(hasRegistrationClosed()), 60_000)
+    return () => clearInterval(interval)
+  }, [closed])
+
+  return closed
+}

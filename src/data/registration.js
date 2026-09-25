@@ -39,3 +39,15 @@ export const REGISTRATION_URL =
 // tiers are access-code blocks held for car clubs. This is Ticket Tailor's list
 // price, and the /show pricing table has to agree with it.
 export const REGISTRATION_PRICE = '$20'
+
+// When online advance registration stops: 6:00pm Eastern the night before the
+// show, set by the organizers. The real cutoff is Ticket Tailor's own sales-end
+// on the General Parking tier — this constant only tells the site, so the
+// "Register" buttons stop sending owners to a checkout with nothing left to buy
+// and point them at the same-day desk instead. Keep the two in step.
+//
+// Fixed -04:00 offset for the same reason as SHOW_START in showTime.js: late
+// September is EDT. Move it with the rest of the dates at year rollover.
+export const REGISTRATION_CLOSES = new Date('2026-09-25T18:00:00-04:00')
+
+export const hasRegistrationClosed = (now = new Date()) => now >= REGISTRATION_CLOSES
