@@ -14,7 +14,7 @@ Change these in one place and every page that quotes them follows.
 | --- | --- |
 | Show date, gates open/close | `SHOW_DATE`, `SHOW_START`, `SHOW_END` — `src/lib/showTime.js` |
 | Firestore event id | `EVENT_ID` — `src/firebase.js`, and **separately** in `src/lib/announcement.js`, `scripts/seed-shifts.mjs`, `scripts/seed-awards.mjs` |
-| Show car registration link & price | `REGISTRATION_URL`, `REGISTRATION_PRICE` — `src/data/registration.js` |
+| Show car registration link, price & online cutoff | `REGISTRATION_URL`, `REGISTRATION_PRICE`, `REGISTRATION_CLOSES` — `src/data/registration.js` |
 | Sponsorship link & Bronze price | `SPONSORSHIP_URL`, `BRONZE_PRICE` — `src/data/sponsorship.js` |
 | Shirt sizes | `SHIRT_SIZES` — `src/shirtSizes.js` (**mirrored in `functions/index.js`**) |
 | Brand colours & fonts | `@theme` in `src/index.css` |
