@@ -39,3 +39,15 @@ export const REGISTRATION_URL =
 // tiers are access-code blocks held for car clubs. This is Ticket Tailor's list
 // price, and the /show pricing table has to agree with it.
 export const REGISTRATION_PRICE = '$20'
+
+// Online registration closes the evening before the show; after this, the only
+// way to register is same-day at the desk. The site retires its links on its
+// own at this instant (no deploy needed), but this constant does NOT stop
+// Ticket Tailor selling — set the matching sales end time on the event's ticket
+// types in the Ticket Tailor dashboard, or a bookmarked checkout link still
+// works. Late September is EDT (UTC-4), so the fixed offset is exact.
+export const ONLINE_REGISTRATION_CLOSES = new Date('2026-09-25T18:00:00-04:00')
+export const ONLINE_REGISTRATION_CLOSES_LABEL = 'Friday, September 25 at 6:00 PM'
+
+export const isOnlineRegistrationOpen = (now = new Date()) =>
+  now < ONLINE_REGISTRATION_CLOSES

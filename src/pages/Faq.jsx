@@ -4,6 +4,8 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
 import { faqBySection, publishedFaq } from '../data/faq.js'
+import { REGISTRATION_URL } from '../data/registration.js'
+import { useOnlineRegistrationOpen } from '../lib/useRegistrationOpen.js'
 
 const ORIGIN = 'https://senoiacar.show'
 
@@ -55,6 +57,8 @@ export default function Faq() {
   const groups = useMemo(faqBySection, [])
   const items = useMemo(publishedFaq, [])
   useFaqJsonLd(items)
+  // Past the cutoff the Ticket Tailor checkout is dead, so its link drops out.
+  const registrationOpen = useOnlineRegistrationOpen()
 
   // Uncontrolled <details> would lose the deep-linked open state on re-render, so
   // the set of open questions is React's. Several can be open at once — someone
@@ -156,9 +160,11 @@ export default function Faq() {
                           {para}
                         </p>
                       ))}
-                      {f.links.length > 0 && (
+                      {f.links.some((l) => registrationOpen || l.href !== REGISTRATION_URL) && (
                         <p className="flex flex-wrap gap-x-5 gap-y-2">
-                          {f.links.map((l) =>
+                          {f.links
+                            .filter((l) => registrationOpen || l.href !== REGISTRATION_URL)
+                            .map((l) =>
                             l.to ? (
                               <Link
                                 key={l.label}

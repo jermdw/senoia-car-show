@@ -104,7 +104,7 @@ can't silently reopen sign-ups you closed.
 | `src/pages/Vendors.jsx` | `FOOD_VENDORS_2026` array (clear it), the "registration is closed" banner — **reopen it** |
 | `src/pages/Merch.jsx` | Shirt art, price, colours, sizes, the enjoysenoia.com buy link |
 | `src/pages/PokerRun.jsx` | Date line, the five `STOPS`, `TICKETS_URL` (the year is in the slug) |
-| `src/data/registration.js` | `REGISTRATION_URL`, `REGISTRATION_PRICE` |
+| `src/data/registration.js` | `REGISTRATION_URL`, `REGISTRATION_PRICE`, `ONLINE_REGISTRATION_CLOSES` + its label (the site hides the checkout links at that instant — set the same sales end time in Ticket Tailor) |
 | `src/data/sponsorship.js` | `SPONSORSHIP_URL`, `BRONZE_PRICE`, the Ticket Tailor event ids in the comment |
 | `src/data/eventMap.js` | Every POI and `SCHEDULE` entry |
 | `src/data/faq.js` | Dates and addresses throughout |
