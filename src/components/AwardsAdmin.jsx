@@ -174,15 +174,16 @@ function AwardGroup({ title, rows, onPublishAll, onToggle, onEdit, onDelete }) {
         )}
       </div>
       <ul className="space-y-2">
-        {rows.map((a) => (
+        {rows.map((a, i) => (
           <li key={a.id} className="bg-white rounded-lg border border-stone-200 p-3 flex flex-wrap items-center gap-2">
             <span className="font-display text-gold-dark w-12 shrink-0 tabular-nums">
-              {a.carNumber || '—'}
+              {a.title ? (a.carNumber || '—') : `${i + 1}.`}
             </span>
             <span className="flex-1 min-w-[12rem]">
               {a.title && <span className="font-semibold text-ink mr-2">{a.title}</span>}
               <span className="text-stone-800">{a.vehicle}</span>
               {a.owner && <span className="text-stone-500 text-sm ml-2">{a.owner}</span>}
+              {!a.title && a.carNumber && <span className="text-stone-400 text-sm ml-2">Car #{a.carNumber}</span>}
               {a.awardClass && <span className="text-stone-400 text-sm ml-2">{a.awardClass}</span>}
             </span>
             <button
