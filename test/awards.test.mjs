@@ -11,6 +11,22 @@ import {
 // order the organizer sees in the admin list — a winner at position 7 on one
 // has to be at position 7 on the other.
 
+test('the Top 50 follows placing order, not car number', () => {
+  // The judges' sheet ranks cars by the "#" column; the car number is only
+  // the registration tag, so 1st place can carry a higher number than 2nd.
+  const rows = [
+    { carNumber: '089', sortOrder: 1 },
+    { carNumber: '402', sortOrder: 0 },
+    { carNumber: '181', sortOrder: 2 },
+  ]
+  assert.deepEqual(sortTop50(rows).map((r) => r.carNumber), ['402', '089', '181'])
+})
+
+test('rows without a placing fall after the placed ones, by car number', () => {
+  const rows = [{ carNumber: '9' }, { carNumber: '500', sortOrder: 0 }, { carNumber: '07' }]
+  assert.deepEqual(sortTop50(rows).map((r) => r.carNumber), ['500', '07', '9'])
+})
+
 test('car numbers sort numerically, not as text', () => {
   const rows = [{ carNumber: '10' }, { carNumber: '9' }, { carNumber: '07' }]
   assert.deepEqual(sortTop50(rows).map((r) => r.carNumber), ['07', '9', '10'])

@@ -14,7 +14,8 @@
 //   awardClass  optional class the car placed in ('Muscle Car')
 //   photoUrl    optional; featured cards show it, everything else shows a medallion
 //   announced   false while staged, true once read out from the stage
-//   sortOrder   announcement order, used for the featured trophies
+//   sortOrder   placing order — the "#" column on the judges' sheet for the
+//               Top 50 (1st place first), announcement order for the trophies
 
 export const FEATURED = 'featured'
 export const TOP50 = 'top50'
@@ -44,7 +45,17 @@ function plainNumber(value) {
 export const sortFeatured = (list) =>
   [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 
-export const sortTop50 = (list) => [...list].sort(compareCarNumber)
+// The Top 50 is a ranking: the judges' sheet lists cars in the order they
+// placed, and the car number is only the registration tag on the dash. Rows
+// without a sortOrder (typed in by hand before this ordering existed) fall to
+// the end, by car number, so they still reach the board.
+export const sortTop50 = (list) =>
+  [...list].sort((a, b) => {
+    const oa = a.sortOrder ?? Infinity
+    const ob = b.sortOrder ?? Infinity
+    if (oa !== ob) return oa < ob ? -1 : 1
+    return compareCarNumber(a, b)
+  })
 
 // One box that searches everything printed on the row, because a spectator at
 // the stage knows the car ("blue F-100"), its number, or the owner's name —
