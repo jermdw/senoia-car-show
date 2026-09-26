@@ -167,11 +167,26 @@ export default function Awards() {
                     as they're called from the stage — try again in a minute.
                   </p>
                 ) : (
-                  <ul className="divide-y divide-gold/15 border-y border-gold/15">
-                    {matches.map((a) => (
-                      <Top50Row key={a.id} award={a} />
-                    ))}
-                  </ul>
+                  <>
+                    {/* Same columns, same order as the printed judges' sheet, so
+                        the board and the paper can be checked against each other. */}
+                    <div
+                      aria-hidden="true"
+                      className="flex gap-3 pb-2 text-xs font-display uppercase tracking-wide text-gold-pale/50"
+                    >
+                      <span className="w-9 shrink-0">Place</span>
+                      <span className="w-12 shrink-0">Car #</span>
+                      <span className="flex-1 sm:flex sm:gap-4">
+                        <span className="sm:flex-1">Vehicle</span>
+                        <span className="hidden sm:inline">Owner</span>
+                      </span>
+                    </div>
+                    <ul className="divide-y divide-gold/15 border-y border-gold/15">
+                      {matches.map((a) => (
+                        <Top50Row key={a.id} award={a} />
+                      ))}
+                    </ul>
+                  </>
                 )}
               </Section>
             )}
@@ -300,17 +315,20 @@ function Top50Row({ award }) {
   const { place, carNumber, vehicle, owner, awardClass } = award
   return (
     <li className="py-3 flex gap-3">
-      <span className="font-display text-gold text-lg tabular-nums w-10 shrink-0">
+      <span className="font-display text-gold text-lg tabular-nums w-9 shrink-0">
         {place}.
+      </span>
+      <span className="text-gold-pale/80 tabular-nums w-12 shrink-0 pt-0.5">
+        {carNumber || '—'}
       </span>
       {/* Owner and class sit beside the car on a wide screen and drop under it
           on a phone — inline, the longest model names push them onto a ragged
           third line and the fifty rows stop scanning as a list. */}
       <div className="flex-1 min-w-0 sm:flex sm:items-baseline sm:gap-4">
         <span className="text-cream sm:flex-1">{vehicle}</span>
-        {(owner || awardClass || carNumber) && (
+        {(owner || awardClass) && (
           <span className="block sm:inline text-gold-pale/70 text-sm mt-0.5 sm:mt-0 sm:text-right">
-            {[owner, carNumber && `Car #${carNumber}`, awardClass].filter(Boolean).join(' · ')}
+            {[owner, awardClass].filter(Boolean).join(' · ')}
           </span>
         )}
       </div>
