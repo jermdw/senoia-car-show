@@ -6,6 +6,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { pushVolunteerSignup } from '../lib/conversions.js'
 import { SHIRT_SIZES } from '../shirtSizes.js'
 
 const DAY_LABELS = {
@@ -187,6 +188,8 @@ function SignupModal({ shift, onClose }) {
     try {
       const signUp = httpsCallable(functions, 'signUp')
       await signUp({ eventId: EVENT_ID, shiftId: shift.id, ...form })
+      // Only after the callable resolves, so a full shift or a failure is not a conversion.
+      if (import.meta.env.PROD) pushVolunteerSignup(shift)
       setState({ status: 'done', error: null })
     } catch (err) {
       setState({ status: 'idle', error: err.message || 'Something went wrong. Please try again.' })

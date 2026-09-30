@@ -220,3 +220,25 @@ layer on every route change.
 `pushPageView` tracks **pathname only, never the query string** — `/cancel`
 carries a per-signup cancellation token, and that must not reach Google
 Analytics. Preserve that if you touch it.
+
+### Conversion events
+
+`src/lib/conversions.js` pushes two events into the data layer (prod builds only):
+
+- `ticket_click` — one delegated click listener on the whole page, so every
+  Register / Sponsor / Poker Run tickets link is counted with no per-button
+  wiring. Params: `link_type` (`car_registration`, `sponsorship`,
+  `food_registration`, `poker_run_tickets`, `tickets_other`), `link_host`,
+  `link_path`, `page_path`. Query strings are dropped on purpose: sponsor
+  approval links carry a per-slot access code. A new Ticket Tailor event needs
+  its id added to `TICKET_TAILOR_EVENTS` or it reports as `tickets_other`.
+- `volunteer_signup` — fires after the `signUp` callable succeeds. Params:
+  `shift_role`, `shift_day`, `page_path`. No volunteer details.
+
+A click is intent, not a purchase — Ticket Tailor sales stay in Ticket Tailor.
+Clicks inside the embedded poker run widget are invisible to the page, so only
+the "open in new tab" link is counted there.
+
+GTM needs one Custom Event trigger and one GA4 Event tag per event name above
+(event parameters mapped from data layer variables), and both events must be
+marked as **key events** in GA4 Admin, or the property keeps showing 0.
