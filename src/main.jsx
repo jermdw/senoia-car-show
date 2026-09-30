@@ -5,8 +5,12 @@ import './index.css'
 import AppRoutes from './AppRoutes.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import { initGtm } from './lib/gtm.js'
+import { initTicketClickTracking } from './lib/conversions.js'
 
-if (import.meta.env.PROD) initGtm()
+if (import.meta.env.PROD) {
+  initGtm()
+  initTicketClickTracking()
+}
 
 class ErrorBoundary extends Component {
   state = { failed: false }
