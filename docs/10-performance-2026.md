@@ -98,6 +98,47 @@ public page — it is the show-day tool people actually use.
   Safari in-app 42, Firefox 38. Mobile Safari dominance matches on-site attendees
   using the map from phones — keep the map and FAQ mobile-first.
 
+## Ticket Tailor (as of 2026-09-30)
+
+Read from the senoiadda box office event summaries. Sales are for the whole selling
+period, not just show week. These are aggregate counts; same-day gate sales are not
+in Ticket Tailor.
+
+**Car show registration** (`ev_8046457`): **522 tickets issued, $70,080 revenue**,
+65% of the 804-ticket capacity. 308 checked in on show day (Ticket Tailor also
+shows "314 attended"). Event page views: 2,960.
+
+| Tier | Issued | Capacity | Note |
+|---|---|---|---|
+| Reserved Parking Pre Sale | 109 | 109 | sold out |
+| North Main Street | 70 | 70 | sold out |
+| Non-Reserved General Parking | 255 | 500 | 245 unsold; online sales closed Sep 25, 6:00 pm |
+| Car Corrals 1–6 (access code) | 88 | 125 | 1: 20/32 · 2: 25/26 · 3: 15/15 · 4: 10/11 · 5: 18/21 · 6: 0/20 |
+
+**Sponsorships** (`ev_8250271`): **28 sold, $28,500**. Title 7 of 8 · Gold 10 of 15 ·
+Silver 7 of 13 · Bronze 4 of 50. Up from 19 sold / $21,500 on 2026-08-28. Event page
+views: 1,361.
+
+**Food registration** (`ev_8250262`): **10 registered, $2,500** (5 food vendors and
+5 non-food, of 20 spots each). Event page views: 2,442.
+
+Combined across these three events: **$101,080**. Excludes same-day gate sales, the
+poker run, and merch.
+
+## Email (Resend, Sep 15–30)
+
+| Broadcast | Sent | Delivered | Bounced |
+|---|---|---|---|
+| Volunteer meeting invite (Sep 16) | 81 | 81 (100%) | 0 |
+| Car owners: Poker Run reminder (Sep 25) | 319 | 318 (99.7%) | 1 permanent |
+
+**Opens and clicks were not measured.** Open tracking and click tracking are both
+off on the `senoiacar.show` domain in Resend, so the zeros in the dashboard are missing
+data, not a lack of engagement. To measure next year, turn both on in Resend's domain
+settings before the first send, and add UTM parameters to email links so GA4 can
+separate email from Direct traffic. (The Sep 25 poker-run send, ~9 AM ET, fell on
+the day traffic jumped to 5,136 views, but with no tracking the two cannot be tied.)
+
 ## Takeaways
 
 1. **Demand is a two-day spike.** Traffic sat at ~100–300 users/day until the
@@ -120,9 +161,13 @@ public page — it is the show-day tool people actually use.
   as a floor, and compare only to future GA4 numbers.
 - **Hourly show-day curve** (peak hour for the map) — not pulled; grab it from
   GA4 Realtime/Explore next year *during* the show.
-- **Sign-up volume, email performance, ticket sales** — volunteer sign-ups
-  (Firestore `signups`), Resend broadcast open/click rates, and Ticket Tailor
-  registration counts are separate systems and were not pulled here.
+- **Email opens and clicks** — tracking was off (see Email above); only delivery
+  and bounces exist for 2026.
+- **Ticket sales over time** — only end-of-period totals were read from Ticket
+  Tailor. A sales-by-day curve (and when sales followed the site's traffic) needs
+  the Ticket Tailor sales report exported.
+- **Volunteer sign-up volume** — lives in Firestore `signups` and was not pulled
+  (it holds personal data; only aggregate counts are needed).
 - **Server-side metrics** (Firebase Hosting bandwidth, Cloud Functions errors,
   App Check rejections) — not pulled.
 - **No prior-year comparison exists** for the site (new in 2026; the legacy
