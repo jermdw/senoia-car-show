@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { PHOTOGRAPHER } from '../data/gallery.js'
 
 /**
  * Thumbnail grid with a lightbox. The lightbox is a native <dialog>: showModal()
@@ -73,7 +74,11 @@ export default function PhotoGrid({ photos }) {
             <figcaption className="text-cream text-sm text-center">
               {photo.alt}
               <span className="block text-gold-pale/70 mt-1">
-                {index + 1} of {photos.length}
+                Photo:{' '}
+                <a className="underline hover:text-gold-pale" href={PHOTOGRAPHER.url} target="_blank" rel="noreferrer">
+                  {PHOTOGRAPHER.name}, {PHOTOGRAPHER.business}
+                </a>
+                {' '}&middot; {index + 1} of {photos.length}
               </span>
             </figcaption>
             <div className="flex gap-3">

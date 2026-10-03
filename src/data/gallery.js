@@ -2,14 +2,14 @@
 // hardcoded in components elsewhere on this site, and the gallery follows suit.
 //
 // Credit: the 2026 photos are by Wayne Dombroski of Stars Mill Photography, who
-// offered them to the show (via Steve Maloy, 2026-10-02) to "use as needed". That
-// was said about posting on social media; hosting copies on this site is a step
-// further, so confirm with Wayne before adding any to PHOTOS, and keep the
-// credit line the page renders from PHOTOGRAPHER.
+// has said the show may use them as needed (via Steve Maloy, 2026-10-02; the
+// organizers confirmed this covers the website, not just social media). In return
+// Wayne and his business are credited wherever his work appears — the page renders
+// the credit line from PHOTOGRAPHER, so keep it there.
 export const PHOTOGRAPHER = {
   name: 'Wayne Dombroski',
   business: 'Stars Mill Photography',
-  url: 'https://www.starsmillphoto.com/senoia-car-show-2026',
+  url: 'https://www.starsmillphoto.com',
 }
 
 // Full galleries that live on the photographer's own site. These are links out

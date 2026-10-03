@@ -75,9 +75,10 @@ Prod seed (idempotent, preserves `spotsFilled`):
   home page). `src/data/gallery.js` holds `ALBUMS` (links out to the photographer's own
   galleries, one per year — Stars Mill Photography / Wayne Dombroski) and `PHOTOS`
   (copies hosted from `public/gallery/<year>/`, rendered by `PhotoGrid` with a native
-  `<dialog>` lightbox). `PHOTOS` starts empty: Wayne's permission was given for social
-  media, so confirm with him before hosting copies. Eager route, no `firebase.js`
-  import. Always render the photographer credit.
+  `<dialog>` lightbox). `PHOTOS` starts empty until the organizers pick a set (Wayne
+  allows use as needed, website included). Eager route, no `firebase.js` import.
+  Always credit Wayne Dombroski / Stars Mill Photography, linked to
+  starsmillphoto.com, wherever his work is shown.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new
