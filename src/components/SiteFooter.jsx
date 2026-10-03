@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { useShowEnded } from '../lib/useShowDay.js'
 
 export default function SiteFooter() {
+  const ended = useShowEnded()
   return (
     <footer className="bg-ink text-gold-pale/70 text-sm">
       <div className="max-w-5xl mx-auto px-6 py-10 grid gap-8 sm:grid-cols-3">
@@ -18,17 +20,21 @@ export default function SiteFooter() {
           {/* The header bar is full at seven links, so the FAQ reaches every page
               from here instead — it is the answer to most of what arrives in that
               inbox, and it should be visible next to the address people write to. */}
-          <p className="mt-3">
-            <Link className="underline hover:text-gold-pale" to="/faq">
-              Frequently asked questions
-            </Link>
-          </p>
+          {!ended && (
+            <p className="mt-3">
+              <Link className="underline hover:text-gold-pale" to="/faq">
+                Frequently asked questions
+              </Link>
+            </p>
+          )}
         </div>
         <div>
           <p className="font-display uppercase tracking-wide text-cream mb-2">The Show</p>
           <p>Saturday, September 26, 2026 · 10am–4pm</p>
           <p>Historic Main Street, Senoia, Georgia</p>
-          <p className="mt-1">Free spectator admission &amp; parking</p>
+          <p className="mt-1">
+            {ended ? 'Thank you for making the 21st Annual show a success' : 'Free spectator admission & parking'}
+          </p>
         </div>
         <div>
           <p className="font-display uppercase tracking-wide text-cream mb-2">About</p>
@@ -41,8 +47,8 @@ export default function SiteFooter() {
             Also from the DDA:{' '}
             <a className="underline hover:text-gold-pale" href="https://senoiaporchfest.org">
               Senoia PorchFest
-            </a>{' '}
-            · Sun, Sept 6
+            </a>
+            {!ended && ' · Sun, Sept 6'}
           </p>
         </div>
       </div>

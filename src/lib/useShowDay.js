@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hasShowDayArrived } from './showTime.js'
+import { hasShowDayArrived, hasShowEnded } from './showTime.js'
 import { hasRegistrationClosed } from '../data/registration.js'
 
 /**
@@ -29,15 +29,39 @@ export function useShowDayArrived() {
 }
 
 /**
- * The one definition of what the two flags mean, so a link marked up once
- * behaves the same everywhere it appears.
+ * Same one-way flip once the show has closed (SHOW_END), for the post-show site.
+ * The poll is cheap insurance for a tab left open on the landing page through the
+ * 4:00pm close, which should turn into the thank-you without a reload.
+ */
+export function useShowEnded() {
+  const [ended, setEnded] = useState(hasShowEnded)
+
+  useEffect(() => {
+    if (ended) return
+    const interval = setInterval(() => setEnded(hasShowEnded()), 60_000)
+    return () => clearInterval(interval)
+  }, [ended])
+
+  return ended
+}
+
+/**
+ * The one definition of what the flags mean, so a link marked up once behaves the
+ * same everywhere it appears.
  *
  * `hideOnShowDay` — stops being actionable once the show starts (Volunteer,
  * Poker Run). `showOnShowDay` — dead air until then, so not worth a slot before
- * (Awards). Anything with neither flag is always visible.
+ * (Awards). `hideAfterShow` — day-of logistics that are only noise once the show
+ * has closed (Show Day guide, FAQ, Vendors, Merch), so they must stay visible
+ * *during* the show, which is why `hideOnShowDay` cannot do this job.
+ * `showAfterShow` — only exists once there is something to look back on (Gallery).
+ * Anything with none of these is always visible.
  */
-export const isVisibleOnShowDay = (item, arrived) =>
-  item.showOnShowDay ? arrived : !(item.hideOnShowDay && arrived)
+export const isVisibleOnShowDay = (item, arrived, ended = false) => {
+  if (item.showAfterShow) return ended
+  if (item.hideAfterShow && ended) return false
+  return item.showOnShowDay ? arrived : !(item.hideOnShowDay && arrived)
+}
 
 /**
  * Same one-way flip as useShowDayArrived, for the online registration cutoff.

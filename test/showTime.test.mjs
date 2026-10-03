@@ -6,6 +6,7 @@ import {
   currentEntryIndex,
   formatTime,
   hasPassedOnShowDay,
+  hasShowEnded,
   hasShowDayArrived,
   isShowDay,
   phaseOnShowDay,
@@ -42,6 +43,13 @@ test('hasShowDayArrived flips once, at event-local midnight, and never reverts',
   // wrongly report the show as still upcoming and bring back the Volunteer link.
   assert.equal(hasShowDayArrived(at('2027-01-05T12:00:00Z')), true, 'next January')
   assert.equal(hasShowDayArrived(at('2025-12-31T12:00:00Z')), false, 'the previous year')
+})
+
+test('hasShowEnded flips at the 4pm close, not at midnight, and never reverts', () => {
+  assert.equal(hasShowEnded(at('2026-09-26T19:59:00Z')), false, '3:59pm ET, still show day')
+  assert.equal(hasShowEnded(at('2026-09-26T20:00:00Z')), true, '4:00pm ET, the show closes')
+  assert.equal(hasShowEnded(at('2026-10-03T12:00:00Z')), true, 'the week after')
+  assert.equal(hasShowEnded(at('2026-09-25T20:00:00Z')), false, 'the day before')
 })
 
 test('hasPassedOnShowDay gates on the wall clock, and only on show day', () => {
