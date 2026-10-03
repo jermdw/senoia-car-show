@@ -109,6 +109,15 @@ prefetch, tapping "Volunteer" on a slow connection looks like nothing happened,
 because React Router wraps navigation in `startTransition` and keeps the old
 page mounted rather than showing the Suspense fallback.
 
+### Gallery
+
+`/gallery` is hidden until `SHOW_END` passes (`showAfterShow`), so the year-rollover
+date bump hides it again until next year's show closes — the URL keeps working and
+the 2026 album stays in `src/data/gallery.js`. Each year add a row to `ALBUMS` (a link
+to the photographer's own gallery) and, once the photographer agrees to it, any
+photos to host in `PHOTOS` (instructions are in the file's comments; images go in
+`public/gallery/<year>/`).
+
 ### Navigation
 
 `SiteHeader.jsx` fits exactly seven direct links at the `md` breakpoint, so the

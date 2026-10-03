@@ -51,7 +51,7 @@ Prod seed (idempotent, preserves `spotsFilled`):
 
 - **SPA**: React 19 + Vite + Tailwind v4, routes in `src/AppRoutes.jsx` (`src/main.jsx`
   is just the error boundary + router): public info pages (`/`, `/show`, `/map`,
-  `/sponsors`, `/vendors`, `/merch`, `/faq`) use the shared `SiteHeader`/`SiteFooter`
+  `/sponsors`, `/vendors`, `/merch`, `/faq`, `/gallery`) use the shared `SiteHeader`/`SiteFooter`
   components; `/awards` (live award board), `/volunteer` (shift board),
   `/cancel?token=` (from confirmation emails), `/admin` (organizer dashboard).
   The four Firebase-touching routes (`/awards`, `/volunteer`, `/cancel`, `/admin`) are
@@ -71,6 +71,13 @@ Prod seed (idempotent, preserves `spotsFilled`):
   drop out, "More ▾" is hidden when empty, and the home page becomes a thank-you.
   Use these flags rather than deleting entries — the rollover date bump then restores
   everything. `PostShowNotice` tops the day-of pages that stay reachable by URL.
+- **Photo gallery** (`/gallery`): post-show only (`showAfterShow` in the nav and on the
+  home page). `src/data/gallery.js` holds `ALBUMS` (links out to the photographer's own
+  galleries, one per year — Stars Mill Photography / Wayne Dombroski) and `PHOTOS`
+  (copies hosted from `public/gallery/<year>/`, rendered by `PhotoGrid` with a native
+  `<dialog>` lightbox). `PHOTOS` starts empty: Wayne's permission was given for social
+  media, so confirm with him before hosting copies. Eager route, no `firebase.js`
+  import. Always render the photographer credit.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new
