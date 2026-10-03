@@ -19,8 +19,11 @@ and Merch leave the nav, the empty "More ▾" dropdown disappears, the footer dr
 the FAQ link and the PorchFest date, the home page turns into a thank-you with a
 single Award Winners button, and `PostShowNotice` banners appear on the
 day-of pages (`/faq`, `/map`, `/vendors`, `/merch`, `/poker-run`). All of that is
-keyed to `SHOW_END`, so **bumping the three constants in step 1 restores the
-pre-show site** with no further work.
+keyed to `SHOW_END`, so bumping the three constants in step 1 restores that
+phase-dependent navigation and conditional content (nav, footer, home page,
+notices, FAQ registration answer). It does **not** restore the page bodies that
+were rewritten or trimmed after 2026 — Show Info, Sponsors, Vendors, Merch, Poker
+Run and the FAQ poker-run answer still need the step 5 content pass.
 
 That is correct for October. It is catastrophic in June, because next year's
 volunteer sign-ups will open with **no link to them anywhere on the site**.
