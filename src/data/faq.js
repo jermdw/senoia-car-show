@@ -23,11 +23,13 @@
 // An `href` link is external/asset, a `to` link is an in-app route.
 
 import { REGISTRATION_URL, REGISTRATION_PRICE, hasRegistrationClosed } from './registration.js'
+import { hasShowEnded } from '../lib/showTime.js'
 
 // Read once, when the module loads. A tab left open across the 6:00pm cutoff
 // keeps the pre-close wording until it reloads, but every link an organizer
 // pastes into an email is a cold load, and that is how this page is read.
 const registrationClosed = hasRegistrationClosed()
+const showEnded = hasShowEnded()
 
 export const FAQ_SECTIONS = [
   { id: 'load-in', label: 'Getting In & Setting Up' },
@@ -161,7 +163,12 @@ export const FAQ = [
     id: 'registration-cost',
     section: 'show-cars',
     q: 'What does it cost to show a car, and how do I register?',
-    a: registrationClosed
+    a: showEnded
+      ? [
+          'Registration for the 2026 show has closed. Unreserved General Parking was $20 in advance or $25 same-day, and the Main Street and North Main Street blocks sold out in advance.',
+          'Registering was for show vehicles only — spectator admission and parking are always free.',
+        ]
+      : registrationClosed
       ? [
           'Online advance registration has closed for 2026. Unreserved General Parking is $25 same-day, at the registration desk from 7:00 to 11:00am on show day. The Main Street and North Main Street blocks sold out in advance.',
           'Registering is for show vehicles only — spectator admission and parking are always free.',
@@ -170,7 +177,9 @@ export const FAQ = [
           `Unreserved General Parking is ${REGISTRATION_PRICE} in advance or $25 same-day. The Main Street and North Main Street blocks are fixed-size and have sold out for 2026, so General Parking is the tier still on sale.`,
           'Advance registration is online through the Senoia DDA box office. Same-day registration runs at the registration desk from 7:00 to 11:00am on show day. Registering is for show vehicles only — spectator admission and parking are always free.',
         ],
-    links: registrationClosed
+    links: showEnded
+      ? [{ label: '2026 show recap', to: '/show' }]
+      : registrationClosed
       ? [
           { label: 'Where the registration desk is', to: '/faq#registration-desk' },
           { label: 'Full pricing table', to: '/show' },
@@ -292,10 +301,10 @@ export const FAQ = [
     section: 'weekend',
     q: 'What is the poker run?',
     a: [
-      'The Cruisin’ for History Poker Run kicks off the weekend on Friday, September 25. Drive five local landmarks at your own pace, photograph your ride at each, then turn in your photos at Marimac Lakes between 6:00 and 7:00pm to draw a poker hand. Best hand wins $200 cash.',
-      'Any make, model or year is welcome — it is not limited to show cars. Tickets are $25 per entry and proceeds benefit the Senoia Area Historical Society.',
+      'The Cruisin’ for History Poker Run kicked off the weekend on Friday, September 25. Drivers visited five local landmarks at their own pace, photographed their rides at each, then turned in their photos at Marimac Lakes between 6:00 and 7:00pm to draw a poker hand. Best hand won $200 cash.',
+      'Any make, model or year was welcome — it was not limited to show cars. Tickets were $25 per entry and proceeds benefit the Senoia Area Historical Society.',
     ],
-    links: [{ label: 'Route, stops and tickets', to: '/poker-run' }],
+    links: [{ label: 'Route and stops', to: '/poker-run' }],
     confirmed: true,
   },
   {
