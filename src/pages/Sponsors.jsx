@@ -223,11 +223,6 @@ export default function Sponsors() {
           The 2026 show was free for spectators because of the businesses below.
           Their sponsorships support the Senoia Downtown Development Authority
           and downtown preservation &mdash; please thank them with your business.
-          Interested in sponsoring a future show? Email{' '}
-          <a className="underline font-semibold" href="mailto:carshow@enjoysenoia.com">
-            carshow@enjoysenoia.com
-          </a>
-          .
         </p>
 
         <h2 className="font-display text-3xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-2">
