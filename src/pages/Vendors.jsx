@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import PostShowNotice from '../components/PostShowNotice.jsx'
 import varsityLogo from '../assets/vendor-varsity.webp'
 import madGreekLogo from '../assets/vendor-mad-greek.webp'
 import jalapenoLogo from '../assets/vendor-jalapeno-express.webp'
@@ -61,7 +61,7 @@ export default function Vendors() {
   usePageMeta({
     title: 'Vendors & Food Trucks | Senoia Car Show',
     description:
-      'Food and beer trucks — including The Varsity — plus local shops and restaurants along Historic Main Street at the 2026 Senoia Car Show. Vendor registration for 2026 is closed.',
+      'The food and beer trucks — including The Varsity — plus local shops and restaurants along Historic Main Street at the 2026 Senoia Car Show, held September 26, 2026.',
     path: '/vendors',
   })
 
@@ -73,20 +73,22 @@ export default function Vendors() {
           Vendor <span className="text-gold">Info</span>
         </h1>
 
+        <PostShowNotice />
+
         <div className="bg-ink rounded-xl p-6 mb-8 text-center">
           <p className="font-display text-2xl uppercase tracking-wide text-gold mb-2">
-            Vendor Registration Is Closed
+            Thank You, Vendors
           </p>
           <p className="text-gold-pale/90">
-            We're no longer accepting vendor applications for the 2026 show.
-            Thank you to everyone who applied!
+            Thank you to the food trucks, shops and restaurants that fed Historic
+            Main Street at the 2026 show.
           </p>
         </div>
 
         <p className="text-stone-700 mb-6 leading-relaxed">
-          Come hungry: the show features music, food &amp; beer trucks —
-          including The Varsity — plus local shops and restaurants open all
-          along Historic Main Street.
+          The show featured music, food &amp; beer trucks &mdash; including The
+          Varsity &mdash; plus local shops and restaurants open all along
+          Historic Main Street.
         </p>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
@@ -132,11 +134,9 @@ export default function Vendors() {
           ))}
         </ul>
         <p className="text-stone-600 text-sm mb-8">
-          Find them in the food court on Travis Street west of Main — see the{' '}
-          <a className="underline font-semibold" href="/map?poi=food-court">
-            show day guide
-          </a>{' '}
-          for the map.
+          The food court was on Travis Street west of Main. Please visit these
+          vendors and the downtown shops and restaurants whenever you&rsquo;re in
+          Senoia.
         </p>
 
         <div className="bg-white rounded-xl border border-stone-200 p-6">
@@ -144,21 +144,13 @@ export default function Vendors() {
             Questions?
           </p>
           <p className="text-stone-700">
-            For anything vendor-related, including next year's show, contact the
+            For anything vendor-related, including future shows, contact the
             organizers at{' '}
             <a className="underline font-semibold" href="mailto:carshow@enjoysenoia.com">
               carshow@enjoysenoia.com
             </a>{' '}
             or{' '}
             <a className="underline font-semibold" href="tel:+17707279173">(770) 727-9173</a>.
-          </p>
-          <p className="text-stone-700 mt-3">
-            Setting up on show day? Vendors enter at Seavy Street and Bridge
-            Street from 6:00am &mdash;{' '}
-            <Link to="/faq#vendor-entrance" className="underline font-semibold">
-              load-in times and entrances
-            </Link>{' '}
-            are on the FAQ.
           </p>
         </div>
       </main>

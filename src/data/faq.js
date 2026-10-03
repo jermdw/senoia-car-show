@@ -313,9 +313,9 @@ export const FAQ = [
     section: 'weekend',
     q: 'Can I help out?',
     a: [
-      'Yes, and the show genuinely runs on it. Shifts are posted on the volunteer board — pick one that suits you, no account needed, and you will get a confirmation email with a link to cancel if your plans change.',
+      `Yes, and the show genuinely runs on it. Volunteer sign-ups for the 2026 show have closed; to help at a future show, email ${EMAIL}.`,
     ],
-    links: [{ label: 'Volunteer sign-up', to: '/volunteer' }],
+    links: [],
     confirmed: true,
   },
   {

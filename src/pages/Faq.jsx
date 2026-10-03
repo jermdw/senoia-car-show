@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import PostShowNotice from '../components/PostShowNotice.jsx'
 import { faqBySection, publishedFaq } from '../data/faq.js'
 
 const ORIGIN = 'https://senoiacar.show'
@@ -87,6 +88,7 @@ export default function Faq() {
           Frequently Asked <span className="text-gold">Questions</span>
         </h1>
         <p className="font-script text-gold text-2xl mb-6">Saturday, September 26, 2026</p>
+        <PostShowNotice />
         <p className="text-stone-700 mb-8 leading-relaxed">
           Gate times, entrances and addresses for everyone bringing something to
           the show — cars, haulers, tents and trailers — plus the basics for
