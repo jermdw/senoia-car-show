@@ -93,7 +93,17 @@ holds this credential" that only the current maintainers can complete. It needs
 to live somewhere the DDA controls, not only in this repo — the repo is one of
 the things it grants access to.
 
-### 9. Decisions for the 2027 cycle
+### 9. Who are the volunteers who never signed up on the site?
+
+The 2026 thank-you cited **151 volunteers**; the site had **93 unique signup
+addresses** (121 active signups, households share emails). The gap is crews the
+show chair counts but who were never in Firestore — likely Poker Run, shuttle and
+department leads. They can't be emailed from the Volunteers segment. Ask the show
+chair for that list (or a rule for who counts), and decide whether those people
+should sign up through `/volunteer` next year so the roster and the headcount
+agree. See [11-email-broadcasts.md](11-email-broadcasts.md).
+
+### 10. Decisions for the 2027 cycle
 
 - [ ] **Confirm show day.** The fourth Saturday in September has been the
       pattern, but the date moved between 2025 and 2026. Everything in

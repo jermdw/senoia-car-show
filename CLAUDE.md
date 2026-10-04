@@ -97,6 +97,14 @@ Prod seed (idempotent, preserves `spotsFilled`):
   rows are **staged** (`announced: false`) until published, so the judges' sheet can be
   entered before the 3:00pm ceremony without leaking. Shared sort/search live in
   `src/lib/awards.js` so both sides order the list identically.
+- **Email broadcasts** (volunteer/car-owner bulk sends): Resend broadcasts from
+  `noreply@senoiacar.show`; full procedure in `docs/11-email-broadcasts.md`. The
+  rules that bite: **refresh the Resend segment from Firestore (active `signups`,
+  deduped by email) right before every send** — the Sept 16 segment was 12 people
+  short by Oct 3; images must be absolute URLs, so they're JPEGs committed under
+  `public/email/` and **live only after the merge deploys**; test copy to the
+  maintainer and explicit go-ahead before sending; `update-broadcast` with HTML
+  resets the broadcast name. The send itself stays a human decision.
 - **Cloud Functions v2** (`functions/index.js`): `signUp` and `cancelSignup` callables.
   All volunteer writes go through them (volunteers have no auth; the Admin SDK
   bypasses rules). Resend confirmation emails are best-effort by design — email

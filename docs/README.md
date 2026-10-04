@@ -45,6 +45,7 @@ resolve conflicts in favour of the operations playbook.
 | [07 · Accounts & access](07-accounts-and-access.md) | Every service the show depends on, and who holds the keys |
 | [08 · Troubleshooting](08-troubleshooting.md) | Something is broken and you'd like it to not be |
 | [09 · Open questions](09-open-questions.md) | Gaps this playbook can't fill without an organizer |
+| [11 · Email broadcasts](11-email-broadcasts.md) | Sending the volunteer / car-owner emails through Resend: segments, images, the send procedure, the 2026 log |
 
 Also in the repo, and worth knowing about:
 

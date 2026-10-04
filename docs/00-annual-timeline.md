@@ -15,6 +15,7 @@ you build a year around it; the show moved by a day between those two years.
 | When | Public deadline | Digital work that must be done first |
 | --- | --- | --- |
 | **Oct (show + 2 weeks)** | — | **Roll the site to next year.** See [01-year-rollover.md](01-year-rollover.md). This is urgent, not housekeeping: until it happens the site is frozen in show-day mode with the Volunteer and Poker Run links hidden. |
+| **Show + 1 week** | — | **Volunteer thank-you email** (request comes from the show chair). Refresh the Volunteers segment first — [11](11-email-broadcasts.md) |
 | **Oct–Nov** | Debrief | Capture what broke into [09-open-questions.md](09-open-questions.md) and the troubleshooting doc while it's fresh |
 | **Nov–Jan** | Quiet | Renew the domain; check Firebase/Mapbox/Resend billing and free-tier headroom ([07](07-accounts-and-access.md)) |
 | **Feb–Apr** | Sponsor prospecting | Build next year's Ticket Tailor sponsorship event; clear last year's sponsor logos off `/sponsors` |
@@ -27,6 +28,7 @@ you build a year around it; the show moved by a day between those two years.
 | **~4 weeks out** | Site plan finalised | Regenerate the venue map, update `src/data/eventMap.js` POIs and schedule |
 | **~2 weeks out** | — | Publish `/faq` updates; the FAQ is what organizers paste into email replies |
 | **~1 week out** | Shirt order placed | Pull the shirt-size tally off `/admin` ([03](03-volunteer-system.md)) |
+| **~1 week before training** | — | Volunteer meeting invite via Resend to the refreshed Volunteers segment ([11](11-email-broadcasts.md)); turn on open/click tracking before the first send |
 | **Sept, Tue & Thu before** | **Volunteer training meetings, 7:00 PM, SAHS Museum** | Shirt pickup happens here — the confirmation email says so, so the dates in `functions/index.js` must be right |
 | **Friday before** | **Cruisin' for History Poker Run** | `/poker-run` stops verified against Google Maps; SAHS ticket embed loading |
 | **Show day** | **10 AM – 4 PM** | Award board and announcement banner staffed ([04](04-show-day.md)) |
