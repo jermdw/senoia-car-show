@@ -6,6 +6,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import { ClockMark, Medallion, SearchMark, TrophyMark } from '../components/AwardArt.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import { PHOTOGRAPHER } from '../data/gallery.js'
 import { phaseOnShowDay } from '../lib/showTime.js'
 import {
   FEATURED,
@@ -267,13 +268,19 @@ function FeaturedCard({ award }) {
     // A row even on a phone: stacked, the art panel becomes a full-width band
     // that pushes the winner's name below the fold.
     <article className="rounded-xl border border-gold/40 bg-white/5 overflow-hidden flex">
-      <div className="w-28 sm:w-40 shrink-0 bg-gold/10 flex items-center justify-center p-3">
+      <div
+        className={`shrink-0 bg-gold/10 flex items-center justify-center p-3 ${
+          photoUrl ? 'w-40 sm:w-64' : 'w-28 sm:w-40'
+        }`}
+      >
         {photoUrl ? (
+          // A landscape car photo needs its own aspect ratio: filling the panel's
+          // height (as the square medallion does) crops it to a vertical sliver.
           <img
             src={photoUrl}
             alt={vehicle ? `${vehicle}, ${title}` : title}
             loading="lazy"
-            className="w-full h-full object-cover rounded-md"
+            className="w-full aspect-[4/3] object-cover rounded-md"
           />
         ) : (
           <Medallion
@@ -291,6 +298,22 @@ function FeaturedCard({ award }) {
         <p className="text-gold-pale/60 text-sm mt-1">
           {[carNumber && `Car #${carNumber}`, awardClass].filter(Boolean).join(' · ')}
         </p>
+        {/* Every file under /gallery/ is one of the photographer's, so those get
+            his credit; a photoUrl an organizer typed in from somewhere else does
+            not, and must not be attributed to him. */}
+        {photoUrl?.includes('/gallery/') && (
+          <p className="text-gold-pale/50 text-xs mt-2">
+            Photo:{' '}
+            <a
+              className="underline hover:text-gold-pale"
+              href={PHOTOGRAPHER.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {PHOTOGRAPHER.name}, {PHOTOGRAPHER.business}
+            </a>
+          </p>
+        )}
       </div>
     </article>
   )
