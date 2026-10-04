@@ -177,7 +177,7 @@ link to the site.
 | --- | --- | --- | --- | --- | --- |
 | 16 Sep | Volunteer meeting invite (Tue 22 / Thu 24 Sep, 7 PM, SAHS museum) | Volunteers 2026 | 81 | `carshow@enjoysenoia.com` | 81 delivered, 0 bounced |
 | 25 Sep | Car owners: Poker Run reminder | Car Owners 2026 | 319 | — | 318 delivered, 1 permanent bounce; sent ~9 AM ET |
-| 3 Oct | Volunteer thank-you | Volunteers 2026 (refreshed 81 → 93) | 93 | Steve Maloy | Photo of show cars under the header; meeting-is-optional line and feedback request per Steve. Delivery numbers: pull from Resend |
+| 3 Oct | Volunteer thank-you | Volunteers 2026 (refreshed 81 → 93) | 93 | Steve Maloy | Photo of show cars under the header; meeting-is-optional line and feedback request per Steve. Sent 9:06 PM ET. Snapshot a few hours after: 93 sent, 92 delivered, 0 bounced, 0 complaints, 0 unsubscribes, 3 delayed (transient). Opens/clicks unmeasured (tracking off) |
 
 Car-owner and sponsor emails sent *by the show chair himself* from Gmail (for
 example the sponsor follow-up of 2 Oct) are outside this system.
