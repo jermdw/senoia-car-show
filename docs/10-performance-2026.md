@@ -98,6 +98,30 @@ public page — it is the show-day tool people actually use.
   Safari in-app 42, Firefox 38. Mobile Safari dominance matches on-site attendees
   using the map from phones — keep the map and FAQ mobile-first.
 
+## Volunteers (shift fill, read 2026-10-02)
+
+Source: the public `events/2026/shifts` documents (`spotsFilled` / `spotsTotal`), which
+hold counts only — no volunteer details. `spotsFilled` is spots currently held by active
+sign-ups, so cancelled spots are already removed. It counts **spots, not people**: a
+volunteer who took two shifts holds two spots.
+
+**121 of 151 spots filled (80%) across 38 shifts.** 26 shifts filled completely, 11
+partly, 1 not at all.
+
+| Day | Shifts | Spots filled |
+|---|---|---|
+| Fri 9/25 setup | 2 | 12 / 12 |
+| Sat 9/26 show day | 35 | 105 / 129 (81%) |
+| Sun 9/27 clean up | 1 | 4 / 10 |
+
+Role groups that filled best: public parking shuttle 21/24, merchandise 19/20, judges
+7/7, entrance gate 6/6, registration 6/6. The gaps were **parking guards 3/16** (the
+only shift with zero volunteers was Parking Guard, Seavy & Barnes, 7–11 AM), **Sunday
+clean up 4/10**, show car parking 19/22, and the late 50/50 raffle slot 3/6.
+
+Not available here: sign-ups per day, or how many distinct people volunteered. Both
+need the private `signups` records; pull them as aggregate counts only.
+
 ## Ticket Tailor (as of 2026-09-30)
 
 Read from the senoiadda box office event summaries. Sales are for the whole selling
@@ -166,8 +190,9 @@ the day traffic jumped to 5,136 views, but with no tracking the two cannot be ti
 - **Ticket sales over time** — only end-of-period totals were read from Ticket
   Tailor. A sales-by-day curve (and when sales followed the site's traffic) needs
   the Ticket Tailor sales report exported.
-- **Volunteer sign-up volume** — lives in Firestore `signups` and was not pulled
-  (it holds personal data; only aggregate counts are needed).
+- **Volunteer sign-up timing and distinct people** — spots filled are above, but
+  sign-ups per day and unique volunteers live in the private `signups` records and
+  were not pulled.
 - **Server-side metrics** (Firebase Hosting bandwidth, Cloud Functions errors,
   App Check rejections) — not pulled.
 - **No prior-year comparison exists** for the site (new in 2026; the legacy
