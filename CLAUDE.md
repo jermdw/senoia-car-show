@@ -51,7 +51,7 @@ Prod seed (idempotent, preserves `spotsFilled`):
 
 - **SPA**: React 19 + Vite + Tailwind v4, routes in `src/AppRoutes.jsx` (`src/main.jsx`
   is just the error boundary + router): public info pages (`/`, `/show`, `/map`,
-  `/sponsors`, `/vendors`, `/merch`, `/faq`, `/gallery`) use the shared `SiteHeader`/`SiteFooter`
+  `/sponsors`, `/vendors`, `/merch`, `/faq`, `/gallery`, `/history`) use the shared `SiteHeader`/`SiteFooter`
   components; `/awards` (live award board), `/volunteer` (shift board),
   `/cancel?token=` (from confirmation emails), `/admin` (organizer dashboard).
   The four Firebase-touching routes (`/awards`, `/volunteer`, `/cancel`, `/admin`) are
@@ -83,6 +83,14 @@ Prod seed (idempotent, preserves `spotsFilled`):
   confirmation from him. Eager route, no `firebase.js` import. Always credit Wayne
   Dombroski / Stars Mill Photography, linked to starsmillphoto.com, wherever his work
   is shown. A new year needs its `/gallery/<year>` line in `public/sitemap.xml`.
+- **Show history** (`/history`, `/history/<year>`): the permanent winners record — Best in
+  Show plus the ranked list (`tierLabel`: 2026 "Top 50", 2025's plaques read "Top 30" —
+  never assume the size) for each year. Content is static `src/data/winners.js`, frozen
+  from the *announced* Firestore awards at each rollover (docs/01 step 1b), so the page
+  stays free of `firebase.js` and outlives `events/<year>`. A year with no data isn't
+  listed; never stub one with guessed results. Reached from the footer on every page
+  (the header bar is full), the gallery and the live awards board; deliberately not
+  `showAfterShow`, so the date bump never hides the archive.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new

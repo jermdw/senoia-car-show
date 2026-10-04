@@ -20,8 +20,13 @@ export default function SiteFooter() {
           {/* The header bar is full at seven links, so the FAQ reaches every page
               from here instead — it is the answer to most of what arrives in that
               inbox, and it should be visible next to the address people write to. */}
+          <p className="mt-3">
+            <Link className="underline hover:text-gold-pale" to="/history">
+              Show history &amp; past winners
+            </Link>
+          </p>
           {!ended && (
-            <p className="mt-3">
+            <p className="mt-1">
               <Link className="underline hover:text-gold-pale" to="/faq">
                 Frequently asked questions
               </Link>
