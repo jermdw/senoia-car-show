@@ -13,6 +13,18 @@ permanently:
 - the Awards board is pinned into the nav in their place
 - the hero countdown reads *"That's a wrap on 2026 — see you next September"*
 
+There is a second, later switch: `hasShowEnded()` (true from `SHOW_END`, 4:00pm on
+show day). It puts the site into its **post-show state** — Show Day, Vendors, FAQ
+and Merch leave the nav, the empty "More ▾" dropdown disappears, the footer drops
+the FAQ link and the PorchFest date, the home page turns into a thank-you with a
+single Award Winners button, and `PostShowNotice` banners appear on the
+day-of pages (`/faq`, `/map`, `/vendors`, `/merch`, `/poker-run`). All of that is
+keyed to `SHOW_END`, so bumping the three constants in step 1 restores that
+phase-dependent navigation and conditional content (nav, footer, home page,
+notices, FAQ registration answer). It does **not** restore the page bodies that
+were rewritten or trimmed after 2026 — Show Info, Sponsors, Vendors, Merch, Poker
+Run and the FAQ poker-run answer still need the step 5 content pass.
+
 That is correct for October. It is catastrophic in June, because next year's
 volunteer sign-ups will open with **no link to them anywhere on the site**.
 Bumping the date constants is therefore step 1, before any content work.
@@ -99,15 +111,15 @@ can't silently reopen sign-ups you closed.
 | File | What carries the year |
 | --- | --- |
 | `src/pages/Landing.jsx` | Hero date line, "21st Annual", meta, card blurbs, flyer link |
-| `src/pages/Show.jsx` | `PRICING` table, `DATES` list, "21st Annual", the whole intro paragraph |
-| `src/pages/Sponsors.jsx` | `SPONSORS_2026` array (clear it), `TIERS` prices, the dated plaque-deadline notice |
-| `src/pages/Vendors.jsx` | `FOOD_VENDORS_2026` array (clear it), the "registration is closed" banner — **reopen it** |
-| `src/pages/Merch.jsx` | Shirt art, price, colours, sizes, the enjoysenoia.com buy link |
-| `src/pages/PokerRun.jsx` | Date line, the five `STOPS`, `TICKETS_URL` (the year is in the slug) |
+| `src/pages/Show.jsx` | **Rewritten as a past-tense recap after 2026** — the pricing table, register button, same-day desk, parking/logistics, poker run ticket link, flyer and volunteer box were removed. Restore from `git log -p -- src/pages/Show.jsx` (the "Post-show cleanup" PR), then update the old `PRICING` table, `DATES` list, "21st Annual", the whole intro paragraph |
+| `src/pages/Sponsors.jsx` | `SPONSORS_2026` array (clear it). **After 2026 the tier cards, "still accepting" box, approved-sponsor box and plaque-deadline note were removed** (the page is a thank-you) — restore them from the "Post-show cleanup" PR and re-price `TIERS` |
+| `src/pages/Vendors.jsx` | `FOOD_VENDORS_2026` array (clear it); the banner and intro were rewritten as a thank-you after 2026 — restore the "registration is closed/open" banner and the load-in paragraph from the "Post-show cleanup" PR |
+| `src/pages/Merch.jsx` | Shirt art, price, colours, sizes, the enjoysenoia.com buy link; the 4XL line and the volunteer-shirt card were removed after 2026 |
+| `src/pages/PokerRun.jsx` | Date line, the five `STOPS`. Copy was put in the past tense after 2026 and the ticket widget (`TicketEmbed`, `TICKETS_URL` — the year is in the slug) and Tickets section were removed; restore them from the "Post-show cleanup" PR |
 | `src/data/registration.js` | `REGISTRATION_URL`, `REGISTRATION_PRICE`, `REGISTRATION_CLOSES` (online cutoff — must match the Ticket Tailor tier's sales-end) |
 | `src/data/sponsorship.js` | `SPONSORSHIP_URL`, `BRONZE_PRICE`, the Ticket Tailor event ids in the comment |
 | `src/data/eventMap.js` | Every POI and `SCHEDULE` entry |
-| `src/data/faq.js` | Dates and addresses throughout |
+| `src/data/faq.js` | Dates and addresses throughout; the `volunteer` entry lost its sign-up link after 2026 — put `links: [{ label: 'Volunteer sign-up', to: '/volunteer' }]` back |
 | `src/components/Countdown.jsx` | "That's a wrap on 2026" and the fallback date line |
 | `src/components/SiteFooter.jsx` | Date line, PorchFest date |
 | `functions/index.js` | **The volunteer training meeting dates in the confirmation email.** Easy to miss — it's backend code, not a page. Requires a functions deploy. |

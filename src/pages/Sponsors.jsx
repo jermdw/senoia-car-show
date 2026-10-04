@@ -1,7 +1,6 @@
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { SPONSORSHIP_URL, BRONZE_PRICE } from '../data/sponsorship.js'
 import bmwLogo from '../assets/sponsor-bmw-south-atlanta.webp'
 import carolinaLogo from '../assets/sponsor-carolina-handling.webp'
 import landmarkLogo from '../assets/sponsor-landmark-dodge.webp'
@@ -205,39 +204,11 @@ const SPONSORS_2026 = [
   },
 ]
 
-const TIERS = [
-  {
-    name: 'Title Sponsor',
-    price: '$2,000',
-    perks: ["15' × 50' premium curbside space", 'DJ promotional mentions every 15 minutes', 'Website promotion & recognition'],
-    featured: true,
-  },
-  {
-    name: 'Gold Sponsor',
-    price: '$1,000',
-    perks: ["15' × 50' curbside space", 'DJ promotional mentions every 30 minutes', 'Website promotion & recognition'],
-  },
-  {
-    name: 'Silver Sponsor',
-    price: '$500',
-    perks: ["15' × 25' curbside space", 'DJ promotional mentions every 45 minutes', 'Website promotion & recognition'],
-  },
-  {
-    name: 'Bronze Sponsor',
-    price: BRONZE_PRICE,
-    perks: ['DJ promotional mentions every 60 minutes', 'Website promotion & recognition'],
-    // The one tier a sponsor can buy outright. The other three are numbered
-    // curbside spaces held behind Ticket Tailor access codes until the SDDA
-    // approves and assigns one, so they route through the contact box instead.
-    checkout: true,
-  },
-]
-
 export default function Sponsors() {
   usePageMeta({
     title: '2026 Sponsors | Senoia Car Show',
     description:
-      'Meet the sponsors of the 21st Annual Senoia Car Show — and join them: sponsorship spots for the 2026 show are still available.',
+      'Thank you to the sponsors of the 21st Annual Senoia Car Show, held September 26, 2026 on Historic Main Street in Senoia, Georgia.',
     path: '/sponsors',
   })
 
@@ -246,129 +217,15 @@ export default function Sponsors() {
       <SiteHeader />
       <main className="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
         <h1 className="font-display text-4xl uppercase tracking-wide text-ink mb-2">
-          Sponsor the <span className="text-gold">Show</span>
+          Thank You, <span className="text-gold">Sponsors</span>
         </h1>
         <p className="text-stone-700 mb-8 leading-relaxed max-w-2xl">
-          Put your business in front of 8,000–10,000 visitors on Historic Main
-          Street. Sponsorships support the Senoia Downtown Development Authority
-          and keep the show free for spectators. Sponsorships are{' '}
-          <strong>still available</strong> for the 2026 show — Bronze can be
-          purchased online, and the tiers that include a reserved curbside space
-          are approved and assigned by the SDDA.
+          The 2026 show was free for spectators because of the businesses below.
+          Their sponsorships support the Senoia Downtown Development Authority
+          and downtown preservation &mdash; please thank them with your business.
         </p>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          {TIERS.map((t) => (
-            <div
-              key={t.name}
-              className={`rounded-xl border p-6 ${
-                t.featured
-                  ? 'bg-ink text-cream border-gold shadow-lg'
-                  : 'bg-white border-stone-200'
-              }`}
-            >
-              <p className={`font-display text-xl uppercase tracking-wide ${t.featured ? 'text-gold' : 'text-ink'}`}>
-                {t.name}
-              </p>
-              <p className={`font-display text-3xl mb-3 ${t.featured ? 'text-cream' : 'text-gold-dark'}`}>
-                {t.price}
-              </p>
-              <ul className={`space-y-1 text-sm ${t.featured ? 'text-gold-pale/90' : 'text-stone-700'}`}>
-                {t.perks.map((p) => (
-                  <li key={p}>• {p}</li>
-                ))}
-              </ul>
-              {/* Only the self-serve tier gets a checkout button. The rest say
-                  how they are actually obtained rather than showing a button
-                  that lands on a checkout with their tier hidden — every upper
-                  tier is an access-code slot until the SDDA assigns one. */}
-              {t.checkout ? (
-                <a
-                  href={SPONSORSHIP_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 block text-center bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-5 py-2.5 rounded-md transition-colors"
-                >
-                  Sponsor Now &mdash; {t.price}
-                </a>
-              ) : (
-                <p className={`mt-4 text-xs uppercase tracking-wide font-display ${t.featured ? 'text-gold-pale/70' : 'text-stone-500'}`}>
-                  Reserved through the SDDA
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-5 bg-gold-pale/40 border border-gold rounded-xl p-4 text-sm text-ink">
-          <strong>Please note:</strong> All sponsorships received after{' '}
-          <strong>August 17, 2026</strong> will not receive an appreciation plaque
-          due to order lead times.
-        </p>
-
-        <div className="mt-8 bg-ink rounded-xl p-6 text-center">
-          <p className="font-script text-gold text-2xl mb-1">Still accepting sponsors!</p>
-          {/* Bronze is the only tier that can be bought outright, so it is the
-              one thing this box can offer as a button. Title, Gold and Silver
-              are numbered curbside spaces released by access code once the SDDA
-              approves the sponsor, which is why they stay an email/phone ask —
-              a checkout link would show those sponsors Bronze and nothing else. */}
-          <p className="text-gold-pale/90 mb-5">
-            Bronze sponsorships can be purchased online right now. Title, Gold
-            and Silver include a reserved curbside space, so those are assigned
-            by the SDDA &mdash; get in touch and we&rsquo;ll set you up.
-          </p>
-          <a
-            href={SPONSORSHIP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-lg uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
-          >
-            Become a Bronze Sponsor &mdash; {BRONZE_PRICE}
-          </a>
-          <p className="text-gold-pale/90 mt-5">
-            For Title, Gold or Silver, email{' '}
-            <a className="underline font-semibold hover:text-cream" href="mailto:carshow@enjoysenoia.com">
-              carshow@enjoysenoia.com
-            </a>{' '}
-            or call the Welcome Center at{' '}
-            <a className="underline font-semibold hover:text-cream" href="tel:+17707279173">(770) 727-9173</a>.
-          </p>
-        </div>
-
-        {/* Approved Title/Gold/Silver sponsors pay through the same event page —
-            their access code reveals their assigned space at checkout. Codes are
-            per-slot (one per numbered space), so there is no single code to
-            publish here even if we wanted to, and publishing one would let
-            anyone buy a reserved space. The code stays in the SDDA's approval
-            email; this block only tells them where to spend it. */}
-        <div className="mt-4 rounded-xl border border-stone-300 bg-white p-5">
-          <p className="font-display uppercase tracking-wide text-ink mb-2">
-            Already approved for Title, Gold or Silver?
-          </p>
-          <p className="text-stone-700 text-sm leading-relaxed">
-            Your approval email from the SDDA includes an access code for your
-            assigned space. To pay online, open the{' '}
-            <a
-              href={SPONSORSHIP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="text-gold-dark underline font-semibold hover:text-ink"
-            >
-              sponsor box office
-            </a>
-            , choose <strong>Select Sponsorship Level</strong>, then{' '}
-            <strong>Use ticket access code</strong> and enter the code from that
-            email. Your sponsorship level will appear once the code is accepted.
-            Lost your code? Email{' '}
-            <a className="text-gold-dark underline font-semibold hover:text-ink" href="mailto:carshow@enjoysenoia.com">
-              carshow@enjoysenoia.com
-            </a>
-            .
-          </p>
-        </div>
-
-        <h2 className="font-display text-3xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mt-14 mb-2">
+        <h2 className="font-display text-3xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-2">
           Our 2026 <span className="text-gold">Sponsors</span>
         </h2>
         <p className="font-script text-gold text-2xl mb-6">Thank you for supporting the show!</p>

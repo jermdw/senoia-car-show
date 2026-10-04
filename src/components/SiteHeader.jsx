@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/logo-header.webp'
 import { warmRoute } from '../lib/routeLoaders.js'
-import { isVisibleOnShowDay, useShowDayArrived } from '../lib/useShowDay.js'
+import { isVisibleOnShowDay, useShowDayArrived, useShowEnded } from '../lib/useShowDay.js'
 import AnnouncementBanner from './AnnouncementBanner.jsx'
 
 // Start fetching a lazily-loaded route's chunk as soon as intent is visible, so the
@@ -19,14 +19,17 @@ const prefetch = (to) => ({
 // `hideOnShowDay`/`showOnShowDay` links are filtered in the component by
 // hasShowDayArrived(): Volunteer and Poker Run stop being actionable once the
 // show starts, and Awards (dead air until the 3pm ceremony) isn't worth a slot
-// before then — see AwardsAdmin's staged/announced flow for why.
+// before then — see AwardsAdmin's staged/announced flow for why. `hideAfterShow`
+// links (the day-of guide, FAQ, Vendors, Merch) are logistics for the day itself:
+// they stay through show day and drop once the show closes (hasShowEnded), when
+// the nav is down to the recap — Show Info, Sponsors, Awards.
 const LINKS = [
   { to: '/show', label: 'Show Info' },
-  { to: '/map', label: 'Show Day' },
+  { to: '/map', label: 'Show Day', hideAfterShow: true },
   { to: '/sponsors', label: 'Sponsors' },
-  { to: '/vendors', label: 'Vendors' },
+  { to: '/vendors', label: 'Vendors', hideAfterShow: true },
   { to: '/volunteer', label: 'Volunteer', hideOnShowDay: true },
-  { to: '/faq', label: 'FAQ' },
+  { to: '/faq', label: 'FAQ', hideAfterShow: true },
   { to: '/awards', label: 'Awards', showOnShowDay: true },
 ]
 
@@ -36,7 +39,7 @@ const LINKS = [
 // width constraint to work around.
 const MORE_LINKS = [
   { to: '/poker-run', label: 'Poker Run', hideOnShowDay: true },
-  { to: '/merch', label: 'Merch' },
+  { to: '/merch', label: 'Merch', hideAfterShow: true },
 ]
 
 export default function SiteHeader() {
@@ -45,8 +48,9 @@ export default function SiteHeader() {
   const moreRef = useRef(null)
   const location = useLocation()
   const showDayArrived = useShowDayArrived()
-  const links = LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived))
-  const moreLinks = MORE_LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived))
+  const showEnded = useShowEnded()
+  const links = LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived, showEnded))
+  const moreLinks = MORE_LINKS.filter((l) => isVisibleOnShowDay(l, showDayArrived, showEnded))
   const allLinks = [...links.slice(0, 2), ...moreLinks, ...links.slice(2)]
 
   useEffect(() => {
@@ -96,6 +100,9 @@ export default function SiteHeader() {
               {l.label}
             </NavLink>
           ))}
+          {/* After the show both More entries (Poker Run, Merch) are retired; an
+              empty "More ▾" would open onto a blank panel, so it goes too. */}
+          {moreLinks.length > 0 && (
           <div
             className="relative"
             ref={moreRef}
@@ -136,6 +143,7 @@ export default function SiteHeader() {
               </div>
             )}
           </div>
+          )}
           {links.slice(2).map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} {...prefetch(l.to)}>
               {l.label}

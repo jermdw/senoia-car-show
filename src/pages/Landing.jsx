@@ -3,7 +3,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import Countdown from '../components/Countdown.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
-import { isVisibleOnShowDay, useRegistrationClosed, useShowDayArrived } from '../lib/useShowDay.js'
+import { isVisibleOnShowDay, useRegistrationClosed, useShowDayArrived, useShowEnded } from '../lib/useShowDay.js'
 import { ROUTE_LOADERS, warmRoute } from '../lib/routeLoaders.js'
 import { REGISTRATION_URL, REGISTRATION_PRICE } from '../data/registration.js'
 import logo from '../assets/logo-hero.webp'
@@ -19,17 +19,21 @@ const HIGHLIGHTS = [
 // selling Friday's poker run and a volunteer shift on Saturday morning after the
 // header has already retired both. The featured flag moves with them: whichever
 // of Volunteer (before) or Awards (on the day) is the standing ask takes the
-// full-width banner at the foot of the grid.
+// full-width banner at the foot of the grid. `hideAfterShow` (day-of logistics)
+// and `textAfterShow` (copy that turns into a thank-you) follow the show's close
+// the same way, so the home page ends up as a recap rather than an invitation.
 const SECTIONS = [
   {
     to: '/show',
     title: 'Show Info',
     text: 'Schedule, key dates, display pricing, and parking logistics for show day.',
+    textAfterShow: 'A look back at the 21st Annual Senoia Car Show.',
   },
   {
     to: '/map',
     title: 'Show Day',
     text: 'Find your way around the show, and what time everything happens.',
+    hideAfterShow: true,
   },
   {
     to: '/poker-run',
@@ -41,16 +45,19 @@ const SECTIONS = [
     to: '/sponsors',
     title: 'Sponsors',
     text: 'Meet our 2026 sponsors — and join them, spots are still available.',
+    textAfterShow: 'Thank you to the 2026 sponsors who helped keep the show free.',
   },
   {
     to: '/vendors',
     title: 'Vendors',
     text: 'Vendor applications are closed for 2026 — see what will be on Main Street.',
+    hideAfterShow: true,
   },
   {
     to: '/merch',
     title: 'Merch',
     text: 'The 21st Annual show t-shirt, available at the merchandise tent.',
+    hideAfterShow: true,
   },
   {
     to: '/volunteer',
@@ -63,21 +70,27 @@ const SECTIONS = [
     to: '/awards',
     title: 'Award Winners',
     text: 'Top 50, Best in Show Car & Truck — posted live as they’re called from the stage at 3:00 PM.',
+    textAfterShow: 'The Top 50 and Best in Show Car & Truck from the 2026 awards ceremony.',
     featured: true,
     showOnShowDay: true,
   },
 ]
 
 export default function Landing() {
+  const showDayArrived = useShowDayArrived()
+  const showEnded = useShowEnded()
+
   usePageMeta({
     title: 'Senoia Car Show — Sept 26, 2026 · Historic Downtown Senoia, GA',
-    description:
-      'The 21st Annual Senoia Car Show: 600+ collector and classic vehicles on Historic Main Street in Senoia, Georgia. Saturday, September 26, 2026, 10am–4pm. Free spectator admission.',
+    description: showEnded
+      ? 'The 21st Annual Senoia Car Show took place Saturday, September 26, 2026 on Historic Main Street in Senoia, Georgia. See the award winners and thank the 2026 sponsors.'
+      : 'The 21st Annual Senoia Car Show: 600+ collector and classic vehicles on Historic Main Street in Senoia, Georgia. Saturday, September 26, 2026, 10am–4pm. Free spectator admission.',
     path: '/',
   })
 
-  const showDayArrived = useShowDayArrived()
-  const sections = SECTIONS.filter((s) => isVisibleOnShowDay(s, showDayArrived))
+  const sections = SECTIONS.filter((s) => isVisibleOnShowDay(s, showDayArrived, showEnded)).map((s) =>
+    showEnded && s.textAfterShow ? { ...s, text: s.textAfterShow } : s,
+  )
   const registrationClosed = useRegistrationClosed()
 
   // Both show-day CTAs below point at /awards, which is lazy and pulls the
@@ -115,13 +128,33 @@ export default function Landing() {
             </span>
           </h1>
           <p className="font-display text-lg uppercase tracking-widest text-gold-pale/80 mt-1 mb-8">
-            21st Annual &middot; Free Spectator Admission
+            {showEnded ? '21st Annual \u00b7 Thank You for Coming' : '21st Annual \u00b7 Free Spectator Admission'}
           </p>
 
           <div className="mb-10">
             <Countdown />
           </div>
 
+          {showEnded ? (
+            // The show is over: no registration to sell and no shifts to fill, so the
+            // one ask left is the board people are still coming to the site for.
+            <>
+              <Link
+                to="/awards"
+                {...prefetch('/awards')}
+                className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+              >
+                Award Winners
+              </Link>
+              <p className="mt-6 max-w-xl mx-auto text-cream/75 leading-relaxed">
+                <strong className="text-gold-pale font-semibold">Thank you.</strong>{' '}
+                To the car owners, sponsors, vendors and volunteers, and to everyone
+                who filled Historic Main Street &mdash; the show is only as good as
+                the people who show up for it.
+              </p>
+            </>
+          ) : (
+            <>
           {/* Two CTAs, deliberately unequal: registering a car costs money and
               stops the moment the spots run out, so it leads; volunteering is the
               standing ask beside it. */}
@@ -182,20 +215,27 @@ export default function Landing() {
               Download the 2026 Info Flyer (PDF)
             </a>
           </p>
+            </>
+          )}
         </section>
 
-        <section className="bg-cream py-12 px-4">
-          <div className="max-w-4xl mx-auto grid gap-6 sm:grid-cols-3 text-center">
-            {HIGHLIGHTS.map(([big, small]) => (
-              <div key={big}>
-                <p className="font-display text-4xl text-gold-dark uppercase">{big}</p>
-                <p className="text-stone-600 mt-1">{small}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* The highlights are a promise ("600+ cars, free admission, live music"),
+            so they go once the show is over rather than being restated in the past
+            tense as figures nobody counted. */}
+        {!showEnded && (
+          <section className="bg-cream py-12 px-4">
+            <div className="max-w-4xl mx-auto grid gap-6 sm:grid-cols-3 text-center">
+              {HIGHLIGHTS.map(([big, small]) => (
+                <div key={big}>
+                  <p className="font-display text-4xl text-gold-dark uppercase">{big}</p>
+                  <p className="text-stone-600 mt-1">{small}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-        <section className="bg-cream pb-14 px-4">
+        <section className={`bg-cream pb-14 px-4 ${showEnded ? 'pt-12' : ''}`}>
           <div className="max-w-4xl mx-auto grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {sections.map((s) => (
               <Link

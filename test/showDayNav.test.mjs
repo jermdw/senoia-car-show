@@ -38,6 +38,27 @@ test('the two flags are exact complements, so a swap never blanks a slot', () =>
   }
 })
 
+const GONE = { to: '/faq', hideAfterShow: true }
+const LATE = { to: '/gallery', showAfterShow: true }
+
+test('hideAfterShow links stay through show day and drop once the show closes', () => {
+  assert.equal(isVisibleOnShowDay(GONE, false, false), true, 'before')
+  assert.equal(isVisibleOnShowDay(GONE, true, false), true, 'during show day — the one day it is needed')
+  assert.equal(isVisibleOnShowDay(GONE, true, true), false, 'after the close')
+})
+
+test('showAfterShow links appear only once the show has closed', () => {
+  assert.equal(isVisibleOnShowDay(LATE, false, false), false, 'before')
+  assert.equal(isVisibleOnShowDay(LATE, true, false), false, 'during show day')
+  assert.equal(isVisibleOnShowDay(LATE, true, true), true, 'after the close')
+})
+
+test('the existing flags behave identically when the show has ended', () => {
+  assert.equal(isVisibleOnShowDay(HIDE, true, true), false, 'Volunteer stays gone')
+  assert.equal(isVisibleOnShowDay(SHOW, true, true), true, 'Awards stays pinned')
+  assert.equal(isVisibleOnShowDay(ALWAYS, true, true), true)
+})
+
 test('the landing grid shows exactly one featured card in either state', async () => {
   // Guards the real data, not just the predicate: a second `featured` entry
   // would render two full-width ink banners stacked at the foot of the page.

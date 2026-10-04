@@ -7,6 +7,7 @@ import MapCanvas from '../components/MapCanvas.jsx'
 import PoiList from '../components/PoiList.jsx'
 import ScheduleList from '../components/ScheduleList.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import PostShowNotice from '../components/PostShowNotice.jsx'
 import { isWithinMap } from '../lib/venueGeo.js'
 import {
   CATEGORIES,
@@ -162,6 +163,7 @@ export default function EventMap() {
         <p className="font-script text-gold text-2xl mb-6">
           Saturday, September 26, 2026
         </p>
+        <PostShowNotice />
         <p className="text-stone-700 mb-8 leading-relaxed">
           Where to find your way around the show, and what time everything
           happens. Spectator admission and parking are <strong>free</strong>.

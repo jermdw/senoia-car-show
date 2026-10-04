@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import ShirtMockup from '../components/ShirtMockup.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import PostShowNotice from '../components/PostShowNotice.jsx'
 import annualMockup from '../assets/shirt-21st-mockup.webp'
 import a250Art from '../assets/shirt-a250-art.webp'
 import kidsArt from '../assets/shirt-kids-art.webp'
@@ -14,7 +14,7 @@ export default function Merch() {
   usePageMeta({
     title: '2026 Show T-Shirts & Merch | Senoia Car Show',
     description:
-      'The 21st Annual Senoia Car Show t-shirt and more, available at the merchandise tent on show day. Proceeds support downtown Senoia preservation.',
+      'The 2026 Senoia Car Show shirts — the 21st Annual, America 250 and Kids’ Racer tees — were sold at the merchandise tent on show day. Proceeds support downtown Senoia preservation.',
     path: '/merch',
   })
 
@@ -25,6 +25,7 @@ export default function Merch() {
         <h1 className="font-display text-4xl uppercase tracking-wide text-ink mb-8">
           Show <span className="text-gold">Merch</span>
         </h1>
+        <PostShowNotice />
 
         <div className="grid gap-6 md:grid-cols-3">
           <div className="bg-white rounded-xl border border-stone-200 p-6 text-center flex flex-col">
@@ -40,13 +41,6 @@ export default function Merch() {
             </p>
             <p className="font-display text-3xl text-gold-dark my-2">$20</p>
             <p className="text-stone-700 text-sm">Unisex cut · China Blue · Sizes SM–3XL</p>
-            <p className="text-stone-600 text-sm mt-2">
-              Need 4XL? Email{' '}
-              <a className="underline" href="mailto:welcome@enjoysenoia.com">welcome@enjoysenoia.com</a>
-            </p>
-            {/* Online sales (the legacy enjoysenoia.com store) closed the day
-                before the 2026 show; from here shirts are sold only at the
-                merchandise tent, which the note under the grid covers. */}
           </div>
 
           <div className="bg-white rounded-xl border border-stone-200 p-6 text-center flex flex-col">
@@ -85,22 +79,10 @@ export default function Merch() {
         </div>
 
         <p className="text-stone-700 text-center mt-8">
-          All shirts available at the merchandise tent on show day — proceeds
-          support downtown Senoia.
+          All shirts were sold at the merchandise tent on show day &mdash;
+          proceeds support downtown Senoia. Questions? Email{' '}
+          <a className="underline" href="mailto:welcome@enjoysenoia.com">welcome@enjoysenoia.com</a>.
         </p>
-
-        <div className="bg-white rounded-xl border border-stone-200 p-5 mt-8 flex items-center gap-5 max-w-xl mx-auto">
-          <ShirtMockup className="w-20 shrink-0" />
-          <p className="text-stone-700 text-sm">
-            Rather earn one?{' '}
-            <span className="font-semibold">Volunteers get their own shirt free</span>{' '}
-            as a thank-you.{' '}
-            <Link to="/volunteer" className="underline text-gold-dark">
-              Claim a shift
-            </Link>
-            .
-          </p>
-        </div>
       </main>
       <SiteFooter />
     </div>

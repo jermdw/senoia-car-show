@@ -74,6 +74,16 @@ export function hasShowDayArrived(now = new Date()) {
   return p.day >= SHOW_DATE.day
 }
 
+// True from the moment the show closes (SHOW_END) onward — the third phase after
+// "before" and "show day", and like hasShowDayArrived it never flips back. Drives
+// the post-show state: Show Day, FAQ, Vendors and Merch drop out of the nav
+// (they are day-of logistics), the Gallery appears, and the landing page turns
+// from "come to the show" into a thank-you. Because it keys off SHOW_END, the
+// same year-rollover bump that moves SHOW_DATE restores the pre-show site.
+export function hasShowEnded(now = new Date()) {
+  return now >= SHOW_END
+}
+
 // True once the event-local clock has reached `hhmm`, and only on show day —
 // "announcing now" on the awards board in March would be nonsense. Reads the
 // wall clock in the event's timezone rather than comparing against SHOW_START,

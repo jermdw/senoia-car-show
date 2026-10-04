@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
+import PostShowNotice from '../components/PostShowNotice.jsx'
 
 // The five photo stops, in the suggested driving order from the organizers' route
 // map (Senoia → Sharpsburg → Newnan → GA-16 → back to Senoia, ~33 miles / ~51 min).
@@ -52,58 +52,16 @@ const ROUTE_URL =
   `&waypoints=${encodeURIComponent(STOPS.slice(1).map((s) => s.address).join('|'))}` +
   '&travelmode=driving'
 
-// Ticket sales are the Historical Society's (Stripe checkout on their site);
-// we embed their widget rather than re-implementing purchase here.
-const TICKETS_ORIGIN = 'https://senoiahistory.com'
-const TICKETS_URL = `${TICKETS_ORIGIN}/embed/tickets/cruisin-for-history-poker-run-2026`
-const TICKETS_INITIAL_HEIGHT = 340
-
-/**
- * The SAHS ticket widget in an iframe that grows to fit its content. When
- * framed, the widget posts `{type:'sahs:embed-height', height}` to its parent
- * from a ResizeObserver on its body; we accept that only from the SAHS origin
- * AND from this iframe's own window (stricter than SAHS's reference snippet,
- * which checked origin alone), and clamp so a bad value can't blow the layout.
- */
-function TicketEmbed() {
-  const frameRef = useRef(null)
-  const [height, setHeight] = useState(TICKETS_INITIAL_HEIGHT)
-
-  useEffect(() => {
-    const onMessage = (e) => {
-      if (e.origin !== TICKETS_ORIGIN) return
-      if (e.source !== frameRef.current?.contentWindow) return
-      if (e.data?.type !== 'sahs:embed-height') return
-      // Floor is low on purpose: a "sold out" notice is legitimately short.
-      const h = Number(e.data.height)
-      if (Number.isFinite(h) && h >= 40 && h <= 4000) setHeight(Math.ceil(h))
-    }
-    window.addEventListener('message', onMessage)
-    return () => window.removeEventListener('message', onMessage)
-  }, [])
-
-  return (
-    <iframe
-      ref={frameRef}
-      src={TICKETS_URL}
-      title="Buy Poker Run tickets"
-      loading="lazy"
-      className="block w-full max-w-[720px] mx-auto border-0"
-      style={{ height }}
-    />
-  )
-}
-
 const STEPS = [
-  ['Cruise the stops', 'Drive to all five landmarks below, in any order, at your own pace. There’s no official start time — go whenever suits you on Friday afternoon.'],
-  ['Snap a photo', 'Take a picture of your vehicle at each stop. A selfie with the car counts! Tell any onlookers to come see the show on Saturday.'],
-  ['Draw your hand', 'Bring your five photos to the Stone Lodge at Marimac Lakes between 6:00 and 7:00 PM. Each photo earns you a playing card — five cards is your poker hand.'],
-  ['Win', 'The best five-card poker hand (standard poker rules) takes the $200 cash prize. Winner announced at 7:00 PM, and Crust and Craft Pizza will be there serving pizza.'],
+  ['Cruise the stops', 'Drivers visited all five landmarks below, in any order, at their own pace, with no official start time on Friday afternoon.'],
+  ['Snap a photo', 'A picture of the vehicle at each stop — a selfie with the car counted!'],
+  ['Draw your hand', 'Five photos, brought to the Stone Lodge at Marimac Lakes between 6:00 and 7:00 PM, each earned a playing card — five cards made the poker hand.'],
+  ['Win', 'The best five-card poker hand (standard poker rules) took the $200 cash prize. The winner was announced at 7:00 PM, and Crust and Craft Pizza served pizza.'],
 ]
 
 const FACTS = [
-  ['Any vehicle', 'Car, truck, or motorcycle — no age restriction, unlike the show'],
-  ['Own pace', 'No set start time; visit the stops in any order'],
+  ['Any vehicle', 'Cars, trucks and motorcycles — no age restriction, unlike the show'],
+  ['Own pace', 'No set start time; stops could be visited in any order'],
   ['$200', 'Cash prize for the best poker hand'],
   ['6–7 PM', 'Photo turn-in at Marimac Lakes; winner announced at 7:00'],
 ]
@@ -112,7 +70,7 @@ export default function PokerRun() {
   usePageMeta({
     title: 'Cruisin’ for History Poker Run — Fri, Sept 25, 2026 | Senoia Car Show',
     description:
-      'Kick off car show weekend with the Cruisin’ for History Poker Run, Friday, September 25, 2026: drive to five local landmarks, photograph your car at each, and turn in your photos at Marimac Lakes 6–7 PM for a poker hand. Best hand wins $200. $25 per entry, any vehicle welcome; benefits the Senoia Area Historical Society.',
+      'The Cruisin’ for History Poker Run kicked off car show weekend on Friday, September 25, 2026: drivers photographed their cars at five local landmarks and turned in their photos at Marimac Lakes 6–7 PM for a poker hand. Best hand won $200; benefited the Senoia Area Historical Society.',
     path: '/poker-run',
   })
 
@@ -128,8 +86,10 @@ export default function PokerRun() {
           Friday, September 25, 2026 &middot; the afternoon before the show
         </p>
 
+        <PostShowNotice />
+
         <p className="text-stone-700 mb-4 leading-relaxed">
-          Back for its second year, the Cruisin’ for History Poker Run is a
+          Back for its second year, the Cruisin’ for History Poker Run was a
           laid-back fundraiser for the{' '}
           <a
             className="underline font-semibold"
@@ -139,14 +99,14 @@ export default function PokerRun() {
           >
             Senoia Area Historical Society
           </a>
-          . Drive a loop of five local landmarks, photograph your ride at each,
-          then trade your photos for a poker hand. Best hand wins — and everyone
-          eats.
+          . Drivers made a loop of five local landmarks, photographed their
+          rides at each, then traded their photos for a poker hand. Best hand
+          won — and everyone ate.
         </p>
         <p className="text-stone-700 mb-8 leading-relaxed">
           Unlike the show itself, <strong>any make, model, or year</strong> of
-          car, truck, or motorcycle can join. It’s the perfect way to kick off
-          car show weekend and support the preservation of Senoia’s history.
+          car, truck, or motorcycle could join. It was a way to kick off car
+          show weekend and support the preservation of Senoia’s history.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10 text-center">
@@ -159,7 +119,7 @@ export default function PokerRun() {
         </div>
 
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
-          How It Works
+          How It Worked
         </h2>
         <ol className="mb-10 space-y-4">
           {STEPS.map(([title, text], i) => (
@@ -180,10 +140,10 @@ export default function PokerRun() {
         </h2>
         <p className="text-stone-700 mb-4 leading-relaxed">
           Five stops, roughly a 33-mile loop — about 50 minutes of driving
-          without the photo breaks. The order below is the suggested route; you’re
-          free to run it however you like. Tap any address to open it in your
-          maps app, or open the whole loop — stops 1–5, then the finish line —
-          in one go.
+          without the photo breaks. The order below was the suggested route;
+          drivers were free to run it however they liked. Tap any address to open
+          it in your maps app, or open the whole loop — stops 1–5, then the
+          finish line — in one go.
         </p>
         <a
           href={ROUTE_URL}
@@ -232,56 +192,25 @@ export default function PokerRun() {
             {FINISH.address}
           </a>
           <p className="text-gold-pale/80 mt-3">
-            Proceed across the lake to the Stone Lodge between{' '}
-            <strong className="text-cream">6:00 and 7:00 PM</strong> with your
-            five photos to draw your hand. Winner announced at 7:00, and Crust
-            and Craft Pizza will be there serving pizza.
+            Drivers crossed the lake to the Stone Lodge between{' '}
+            <strong className="text-cream">6:00 and 7:00 PM</strong> with their
+            five photos to draw a hand. The winner was announced at 7:00, and
+            Crust and Craft Pizza served pizza.
           </p>
         </div>
-
-        <h2 id="tickets" className="scroll-mt-24 font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
-          Tickets
-        </h2>
-        <p className="text-stone-700 mb-4 leading-relaxed">
-          Tickets are <strong>$25 per entry</strong> — buy below. All proceeds
-          benefit the Senoia Area Historical Society.
-        </p>
-        <div className="bg-white rounded-xl border border-stone-200 p-2 sm:p-4 mb-3">
-          <TicketEmbed />
-        </div>
-        <p className="text-stone-600 text-sm mb-10">
-          Trouble with the form?{' '}
-          <a
-            className="underline font-semibold"
-            href={TICKETS_URL}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open the ticket page directly
-          </a>{' '}
-          or visit{' '}
-          <a
-            className="underline font-semibold"
-            href="https://senoiahistory.com"
-            target="_blank"
-            rel="noreferrer"
-          >
-            senoiahistory.com
-          </a>
-          .
-        </p>
 
         <div className="bg-cream border-2 border-gold rounded-xl p-6 text-center">
-          <p className="font-script text-gold text-2xl mb-2">Then come see the show</p>
+          <p className="font-script text-gold text-2xl mb-2">Thank you</p>
           <p className="text-stone-700 mb-4">
-            The 21st Annual Senoia Car Show is the next morning, Saturday,
-            September 26 — 10am–4pm on Historic Main Street.
+            Thank you to everyone who cruised, and to the Senoia Area Historical
+            Society for putting the poker run together. The 21st Annual Senoia Car
+            Show followed the next morning, Saturday, September 26.
           </p>
           <Link
-            to="/show"
+            to="/awards"
             className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold uppercase tracking-wider px-8 py-3 rounded-md transition-colors"
           >
-            Show Info
+            Award Winners
           </Link>
         </div>
       </main>

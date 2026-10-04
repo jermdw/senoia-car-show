@@ -63,7 +63,14 @@ Prod seed (idempotent, preserves `spotsFilled`):
   to make room for `/faq` and `/awards` as direct links — the dropdown only affects
   the inline `md`+ bar; the mobile hamburger menu lists all nine links flat, since a
   vertical list has no width to economize on. `/faq` is also reached from the
-  footer (on every page) plus `/show`, `/map` and `/vendors`.
+  footer (on every page) plus `/map` and `/vendors`.
+  The nav is **phase-aware**: `isVisibleOnShowDay(item, arrived, ended)` in
+  `src/lib/useShowDay.js` reads `hideOnShowDay` / `showOnShowDay` (flip at show day,
+  `hasShowDayArrived`) and `hideAfterShow` / `showAfterShow` (flip at `SHOW_END`,
+  `hasShowEnded`). After the show the day-of links (Show Day, Vendors, FAQ, Merch)
+  drop out, "More ▾" is hidden when empty, and the home page becomes a thank-you.
+  Use these flags rather than deleting entries — the rollover date bump then restores
+  everything. `PostShowNotice` tops the day-of pages that stay reachable by URL.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new
