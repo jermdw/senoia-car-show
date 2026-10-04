@@ -89,7 +89,7 @@ Prod seed (idempotent, preserves `spotsFilled`):
   from the *announced* Firestore awards at each rollover (docs/01 step 1b), so the page
   stays free of `firebase.js` and outlives `events/<year>`. A year with no data isn't
   listed; never stub one with guessed results. Reached from the footer on every page
-  (the header bar is full), the gallery and the live awards board; deliberately not
+  (the header bar is full, so that includes `/awards`) and the gallery; deliberately not
   `showAfterShow`, so the date bump never hides the archive.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
