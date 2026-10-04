@@ -11,7 +11,7 @@ the credential lives*, not the credential.
 | **Domain `senoiacar.show`** | The canonical host | Registrar account | Site unreachable; **auto-renew must stay on** |
 | **Firebase / GCP project `senoiacar`** | Hosting, Firestore, Functions, Auth | Google accounts with project IAM | Everything |
 | **GitHub `jermdw/senoia-car-show`** | Source, CI, and the published copy of this playbook | GitHub account | No deploys; site keeps serving |
-| **Resend** | Confirmation & cancellation emails | Functions secret `RESEND_API_KEY` | Sign-ups still work — email is best-effort — but volunteers get no confirmation |
+| **Resend** | Confirmation & cancellation emails, plus volunteer and car-owner broadcasts ([11](11-email-broadcasts.md)) | Functions secret `RESEND_API_KEY` | Sign-ups still work — email is best-effort — but volunteers get no confirmation |
 | **Mapbox** | Static Images API for the venue map | A personal access token, used at export time only | Only blocks *regenerating* the map; the exported WebP is committed and keeps serving |
 | **reCAPTCHA Enterprise** | App Check on prod callables | Site key is in `src/firebase.js` (public by design) | Sign-ups fail with `UNAUTHENTICATED` |
 | **Google Tag Manager / GA4** | Analytics, container `GTM-5P5465M9` | Google account | Analytics only |
