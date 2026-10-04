@@ -8,6 +8,7 @@ import Sponsors from './pages/Sponsors.jsx'
 import Vendors from './pages/Vendors.jsx'
 import Merch from './pages/Merch.jsx'
 import Faq from './pages/Faq.jsx'
+import Gallery from './pages/Gallery.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { ROUTE_LOADERS } from './lib/routeLoaders.js'
 
@@ -42,6 +43,7 @@ export default function AppRoutes() {
         <Route path="/vendors" element={<Vendors />} />
         <Route path="/merch" element={<Merch />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/awards" element={<Awards />} />
         <Route path="/volunteer" element={<Volunteer />} />
         <Route path="/cancel" element={<Cancel />} />

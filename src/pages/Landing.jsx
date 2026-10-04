@@ -60,6 +60,12 @@ const SECTIONS = [
     hideAfterShow: true,
   },
   {
+    to: '/gallery',
+    title: 'Photo Gallery',
+    text: 'Photos from show day on Main Street, by Wayne Dombroski of Stars Mill Photography.',
+    showAfterShow: true,
+  },
+  {
     to: '/volunteer',
     title: 'Volunteer',
     text: 'The show runs on volunteers — grab a shift and be part of it.',
@@ -139,13 +145,21 @@ export default function Landing() {
             // The show is over: no registration to sell and no shifts to fill, so the
             // one ask left is the board people are still coming to the site for.
             <>
-              <Link
-                to="/awards"
-                {...prefetch('/awards')}
-                className="inline-block bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
-              >
-                Award Winners
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+                <Link
+                  to="/awards"
+                  {...prefetch('/awards')}
+                  className="w-full sm:w-auto bg-gold hover:bg-gold-dark text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-4 rounded-md shadow-lg transition-colors"
+                >
+                  Award Winners
+                </Link>
+                <Link
+                  to="/gallery"
+                  className="w-full sm:w-auto border-2 border-gold text-gold hover:bg-gold hover:text-ink font-display font-semibold text-xl uppercase tracking-wider px-10 py-[0.875rem] rounded-md transition-colors"
+                >
+                  Photo Gallery
+                </Link>
+              </div>
               <p className="mt-6 max-w-xl mx-auto text-cream/75 leading-relaxed">
                 <strong className="text-gold-pale font-semibold">Thank you.</strong>{' '}
                 To the car owners, sponsors, vendors and volunteers, and to everyone
