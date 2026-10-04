@@ -71,14 +71,18 @@ Prod seed (idempotent, preserves `spotsFilled`):
   drop out, "More ▾" is hidden when empty, and the home page becomes a thank-you.
   Use these flags rather than deleting entries — the rollover date bump then restores
   everything. `PostShowNotice` tops the day-of pages that stay reachable by URL.
-- **Photo gallery** (`/gallery`): post-show only (`showAfterShow` in the nav and on the
-  home page). `src/data/gallery.js` holds `ALBUMS` (links out to the photographer's own
-  galleries, one per year — Stars Mill Photography / Wayne Dombroski) and `PHOTOS`
-  (copies hosted from `public/gallery/<year>/`, rendered by `PhotoGrid` with a native
-  `<dialog>` lightbox). `PHOTOS` starts empty until the organizers pick a set (Wayne
-  allows use as needed, website included). Eager route, no `firebase.js` import.
-  Always credit Wayne Dombroski / Stars Mill Photography, linked to
-  starsmillphoto.com, wherever his work is shown.
+- **Photo gallery** (`/gallery`, `/gallery/<year>`): post-show only (`showAfterShow` in the
+  nav and on the home page). `/gallery` is the newest year; older years are
+  `/gallery/<year>`, reached from a year switcher. `src/data/gallery.js` holds `EDITIONS`
+  (the year list, with each show's ordinal as printed on its trophies — never computed),
+  `ALBUMS` (links out to the photographer's own galleries, one per year — Stars Mill
+  Photography / Wayne Dombroski) and `PHOTOS` (copies hosted from
+  `public/gallery/<year>/`, built with `g(year, album, slug, w, h, alt)` and rendered by
+  `PhotoGrid` with a native `<dialog>` lightbox). Wayne allows use as needed, website
+  included; the 2025 set was added on the organizers' say-so and is worth a one-line
+  confirmation from him. Eager route, no `firebase.js` import. Always credit Wayne
+  Dombroski / Stars Mill Photography, linked to starsmillphoto.com, wherever his work
+  is shown. A new year needs its `/gallery/<year>` line in `public/sitemap.xml`.
 - **FAQ** (`/faq`): gate times, entrances and load-in addresses, in the words people
   email them in. Content is `src/data/faq.js`, which re-states facts that already
   live in `eventMap.js`/`Show.jsx`/`registration.js` rather than introducing new

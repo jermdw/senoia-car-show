@@ -113,9 +113,13 @@ page mounted rather than showing the Suspense fallback.
 
 `/gallery` is hidden until `SHOW_END` passes (`showAfterShow`), so the year-rollover
 date bump hides it again until next year's show closes — the URL keeps working and
-the 2026 album stays in `src/data/gallery.js`. Each year add a row to `ALBUMS` (a link
-to the photographer's own gallery) and any photos you want hosted to `PHOTOS`
-(instructions are in the file's comments; images go in `public/gallery/<year>/`).
+every year's album stays in `src/data/gallery.js`. The newest year is `/gallery`; older
+years are `/gallery/<year>`, picked from a year switcher on the page. Each year add a
+row to `EDITIONS` (the show's ordinal as printed on that year's trophies — read it off
+the signage, don't count), a row to `ALBUMS` (a link to the photographer's own
+gallery), any photos you want hosted to `PHOTOS` (instructions are in the file's
+comments; images go in `public/gallery/<year>/`), and a `/gallery/<year>` line to
+`public/sitemap.xml`.
 Wayne Dombroski / Stars Mill Photography must stay credited and linked wherever
 his photos appear — the page and the lightbox both render it from `PHOTOGRAPHER`.
 

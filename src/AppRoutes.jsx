@@ -43,7 +43,7 @@ export default function AppRoutes() {
         <Route path="/vendors" element={<Vendors />} />
         <Route path="/merch" element={<Merch />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/gallery/:year?" element={<Gallery />} />
         <Route path="/awards" element={<Awards />} />
         <Route path="/volunteer" element={<Volunteer />} />
         <Route path="/cancel" element={<Cancel />} />
