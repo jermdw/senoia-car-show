@@ -7,7 +7,7 @@ import SiteFooter from '../components/SiteFooter.jsx'
 import { ClockMark, Medallion, SearchMark, TrophyMark } from '../components/AwardArt.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
 import { PHOTOGRAPHER } from '../data/gallery.js'
-import { phaseOnShowDay } from '../lib/showTime.js'
+import { hasShowEnded, phaseOnShowDay } from '../lib/showTime.js'
 import {
   FEATURED,
   matchesAwardSearch,
@@ -29,8 +29,12 @@ const CEREMONY_PLACE = 'The Stage — bottom of the hill, by the gazebo'
 const CEREMONY_END = '16:00'
 
 // 'before' | 'during' | 'after'. Off show day it is 'before', so the board reads
-// as pre-ceremony in March rather than claiming the show has been and gone.
-const ceremonyPhase = (now) => phaseOnShowDay(CEREMONY_TIME, CEREMONY_END, now)
+// as pre-ceremony in March rather than claiming the show has been and gone. Once
+// the show has closed it is 'after' for good: phaseOnShowDay only knows show day
+// itself, so on its own it sent the board back to "starting at 3:00 PM" the next
+// morning and every day since.
+const ceremonyPhase = (now = new Date()) =>
+  hasShowEnded(now) ? 'after' : phaseOnShowDay(CEREMONY_TIME, CEREMONY_END, now)
 
 // The board is a passive display: nobody reloads it during the ceremony, so
 // the "announcing now" state has to arrive on its own.
@@ -40,7 +44,7 @@ export default function Awards() {
   usePageMeta({
     title: '2026 Award Winners | Senoia Car Show',
     description:
-      'Live results from the 21st Annual Senoia Car Show awards ceremony — Top 50 winners plus Best in Show Car and Truck, posted as they are announced from the stage on September 26, 2026.',
+      'Results from the 21st Annual Senoia Car Show awards ceremony, held September 26, 2026 — the Top 50 winners plus Best in Show Car and Best in Show Truck.',
     path: '/awards',
   })
 
@@ -159,13 +163,16 @@ export default function Awards() {
                 <p className="text-gold-pale/60 text-sm mb-3" aria-live="polite">
                   {term
                     ? `${matches.length} of ${top50.length} announced ${plural(top50.length, 'winner')} match "${term}"`
-                    : `${top50.length} ${plural(top50.length, 'winner')} announced so far`}
+                    : phase === 'after'
+                      ? `${top50.length} ${plural(top50.length, 'winner')}`
+                      : `${top50.length} ${plural(top50.length, 'winner')} announced so far`}
                 </p>
 
                 {matches.length === 0 ? (
                   <p className="text-gold-pale/60 py-6">
-                    No announced winner matches that yet. Awards are posted here
-                    as they're called from the stage — try again in a minute.
+                    {phase === 'after'
+                      ? 'No winner matches that search.'
+                      : 'No announced winner matches that yet. Awards are posted here as they\'re called from the stage — try again in a minute.'}
                   </p>
                 ) : (
                   <ul className="divide-y divide-gold/15 border-y border-gold/15">
@@ -180,11 +187,11 @@ export default function Awards() {
         )}
 
         <p className="text-gold-pale/50 text-sm mt-10 text-center">
-          Trophies are handed out at the stage. Can't stay? Email{' '}
+          {phase === 'after' ? 'Questions about a trophy? Email' : "Trophies are handed out at the stage. Can't stay? Email"}{' '}
           <a className="underline hover:text-gold-pale" href="mailto:carshow@enjoysenoia.com">
             carshow@enjoysenoia.com
-          </a>{' '}
-          to arrange a pickup.
+          </a>
+          {phase === 'after' ? '.' : ' to arrange a pickup.'}
         </p>
       </main>
 
@@ -207,6 +214,25 @@ function Section({ title, children }) {
 }
 
 function CeremonyCard({ phase }) {
+  // After the show the card is a record, not a schedule: no "find the stage" link
+  // to a gate map that is no longer in the nav, and nothing in the future tense.
+  if (phase === 'after') {
+    return (
+      <div className="rounded-xl border border-gold/40 bg-white/5 px-5 py-4 text-center">
+        <p className="font-display text-xl uppercase tracking-wide text-gold">
+          Awards Ceremony
+        </p>
+        <p className="mt-2 flex items-center justify-center gap-2 text-cream text-lg">
+          <ClockMark className="w-5 h-5 text-gold-pale shrink-0" />
+          {CEREMONY_LABEL} · The Stage, by the gazebo
+        </p>
+        <p className="mt-2 text-gold-pale/70 text-sm">
+          The 50/50 raffle winner, recognition of last year&rsquo;s Best in Show,
+          then the Top 50 and Best in Show Car &amp; Truck.
+        </p>
+      </div>
+    )
+  }
   return (
     <div className="rounded-xl border border-gold/40 bg-white/5 px-5 py-4 text-center">
       <p className="font-display text-xl uppercase tracking-wide text-gold">
