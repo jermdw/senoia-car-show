@@ -89,6 +89,12 @@ export default function Gallery() {
           </section>
         ))}
 
+        <p className="mb-8">
+          <Link className="underline font-semibold text-stone-800 hover:text-ink" to="/history">
+            Show history &amp; past winners →
+          </Link>
+        </p>
+
         <h2 className="font-display text-2xl uppercase tracking-wide text-ink border-b-2 border-gold pb-2 mb-4">
           Full Galleries
         </h2>

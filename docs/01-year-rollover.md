@@ -56,6 +56,17 @@ Three things to get right:
 
 Then `npm test` — `test/showTime.test.mjs` exercises these at a fixed clock.
 
+## Step 1b — Freeze last year's winners into the history page
+
+`/history` reads `src/data/winners.js`, not Firestore, so last year's results survive
+the rollover. Before the new `EVENT_ID` lands, copy the **announced** rows of
+`events/<old year>/awards` into a new `WINNERS` entry (newest first): the `featured`
+trophies in announcement order, and `top` in `sortOrder` order (list position is the
+place). Set `edition` from the signage and `tierLabel` from what was actually
+awarded that year — 2025 was a "Top 30", 2026 a "Top 50". Keep owner names exactly as
+announced. Do it on the same branch as the date switch; `npm test` checks the entry's
+shape. Never add a year with guessed contents.
+
 ## Step 2 — The event id
 
 `EVENT_ID` is the Firestore document under `events/`, and it is declared in
@@ -183,6 +194,7 @@ Merging to `main` deploys automatically. Then, in a real browser:
 
 ```
 [ ] showTime.js constants (FIRST)
+[ ] Freeze last year's winners into src/data/winners.js
 [ ] EVENT_ID in all four files
 [ ] index.html: title, meta, both JSON-LD events
 [ ] Seed new shifts, signupOpen: true
