@@ -4,9 +4,9 @@
 // Credit: the 2026 photos are by Wayne Dombroski of Stars Mill Photography, who
 // has said the show may use them as needed (via Steve Maloy, 2026-10-02; the
 // organizers confirmed this covers the website, not just social media). The 2025
-// set is also his, curated from his public 2025 gallery on 2026-10-04 at the
-// organizers' request (Wayne's 2026-10-02 permission was given for the 2026 photos
-// — worth a one-line confirmation from him that it extends to 2025). In return
+// set is also his, taken from his public 2025 gallery at the organizers' request
+// (2026-10-04); Wayne confirmed to the organizers by text on 2026-10-05 that the
+// show may use the 2025 photos too. In return
 // Wayne and his business are credited wherever his work appears — the page renders
 // the credit line from PHOTOGRAPHER, so keep it there.
 export const PHOTOGRAPHER = {
