@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PHOTOGRAPHER } from '../data/gallery.js'
+import ShareButtons from './ShareButtons.jsx'
+import { photoSlug } from '../lib/share.js'
 
 /**
  * Thumbnail grid with a lightbox. The lightbox is a native <dialog>: showModal()
@@ -13,10 +15,23 @@ export default function PhotoGrid({ photos }) {
 
   const open = (i) => {
     setIndex(i)
-    dialogRef.current?.showModal()
+    if (!dialogRef.current?.open) dialogRef.current?.showModal()
   }
   const count = photos.length
   const step = (delta) => setIndex((i) => (i + delta + count) % count)
+
+  // A shared photo link (?photo=<slug>) opens that photo on arrival. Only the grid
+  // that holds it reacts; the others find no match and stay closed.
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get('photo')
+    if (!slug) return
+    const i = photos.findIndex((p) => photoSlug(p) === slug)
+    if (i === -1) return
+    setIndex(i)
+    if (!dialogRef.current?.open) dialogRef.current?.showModal()
+    // Runs once per mount: later navigation inside the lightbox must not reopen it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const isOpen = index !== null
   useEffect(() => {
@@ -69,7 +84,7 @@ export default function PhotoGrid({ photos }) {
             <img
               src={photo.src}
               alt={photo.alt}
-              className="max-w-full max-h-[80vh] w-auto h-auto rounded-md"
+              className="max-w-full max-h-[62vh] w-auto h-auto rounded-md"
             />
             <figcaption className="text-cream text-sm text-center">
               {photo.alt}
@@ -104,6 +119,14 @@ export default function PhotoGrid({ photos }) {
                 Next
               </button>
             </div>
+            <ShareButtons
+              tone="dark"
+              label="Share this photo"
+              path={`/gallery/${photo.year}?photo=${photoSlug(photo)}`}
+              title={`Senoia Car Show ${photo.year} photo`}
+              text={`${photo.alt} — Senoia Car Show ${photo.year}`}
+              className="justify-center"
+            />
           </figure>
         )}
       </dialog>

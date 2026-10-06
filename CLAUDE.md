@@ -83,6 +83,13 @@ Prod seed (idempotent, preserves `spotsFilled`):
   confirmation from him. Eager route, no `firebase.js` import. Always credit Wayne
   Dombroski / Stars Mill Photography, linked to starsmillphoto.com, wherever his work
   is shown. A new year needs its `/gallery/<year>` line in `public/sitemap.xml`.
+- **Share buttons** (`ShareButtons.jsx`, `src/lib/share.js`): native share sheet where the
+  device has one, plus Facebook / X / email / copy-link as plain links — no third-party
+  scripts. URLs are always built on the canonical `https://senoiacar.show`, never
+  `window.location.origin`. Rendered in `SiteFooter` on every page (`share={false}` on the
+  404), at the top of `/gallery`, and in the lightbox, where a photo shares as
+  `/gallery/<year>?photo=<file slug>` and `PhotoGrid` opens it on arrival — so a photo's
+  file name is its permalink; don't rename a published one. Clicks push a GTM `share` event.
 - **Show history** (`/history`, `/history/<year>`): the permanent winners record — Best in
   Show plus the ranked list (`tierLabel`: 2026 "Top 50", 2025's plaques read "Top 30" —
   never assume the size) for each year. Content is static `src/data/winners.js`, frozen

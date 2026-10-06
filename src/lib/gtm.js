@@ -26,3 +26,10 @@ export function pushPageView(title) {
     page_location: window.location.origin + window.location.pathname,
   })
 }
+
+// A visitor used a share button. Path only, like pushPageView: the shared URL can
+// carry a photo slug but never anything private.
+export function pushShare(method, path) {
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({ event: 'share', method, page_path: path })
+}
