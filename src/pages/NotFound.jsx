@@ -31,7 +31,7 @@ export default function NotFound() {
           Back to Home
         </Link>
       </main>
-      <SiteFooter />
+      <SiteFooter share={false} />
     </div>
   )
 }

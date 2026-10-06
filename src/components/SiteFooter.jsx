@@ -1,8 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import ShareButtons from './ShareButtons.jsx'
 import { useShowEnded } from '../lib/useShowDay.js'
 
-export default function SiteFooter() {
+// `share={false}` for pages with no address worth passing along (the 404).
+export default function SiteFooter({ share = true }) {
   const ended = useShowEnded()
+  const { pathname } = useLocation()
   return (
     <footer className="bg-ink text-gold-pale/70 text-sm">
       <div className="max-w-5xl mx-auto px-6 py-10 grid gap-8 sm:grid-cols-3">
@@ -57,6 +60,17 @@ export default function SiteFooter() {
           </p>
         </div>
       </div>
+      {share && (
+        <div className="max-w-5xl mx-auto px-6 pb-8">
+          <ShareButtons
+            tone="dark"
+            label="Share this page"
+            path={pathname}
+            title="The Senoia Car Show"
+            text="The Senoia Car Show — Historic Main Street, Senoia, Georgia"
+          />
+        </div>
+      )}
       <p className="text-center pb-6 text-gold-pale/70">
         The Senoia Car Show · Est. 2005
       </p>

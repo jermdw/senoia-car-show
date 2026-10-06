@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import PhotoGrid from '../components/PhotoGrid.jsx'
+import ShareButtons from '../components/ShareButtons.jsx'
 import usePageMeta from '../lib/usePageMeta.js'
 import { ALBUMS, EDITIONS, PHOTOGRAPHER, PHOTOS } from '../data/gallery.js'
 
@@ -76,6 +77,13 @@ export default function Gallery() {
           </a>
           , who generously shared them with the show. Thank you, Wayne!
         </p>
+        <ShareButtons
+          className="mb-8"
+          label="Share this gallery"
+          path={year === LATEST ? '/gallery' : `/gallery/${year}`}
+          title={`${year} Senoia Car Show photo gallery`}
+          text={`Photos from the ${edition} Annual Senoia Car Show, ${year}`}
+        />
 
         {groups.map(([album, photos]) => (
           <section key={album} className="mb-10" aria-labelledby={`album-${year}-${album}`}>

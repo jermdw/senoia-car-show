@@ -123,6 +123,14 @@ comments; images go in `public/gallery/<year>/`), and a `/gallery/<year>` line t
 Wayne Dombroski / Stars Mill Photography must stay credited and linked wherever
 his photos appear — the page and the lightbox both render it from `PHOTOGRAPHER`.
 
+### Share buttons
+
+Every public page's footer has a "Share this page" row; the gallery also has one at
+the top and one per photo in the lightbox (`/gallery/<year>?photo=<slug>`, where the
+slug is the photo's file name, so renaming a published file breaks links people have
+already shared). Links always point at `senoiacar.show`. Clicks fire a GTM `share`
+event (`method`: native, facebook, x, email, copy) for GA4.
+
 ### Navigation
 
 `SiteHeader.jsx` fits exactly seven direct links at the `md` breakpoint, so the
