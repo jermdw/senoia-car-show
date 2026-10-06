@@ -79,8 +79,7 @@ Prod seed (idempotent, preserves `spotsFilled`):
   Photography / Wayne Dombroski) and `PHOTOS` (copies hosted from
   `public/gallery/<year>/`, built with `g(year, album, slug, w, h, alt)` and rendered by
   `PhotoGrid` with a native `<dialog>` lightbox). Wayne allows use as needed, website
-  included; the 2025 set was added on the organizers' say-so and is worth a one-line
-  confirmation from him. Eager route, no `firebase.js` import. Always credit Wayne
+  included; he confirmed by text (2026-10-05) that this covers the 2025 set too. Eager route, no `firebase.js` import. Always credit Wayne
   Dombroski / Stars Mill Photography, linked to starsmillphoto.com, wherever his work
   is shown. A new year needs its `/gallery/<year>` line in `public/sitemap.xml`.
 - **Share buttons** (`ShareButtons.jsx`, `src/lib/share.js`): native share sheet where the
