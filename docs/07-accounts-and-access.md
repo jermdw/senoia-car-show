@@ -14,7 +14,7 @@ the credential lives*, not the credential.
 | **Resend** | Confirmation & cancellation emails, plus volunteer and car-owner broadcasts ([11](11-email-broadcasts.md)) | Functions secret `RESEND_API_KEY` | Sign-ups still work — email is best-effort — but volunteers get no confirmation |
 | **Mapbox** | Static Images API for the venue map | A personal access token, used at export time only | Only blocks *regenerating* the map; the exported WebP is committed and keeps serving |
 | **reCAPTCHA Enterprise** | App Check on prod callables | Site key is in `src/firebase.js` (public by design) | Sign-ups fail with `UNAUTHENTICATED` |
-| **Google Tag Manager / GA4** | Analytics, container `GTM-5P5465M9` | Google account | Analytics only |
+| **Google Tag Manager / GA4 / Search Console** | Analytics, container `GTM-5P5465M9`; IDs and mappings in [12](12-analytics-and-seo.md) | Google account | Analytics only |
 | **Ticket Tailor (SDDA box office)** | Vehicle registration + sponsorships | SDDA account | Nobody can register or sponsor |
 | **enjoysenoia.com** | DDA site + online shirt store | DDA | Shirt sales |
 | **senoiahistory.com** | Poker run ticket sales (Stripe) | SAHS | Poker run sales |
