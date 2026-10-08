@@ -121,12 +121,27 @@ properties were **not** looked up here.
 
 ## Getting the numbers (for humans and agents)
 
-- **No API access is wired up.** `gcloud` auth tokens don't carry the Analytics
-  scope by default, and no GA4/Search Console connector is configured in Claude.
-  Until that changes, the working routes are the console UIs (below) or a CSV
-  export dropped into the repo.
-- **Agents: use the user's own Chrome** (Claude in Chrome), which is already
-  signed in. The built-in browser pane has no Google session.
+- **API access works (set up 2026-10-08).** Application Default Credentials with
+  the read-only Analytics and Search Console scopes, from the user's own
+  OAuth *Desktop app* client in project `senoiacar` (kept outside the repo):
+
+  ```bash
+  gcloud auth application-default login --client-id-file=client.json \
+    --scopes=https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/webmasters.readonly,https://www.googleapis.com/auth/cloud-platform
+  ```
+
+  gcloud's built-in client is rejected ("This app is blocked") for these
+  scopes, hence the custom client. The token must come from
+  `gcloud auth application-default print-access-token` — plain
+  `gcloud auth print-access-token` never carries these scopes. Send
+  `x-goog-user-project: senoiacar` and call
+  `analyticsdata.googleapis.com/v1beta/properties/549032613:runReport` and
+  `searchconsole.googleapis.com/webmasters/v3/sites/sc-domain%3Asenoiacar.show/searchAnalytics/query`.
+  Verify scopes with `https://oauth2.googleapis.com/tokeninfo?access_token=…`.
+  Search Console data lags about two days. If the Testing-mode consent screen
+  is unpublished, the refresh token expires weekly — just log in again.
+- **Browser fallback — agents: use the user's own Chrome** (Claude in Chrome),
+  which is already signed in. The built-in browser pane has no Google session.
 - **GA4 deep links:** the property Home URL and the data-stream URL above load
   directly. Other `admin/...` deep links (`admin/property/details`,
   `admin/account/details`) bounce back to Home — click through the Admin UI
