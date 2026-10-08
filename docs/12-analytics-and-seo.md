@@ -140,6 +140,11 @@ properties were **not** looked up here.
   Verify scopes with `https://oauth2.googleapis.com/tokeninfo?access_token=…`.
   Search Console data lags about two days. If the Testing-mode consent screen
   is unpublished, the refresh token expires weekly — just log in again.
+- **Export script:** `node scripts/export-analytics.mjs --start 2026-09-07 --end 2026-10-08`
+  prints a markdown report (daily traffic, channels, sources, pages, events, plus
+  Search Console daily/queries/pages); add `--csv out/` for one CSV per table.
+  Defaults to the last 30 days. It uses the login above and fails with a clear
+  message if the token or scopes are missing.
 - **Browser fallback — agents: use the user's own Chrome** (Claude in Chrome),
   which is already signed in. The built-in browser pane has no Google session.
 - **GA4 deep links:** the property Home URL and the data-stream URL above load
