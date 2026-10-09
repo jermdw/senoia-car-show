@@ -197,5 +197,8 @@ sign-in card). Keep header art sized for its slot — it loads on every page.
   call it (`noindex: true` for anything private). senoiacar.show is the
   canonical host — the `.web.app`/`.firebaseapp.com` mirrors must never be
   linked or promoted.
+- **Analytics / Search Console IDs** (GA4 property, GTM containers, the `sc-domain:` property,
+  and how to read the consoles) are recorded in `docs/12-analytics-and-seo.md` — look there
+  before re-deriving them from the browser.
 - GitHub secret-scanning flags the Firebase web API key in `src/firebase.js`;
   it is a public client identifier, not a secret (alert #1 resolved as such).
