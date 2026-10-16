@@ -22,11 +22,11 @@ const prefetch = (to) => ({
 // before then — see AwardsAdmin's staged/announced flow for why. `hideAfterShow`
 // links (FAQ, Vendors, Merch) are logistics for the day itself: they stay through
 // show day and drop once the show closes (hasShowEnded), when the nav is down to
-// the recap — Show Info, Show Day, Sponsors, Awards, Gallery. The show day guide
+// the recap — Show Info, Map, Sponsors, Awards, Gallery. The show day guide
 // stays on purpose: the map of the venue is still worth a look afterwards.
 const LINKS = [
   { to: '/show', label: 'Show Info' },
-  { to: '/map', label: 'Show Day' },
+  { to: '/map', label: 'Map' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors', hideAfterShow: true },
   { to: '/volunteer', label: 'Volunteer', hideOnShowDay: true },
