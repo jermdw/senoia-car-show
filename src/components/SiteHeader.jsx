@@ -20,12 +20,13 @@ const prefetch = (to) => ({
 // hasShowDayArrived(): Volunteer and Poker Run stop being actionable once the
 // show starts, and Awards (dead air until the 3pm ceremony) isn't worth a slot
 // before then — see AwardsAdmin's staged/announced flow for why. `hideAfterShow`
-// links (the day-of guide, FAQ, Vendors, Merch) are logistics for the day itself:
-// they stay through show day and drop once the show closes (hasShowEnded), when
-// the nav is down to the recap — Show Info, Sponsors, Awards, Gallery.
+// links (FAQ, Vendors, Merch) are logistics for the day itself: they stay through
+// show day and drop once the show closes (hasShowEnded), when the nav is down to
+// the recap — Show Info, Show Day, Sponsors, Awards, Gallery. The show day guide
+// stays on purpose: the map of the venue is still worth a look afterwards.
 const LINKS = [
   { to: '/show', label: 'Show Info' },
-  { to: '/map', label: 'Show Day', hideAfterShow: true },
+  { to: '/map', label: 'Show Day' },
   { to: '/sponsors', label: 'Sponsors' },
   { to: '/vendors', label: 'Vendors', hideAfterShow: true },
   { to: '/volunteer', label: 'Volunteer', hideOnShowDay: true },

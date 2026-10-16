@@ -33,7 +33,7 @@ const SECTIONS = [
     to: '/map',
     title: 'Show Day',
     text: 'Find your way around the show, and what time everything happens.',
-    hideAfterShow: true,
+    textAfterShow: 'The show day map: where everything was on Historic Main Street, and when.',
   },
   {
     to: '/poker-run',
@@ -250,7 +250,9 @@ export default function Landing() {
         )}
 
         <section className={`bg-cream pb-14 px-4 ${showEnded ? 'pt-12' : ''}`}>
-          <div className="max-w-4xl mx-auto grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Post-show there are four plain cards, which a third column would leave
+              one orphaned; two columns fill evenly. */}
+          <div className={`max-w-4xl mx-auto grid gap-5 sm:grid-cols-2 ${showEnded ? '' : 'lg:grid-cols-3'}`}>
             {sections.map((s) => (
               <Link
                 key={s.to}
@@ -261,7 +263,7 @@ export default function Landing() {
                     ? // The card count leaves an orphan either way (seven before show
                       // day, six on it); the featured CTA takes the whole last row as a
                       // banner rather than sitting alone at a third width.
-                      'bg-ink border-gold sm:col-span-2 lg:col-span-3 text-center'
+                      'bg-ink border-gold sm:col-span-full text-center'
                     : 'bg-white border-stone-200'
                 }`}
               >

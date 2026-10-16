@@ -14,8 +14,8 @@ permanently:
 - the hero countdown reads *"That's a wrap on 2026 — see you next September"*
 
 There is a second, later switch: `hasShowEnded()` (true from `SHOW_END`, 4:00pm on
-show day). It puts the site into its **post-show state** — Show Day, Vendors, FAQ
-and Merch leave the nav, the empty "More ▾" dropdown disappears, the footer drops
+show day). It puts the site into its **post-show state** — Vendors, FAQ and Merch
+leave the nav (the Show Day map stays), the empty "More ▾" dropdown disappears, the footer drops
 the FAQ link and the PorchFest date, the home page turns into a thank-you with a
 single Award Winners button, and `PostShowNotice` banners appear on the
 day-of pages (`/faq`, `/map`, `/vendors`, `/merch`, `/poker-run`). All of that is
