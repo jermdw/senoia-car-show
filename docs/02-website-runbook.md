@@ -140,7 +140,7 @@ since a vertical list has no width to economise on.
 
 The nav also **swaps itself on show day** with no redeploy: `hasShowDayArrived()`
 drops Volunteer and Poker Run and promotes Awards. A second flip, `hasShowEnded()`
-at `SHOW_END`, retires the day-of links too (Show Day, Vendors, FAQ, Merch) and,
+at `SHOW_END`, retires the day-of links too (Vendors, FAQ, Merch — the Show Day map stays) and,
 once Poker Run and Merch are both gone, hides the "More ▾" button rather than
 leaving an empty dropdown. Links opt in with `hideAfterShow` / `showAfterShow`
 (see `isVisibleOnShowDay` in `src/lib/useShowDay.js`). See

@@ -67,8 +67,9 @@ Prod seed (idempotent, preserves `spotsFilled`):
   The nav is **phase-aware**: `isVisibleOnShowDay(item, arrived, ended)` in
   `src/lib/useShowDay.js` reads `hideOnShowDay` / `showOnShowDay` (flip at show day,
   `hasShowDayArrived`) and `hideAfterShow` / `showAfterShow` (flip at `SHOW_END`,
-  `hasShowEnded`). After the show the day-of links (Show Day, Vendors, FAQ, Merch)
-  drop out, "More ▾" is hidden when empty, and the home page becomes a thank-you.
+  `hasShowEnded`). After the show the day-of links (Vendors, FAQ, Merch) drop out
+  (the Show Day map stays linked in the nav and on the home page), "More ▾" is
+  hidden when empty, and the home page becomes a thank-you.
   Use these flags rather than deleting entries — the rollover date bump then restores
   everything. `PostShowNotice` tops the day-of pages that stay reachable by URL.
 - **Photo gallery** (`/gallery`, `/gallery/<year>`): post-show only (`showAfterShow` in the
